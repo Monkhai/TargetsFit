@@ -13,8 +13,13 @@ export type Target = {
 };
 
 export type Day = {
-  id: number;
+  id: 1 | 2 | 3 | 4 | 5 | 6 | 7;
   name: 'sunday' | 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday';
+};
+
+export type TargetsByDay = {
+  day: Day;
+  target: Target[];
 };
 
 const db: any = SQLite.openDatabase(DATABASE_NAME);
@@ -36,6 +41,19 @@ const createTargetsTable = () => {
       },
       () => resolve()
     );
+  });
+};
+
+const createTargetsByDays = () => {
+  return new Promise<void>((resolve, reject) => {
+    db.transaction((tx: SQLite.SQLTransaction) => {
+      tx.executeSql(`
+                CREATE TABLE IF NOT EXISTS targets_by_days (
+                    id INTEGER PRIMARY KEY NOT NULL,
+                    
+                )
+                `);
+    });
   });
 };
 
@@ -76,6 +94,7 @@ export const createDB = async (): Promise<void> => {
   try {
     await createDaysTable();
     await createTargetsTable();
+    await createTargetsByDays();
   } catch (error) {
     console.error(`Error occurred while creating DB: ${error}`);
     throw error;
