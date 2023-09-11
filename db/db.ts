@@ -72,9 +72,13 @@ class TargetDAO {
     return new Promise((resolve, reject) => {
       db.transaction(
         (tx: SQLite.SQLTransaction) => {
-          tx.executeSql(`SELECT * FROM targets`, [], (_, { rows: { _array } }) => {
-            resolve(_array as Target[]);
-          });
+          tx.executeSql(
+            `SELECT * FROM targets ORDER BY name ASC`,
+            [],
+            (_, { rows: { _array } }) => {
+              resolve(_array as Target[]);
+            }
+          );
         },
         (error: Error) => {
           handleError('Error occured while getting targets', error, reject);
