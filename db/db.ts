@@ -48,6 +48,21 @@ const createDaysTable = () => {
                     id INTEGER PRIMARY KEY NOT NULL,
                     name TEXT NOT NULL,
                 );`);
+
+        tx.executeSql(`SELECT COUNT(id) as count FROM days;`, [], (_, { rows: { _array } }) => {
+          if (_array[0].count === 0) {
+            tx.executeSql(
+              `INSERT INTO days (id, name) VALUES 
+                (1, 'sunday'),
+                (2, 'monday'),
+                (3, 'tuesday'),
+                (4, 'wednesday'),
+                (5, 'thursday'),
+                (6, 'friday'),
+                (7, 'saturday');`
+            );
+          }
+        });
       },
       (error: Error) => {
         handleError('Error occurred while creating days table', error, reject);
