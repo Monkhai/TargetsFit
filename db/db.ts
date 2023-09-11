@@ -1,4 +1,5 @@
 import * as SQLite from 'expo-sqlite';
+import { handleError } from './dbErrorHandler';
 
 //define db name
 const DATABASE_NAME = 'app.db';
@@ -31,8 +32,7 @@ const createTargetsTable = () => {
                 );`);
       },
       (error: Error) => {
-        console.error(`Error occurred while creating targets table: ${error}`);
-        reject();
+        handleError('Error occurred while creating targets table', error, reject);
       },
       () => resolve()
     );
@@ -50,8 +50,7 @@ const createDaysTable = () => {
                 );`);
       },
       (error: Error) => {
-        console.error(`Error occurred while creating days table: ${error}`);
-        reject();
+        handleError('Error occurred while creating days table', error, reject);
       },
       () => resolve()
     );
@@ -67,3 +66,20 @@ export const createDB = async (): Promise<void> => {
     throw error;
   }
 };
+
+class TargetDAO {
+  public async getAllTargets(): Promise<Target[]> {
+    return new Promise((resolve, reject) => {
+      db.transaction(
+        (tx: SQLite.SQLTransaction) => {
+          tx.executeSql(`SELECT * FROM targets`, [], (_, { rows: { _array } }) => {
+            resolve(_array as Target[]);
+          });
+        },
+        (error: Error) => {
+          handleError('Error occured while getting targets', error, reject);
+        }
+      );
+    });
+  }
+}
