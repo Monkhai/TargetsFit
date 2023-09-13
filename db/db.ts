@@ -13,6 +13,8 @@ export type Target = {
   type: 'mobility' | 'strength' | 'specific' | 'cardio' | 'VO2' | 'flexibility';
 };
 
+export type NewTarget = Omit<Target, 'id' | 'activeQuantity'>;
+
 export type Day = {
   id: 1 | 2 | 3 | 4 | 5 | 6 | 7;
   name: 'sunday' | 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday';
@@ -33,7 +35,7 @@ const createTargetsTable = () => {
                     type TEXT NOT NULL
                 );`);
       },
-      (error: Error) => handleError('Error occurred while creating targets table', error, reject),
+      (error: Error) => handleError('creating targets table', error, reject),
       () => resolve()
     );
   });
@@ -64,7 +66,7 @@ const createDaysTable = () => {
           }
         });
       },
-      (error: Error) => handleError('Error occurred while creating days table', error, reject),
+      (error: Error) => handleError('creating days table', error, reject),
       () => resolve()
     );
   });
@@ -84,8 +86,7 @@ const createTargetsByDays = () => {
         )`
         );
       },
-      (error: Error) =>
-        handleError('Error occurred while creating targets_by_day table', error, reject),
+      (error: Error) => handleError('creating targets_by_day table', error, reject),
       () => resolve()
     );
   });
@@ -97,7 +98,7 @@ export const createDB = async (): Promise<void> => {
     await createTargetsTable();
     await createTargetsByDays();
   } catch (error) {
-    console.error(`Error occurred while creating DB: ${error}`);
+    console.error(`creating DB: ${error}`);
     throw error;
   }
 };
@@ -119,7 +120,25 @@ class TargetDAO {
             }
           );
         },
-        (error: Error) => handleError('Error occurred while getting targets', error, reject)
+        (error: Error) => handleError('getting targets', error, reject)
+      );
+    });
+  }
+
+  public async createNewTarget(target: NewTarget): Promise<Target[]> {
+    return new Promise((resolve, reject) => {
+      db.transaction(
+        (tx: SQLite.SQLTransaction) => {
+          tx.executeSql(
+            `INSERT INTO targets (name, total_quantity, active_quantity, type) VALUES (?, ?, ?, ?)`,
+            [target.name, target.totalQuantity, target.totalQuantity, target.type],
+            async () => {
+              const newTargets = await this.getAllTargets();
+              resolve(newTargets);
+            }
+          );
+        },
+        (error: Error) => handleError('creating a new target', error, reject)
       );
     });
   }
@@ -141,7 +160,7 @@ class TargetDAO {
             }
           );
         },
-        (error: Error) => handleError('Error occurred updating target quantity', error, reject)
+        (error: Error) => handleError('updating target quantity', error, reject)
       );
     });
   }
@@ -171,8 +190,7 @@ class TargetByDaysDAO {
             (_, { rows: { _array } }) => resolve(_array as Target[])
           );
         },
-        (error: Error) =>
-          handleError('Error occurred while getting targets for this day', error, reject)
+        (error: Error) => handleError('getting targets for this day', error, reject)
       );
     });
   }
