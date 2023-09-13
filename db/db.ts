@@ -143,6 +143,20 @@ class TargetDAO {
     });
   }
 
+  public async deleteTarget(targetId: number): Promise<string> {
+    return new Promise((resolve, reject) => {
+      db.transaction(
+        (tx: SQLite.SQLTransaction) => {
+          tx.executeSql(`DELETE FROM targets WHERE id = ?`, [targetId], () => {
+            tx.executeSql(`DELETE FROM targets_by_days WHERE target_id = ?`, [targetId]);
+          });
+        },
+        (error: Error) => handleError('deleteing target', error, reject),
+        () => resolve('Target successfully deleted')
+      );
+    });
+  }
+
   public async updateSingleTargetActiveQuantity(
     newActiveQuantity: number,
     id: number
