@@ -1,55 +1,71 @@
 import * as SQLite from 'expo-sqlite';
-import { handleError } from './dbErrorHandler';
+import { handleError } from './utilities/dbErrorHandler';
+import { DATABASE_NAME } from '../constants/DATABASE_NAME';
+import { handleQuery } from './utilities/queryHandler';
+import { transformWeeklyTargets } from './utilities/transformWeeklyTargets';
 
-//define db name
-const DATABASE_NAME = 'app.db';
+export type TargetType = 'mobility' | 'strength' | 'specific' | 'cardio' | 'VO2' | 'flexibility';
 
-//TYPES
 export type Target = {
   id: number;
   name: string;
-  totalQuantity: number;
-  activeQuantity: number;
-  type: 'mobility' | 'strength' | 'specific' | 'cardio' | 'VO2' | 'flexibility';
+  quantity: number;
+  type: TargetType;
 };
 
-export type NewTarget = Omit<Target, 'id' | 'activeQuantity'>;
+export type NewTarget = Omit<Target, 'id'>;
+
+type DayId = 1 | 2 | 3 | 4 | 5 | 6 | 7;
+
+type DayName = 'sunday' | 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday';
 
 export type Day = {
-  id: 1 | 2 | 3 | 4 | 5 | 6 | 7;
-  name: 'sunday' | 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday';
+  id: DayId;
+  name: DayName;
 };
+
+export type DailyTargets = {
+  day: Day;
+  targets: Target[];
+};
+
+export type WeeklyTargets = DailyTargets[];
+
+type RawDailyTargets = {
+  day_id: DayId;
+  day_name: DayName;
+  id: number;
+  name: string;
+  quantity: number;
+  type: TargetType;
+};
+
+export type RawWeeklyTargets = RawDailyTargets[];
 
 const db: any = SQLite.openDatabase(DATABASE_NAME);
 
-const createTargetsTable = () => {
-  return new Promise<void>((resolve, reject) => {
-    db.transaction(
-      (tx: SQLite.SQLTransaction) => {
-        tx.executeSql(`
-                CREATE TABLE IF NOT EXISTS targets (
-                    id INTEGER PRIMARY KEY NOT NULL,
-                    name TEXT NOT NULL,
-                    total_quantity INTEGER,
-                    active_quantity INTEGER,
-                    type TEXT NOT NULL
-                );`);
-      },
-      (error: Error) => handleError('creating targets table', error, reject),
-      () => resolve()
-    );
-  });
+const createTargetsTable = async () => {
+  await handleQuery(
+    `CREATE TABLE IF NOT EXISTS targets (
+      id INTEGER PRIMARY KEY NOT NULL,
+      name TEXT NOT NULL,
+      quantity INTEGER,
+      type TEXT NOT NULL
+      );`,
+    'creating targets table'
+  );
 };
 
 const createDaysTable = () => {
   return new Promise<void>((resolve, reject) => {
     db.transaction(
       (tx: SQLite.SQLTransaction) => {
-        tx.executeSql(`
-                CREATE TABLE IF NOT EXISTS days (
-                    id INTEGER PRIMARY KEY NOT NULL,
-                    name TEXT NOT NULL,
-                );`);
+        tx.executeSql(
+          `CREATE TABLE IF NOT EXISTS days (
+              id INTEGER PRIMARY KEY NOT NULL,
+              name TEXT NOT NULL
+          );`
+        );
 
         tx.executeSql(`SELECT COUNT(id) as count FROM days;`, [], (_, { rows: { _array } }) => {
           if (_array[0].count === 0) {
@@ -72,30 +88,23 @@ const createDaysTable = () => {
   });
 };
 
-const createTargetsByDays = () => {
-  return new Promise<void>((resolve, reject) => {
-    db.transaction(
-      (tx: SQLite.SQLTransaction) => {
-        tx.executeSql(
-          `CREATE TABLE IF NOT EXISTS targets_by_days (
-            id INTEGER PRIMARY KEY NOT NULL,
-            day_id INTEGER,
-            target_id INTEGER,
-            FOREIGN KEY(day_id) REFERENCES days(id),
-            FOREIGN KEY(target_id) REFERENCES targets(id)
-        )`
-        );
-      },
-      (error: Error) => handleError('creating targets_by_day table', error, reject),
-      () => resolve()
-    );
-  });
+const createTargetsByDays = async () => {
+  await handleQuery(
+    `CREATE TABLE IF NOT EXISTS targets_by_days (
+      id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+      day_id INTEGER,
+      target_id INTEGER,
+      FOREIGN KEY(day_id) REFERENCES days(id),
+      FOREIGN KEY(target_id) REFERENCES targets(id)
+      )`,
+    'creating targets_by_days table'
+  );
 };
 
 export const createDB = async (): Promise<void> => {
   try {
-    await createDaysTable();
     await createTargetsTable();
+    await createDaysTable();
     await createTargetsByDays();
   } catch (error) {
     console.error(`creating DB: ${error}`);
@@ -103,42 +112,70 @@ export const createDB = async (): Promise<void> => {
   }
 };
 
-class TargetDAO {
+export const deleteAllTables = async () => {
+  return new Promise<void>((resolve, reject) => {
+    db.transaction(
+      (tx: SQLite.SQLTransaction) => {
+        tx.executeSql(`DROP TABLE IF EXISTS targets;`, [], undefined, (_, error) => {
+          handleError('deleting targets table', error, reject);
+          return false;
+        });
+        tx.executeSql(`DROP TABLE IF EXISTS days;`, [], undefined, (_, error) => {
+          handleError('deleting days table', error, reject);
+          return false;
+        });
+        tx.executeSql(`DROP TABLE IF EXISTS targets_by_days;`, [], undefined, (_, error) => {
+          handleError('deleting targets_by_days table', error, reject);
+          return false;
+        });
+      },
+      (error: Error) => {
+        handleError('deleting all tables', error, reject);
+      },
+      () => resolve()
+    );
+  });
+};
+
+export class TargetDAO {
   public async getAllTargets(): Promise<Target[]> {
-    return new Promise((resolve, reject) => {
-      db.transaction(
-        (tx: SQLite.SQLTransaction) => {
-          tx.executeSql(
-            `SELECT * FROM targets
-                ORDER BY
-                    CASE WHEN active_quantity = quantity THEN 0 ELSE 1 END,
-                    type ASC, 
-                    name ASC`,
-            [],
-            (_, { rows: { _array } }) => {
-              resolve(_array as Target[]);
-            }
-          );
-        },
-        (error: Error) => handleError('getting targets', error, reject)
-      );
-    });
+    const targets = await handleQuery<Target[]>(
+      `SELECT * FROM targets ORDER BY type ASC, name ASC`,
+      'getting targets'
+    );
+    return targets;
   }
 
+  public async getOneTarget(targetId: number): Promise<Target> {
+    const targets = await handleQuery<Target[]>(
+      `SELECT * FROM targets WHERE id = ?`,
+      'getting target',
+      [targetId]
+    );
+    return targets[0];
+  }
+
+  //CHANGE TO TRANSACTIONS
+  //CHANGE TO TRANSACTIONS
+  //CHANGE TO TRANSACTIONS
+  //CHANGE TO TRANSACTIONS
+  //CHANGE TO TRANSACTIONS
+  //CHANGE TO TRANSACTIONS
   public async createNewTarget(target: NewTarget): Promise<Target[]> {
     return new Promise((resolve, reject) => {
       db.transaction(
         (tx: SQLite.SQLTransaction) => {
           tx.executeSql(
-            `INSERT INTO targets (name, total_quantity, active_quantity, type) VALUES (?, ?, ?, ?)`,
-            [target.name, target.totalQuantity, target.totalQuantity, target.type],
-            async () => {
-              const newTargets = await this.getAllTargets();
-              resolve(newTargets);
-            }
+            `INSERT INTO targets (name, quantity, type) VALUES (?, ?, ?)`,
+            [target.name, target.quantity, target.type],
+            undefined
           );
         },
-        (error: Error) => handleError('creating a new target', error, reject)
+        (error: Error) => handleError('creating new target', error, reject),
+        async () => {
+          const updatedTargets = await this.getAllTargets();
+          resolve(updatedTargets);
+        }
       );
     });
   }
@@ -148,7 +185,8 @@ class TargetDAO {
       db.transaction(
         (tx: SQLite.SQLTransaction) => {
           tx.executeSql(`DELETE FROM targets WHERE id = ?`, [targetId], () => {
-            tx.executeSql(`DELETE FROM targets_by_days WHERE target_id = ?`, [targetId]);
+            tx.executeSql(`DELETE FROM targets_by_days WHERE target_id = ?`, [targetId]),
+              (error: Error) => handleError('deleteing target', error, reject);
           });
         },
         (error: Error) => handleError('deleteing target', error, reject),
@@ -156,56 +194,69 @@ class TargetDAO {
       );
     });
   }
-
-  public async updateSingleTargetActiveQuantity(
-    newActiveQuantity: number,
-    id: number
-  ): Promise<Target> {
-    return new Promise((resolve, reject) => {
-      db.transaction(
-        (tx: SQLite.SQLTransaction) => {
-          tx.executeSql(
-            `UPDATE targets SET active_quantity = ? WHERE id = ?`,
-            [newActiveQuantity, id],
-            () => {
-              tx.executeSql(`SELECT * FROM targets WHERE id = ?`, [id], (_, { rows: { _array } }) =>
-                resolve(_array[0])
-              );
-            }
-          );
-        },
-        (error: Error) => handleError('updating target quantity', error, reject)
-      );
-    });
-  }
-
-  public async updateAllTargetsActiveQuantity(targets: Target[]): Promise<Target[]> {
-    targets.forEach(async (target) => {
-      await this.updateSingleTargetActiveQuantity(target.activeQuantity, target.id);
-    });
-
-    const allTargets = await this.getAllTargets();
-    return allTargets;
-  }
 }
 
-class TargetByDaysDAO {
-  public async getTargetsForDay(dayId: number): Promise<Target[]> {
+export class TargetByDaysDAO {
+  public async getDailyTargets(dayId: number): Promise<Target[]> {
+    return handleQuery(
+      `SELECT targets.* FROM days
+        JOIN targets_by_days ON days.id = targets_by_days.day_id
+        JOIN targets ON targets.id = targets_by_days.target_id WHERE days.id = ?;`,
+      'getting targets for this day',
+      [dayId]
+    );
+  }
+
+  public async getWeeklyTargets(): Promise<WeeklyTargets> {
+    const rawWeeklyTargets = await handleQuery<RawWeeklyTargets>(
+      `SELECT days.id as day_id, days.name as day_name, targets.* 
+        FROM days
+        LEFT JOIN targets_by_days ON days.id = targets_by_days.day_id
+        LEFT JOIN targets ON targets.id = targets_by_days.target_id
+        ORDER BY days.id, targets.type, targets.name;`,
+      'getting targets for the week'
+    );
+
+    return transformWeeklyTargets(rawWeeklyTargets);
+  }
+
+  public async saveWeeklyTargets(weeklyTargets: WeeklyTargets): Promise<WeeklyTargets> {
     return new Promise((resolve, reject) => {
       db.transaction(
         (tx: SQLite.SQLTransaction) => {
-          tx.executeSql(
-            `SELECT targets.* 
-                FROM days
-                JOIN targets_by_days ON days.id = targets_by_days.day_id
-                JOIN targets ON targets.id = targets_by_days.target_id
-                WHERE days.id = ?;`,
-            [dayId],
-            (_, { rows: { _array } }) => resolve(_array as Target[])
-          );
+          weeklyTargets.forEach((day) => {
+            day.targets.forEach((target) => {
+              tx.executeSql(
+                `INSERT INTO targets_by_days (day_id, target_id) VALUES (?, ?);`,
+                [day.day.id, target.id],
+                undefined,
+                (_, error: SQLite.SQLError) => {
+                  handleError(`saving ${target.name} into ${day.day.name}`, error, reject);
+                  return false; // This will roll back the transaction
+                }
+              );
+            });
+          });
         },
-        (error: Error) => handleError('getting targets for this day', error, reject)
+        (error: Error) => {
+          handleError('Error saving weekly targets', error, reject);
+          reject(error);
+        },
+        async () => {
+          const updatedTargets = await this.getWeeklyTargets();
+          resolve(updatedTargets);
+        }
       );
     });
+  }
+
+  public async addTargetToDay(dayId: number, targetId: number): Promise<Target[]> {
+    await handleQuery(
+      `INSERT INTO targets_by_days (day_id, target_id) VALUES (?, ?)`,
+      'adding a target',
+      [dayId, targetId]
+    );
+    const Targets = new TargetDAO();
+    return Targets.getAllTargets();
   }
 }

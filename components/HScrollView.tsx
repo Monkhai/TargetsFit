@@ -25,6 +25,7 @@ const HScrollView = ({ children, onScroll }: Props) => {
       snapToInterval={screenWidth}
       decelerationRate={'fast'}
       showsHorizontalScrollIndicator={false}
+      contentContainerStyle={styles.container}
     >
       {children}
     </ScrollView>
@@ -33,4 +34,9 @@ const HScrollView = ({ children, onScroll }: Props) => {
 
 export default HScrollView;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});
