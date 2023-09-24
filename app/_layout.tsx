@@ -8,6 +8,8 @@ import Icon from '../components/Icon';
 import Colors from '../constants/Colors';
 import DBContext from '../context/DBLoadingContext';
 import useInitializeTables from '../hooks/useCreateDB';
+import { MenuProvider } from 'react-native-popup-menu';
+
 export { ErrorBoundary } from 'expo-router';
 
 SplashScreen.preventAutoHideAsync();
@@ -36,7 +38,9 @@ export default function RootLayout() {
 
   return (
     <DBContext.Provider value={{ isLoading: isLoading, error: dbError }}>
-      <RootLayoutNav />
+      <MenuProvider>
+        <RootLayoutNav />
+      </MenuProvider>
     </DBContext.Provider>
   );
 }

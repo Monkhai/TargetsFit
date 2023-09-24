@@ -138,11 +138,27 @@ export const deleteAllTables = async () => {
 };
 
 export class TargetDAO {
-  public async getAllTargets(): Promise<Target[]> {
-    const targets = await handleQuery<Target[]>(
-      `SELECT * FROM targets ORDER BY type ASC, name ASC`,
-      'getting targets'
-    );
+  public async getAllTargets(typeFilter?: string): Promise<Target[]> {
+    let sql = `SELECT * FROM targets `;
+    let params: any[] = [];
+
+    if (typeFilter) {
+      sql += `WHERE type = ? `;
+      params.push(typeFilter);
+    }
+
+    sql += `ORDER BY
+        CASE type
+          WHEN 'strength' THEN 1  
+          WHEN 'mobility' THEN 2  
+          WHEN 'flexibility' THEN 3  
+          WHEN 'VO2' THEN 4  
+          WHEN 'specific' THEN 5
+          ELSE 1000
+        END,
+      name ASC`;
+
+    const targets = await handleQuery<Target[]>(sql, 'getting targets', params);
     return targets;
   }
 
@@ -161,21 +177,32 @@ export class TargetDAO {
   //CHANGE TO TRANSACTIONS
   //CHANGE TO TRANSACTIONS
   //CHANGE TO TRANSACTIONS
-  public async createNewTarget(target: NewTarget): Promise<Target[]> {
+  public async createNewTarget(target: NewTarget): Promise<string> {
     return new Promise((resolve, reject) => {
       db.transaction(
         (tx: SQLite.SQLTransaction) => {
           tx.executeSql(
             `INSERT INTO targets (name, quantity, type) VALUES (?, ?, ?)`,
             [target.name, target.quantity, target.type],
-            undefined
+            () => resolve('created new targets')
           );
         },
-        (error: Error) => handleError('creating new target', error, reject),
-        async () => {
-          const updatedTargets = await this.getAllTargets();
-          resolve(updatedTargets);
-        }
+        (error: Error) => handleError('creating new target', error, reject)
+      );
+    });
+  }
+
+  public async updateTarget(target: Target): Promise<string> {
+    return new Promise((resolve, reject) => {
+      db.transaction(
+        (tx: SQLite.SQLTransaction) => {
+          tx.executeSql(
+            `UPDATE targets SET name = ?, type = ?, quantity = ? WHERE id = ?`,
+            [target.name, target.type, target.quantity, target.id],
+            () => resolve('Target successfully updated')
+          );
+        },
+        (error: Error) => handleError('updating target', error, reject)
       );
     });
   }

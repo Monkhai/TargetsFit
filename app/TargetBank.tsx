@@ -9,19 +9,19 @@ import {
   TextInput,
   useColorScheme,
 } from 'react-native';
+import { Menu, MenuOption, MenuOptions, MenuTrigger } from 'react-native-popup-menu';
 import BankListItem from '../components/BankListItem';
+import EditTargetModal from '../components/EditTargetModal';
+import FlexCard from '../components/FlexCard';
+import { listItemHeight } from '../components/ListItem';
 import ListItemDeleteAction from '../components/ListItemDeleteAction';
+import ListItemSeparator from '../components/ListItemSeparator';
+import NewTargetModal from '../components/NewTargetModal';
 import { Text, View } from '../components/Themed';
 import Colors from '../constants/Colors';
 import DBContext from '../context/DBLoadingContext';
 import { NewTarget, Target, TargetDAO } from '../db/db';
 import useGetAllTargets from '../hooks/useGetAllTargets';
-import FlexCard from '../components/FlexCard';
-import NewTargetModal from '../components/NewTargetModal';
-import { listItemHeight } from '../components/ListItem';
-import ListItemSeparator from '../components/ListItemSeparator';
-import EditTargetModal from '../components/EditTargetModal';
-import { setParams } from '@react-navigation/routers/lib/typescript/src/CommonActions';
 
 const Targets = new TargetDAO();
 
@@ -34,6 +34,8 @@ const TargetBank = () => {
 
   const [isNewModalVisible, setIsNewModalVisible] = useState(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
+
+  const menuRef = useRef<Menu>(null);
 
   const nameRef = useRef<TextInput>(null);
   const typeRef = useRef<TextInput>(null);
@@ -68,7 +70,12 @@ const TargetBank = () => {
       .catch((error: Error) => Alert.alert(error.message));
   };
 
-  const handleModalEdit = (updatedTarget: Target) => {};
+  const handleModalEdit = (updatedTarget: Target) => {
+    Targets.updateTarget(updatedTarget)
+      .then(() => refetch())
+      .then(() => setIsEditModalVisible(false))
+      .catch((error: Error) => Alert.alert(error.message));
+  };
 
   if (isLoading || isDBLoading) {
     return (
@@ -93,6 +100,29 @@ const TargetBank = () => {
                 color={Colors[colorScheme ?? 'light'].accent}
                 onPress={() => setIsNewModalVisible(true)}
               />
+            ),
+            headerRight: () => (
+              <>
+                <Button
+                  title="filter"
+                  color={Colors[colorScheme ?? 'light'].accent}
+                  onPress={() => menuRef.current?.open()}
+                />
+                <Menu ref={menuRef}>
+                  <MenuTrigger />
+                  <MenuOptions>
+                    <MenuOption onSelect={() => alert(`Save`)} text="Save" />
+                    <MenuOption onSelect={() => alert(`Delete`)}>
+                      <Text style={{ color: 'red' }}>Delete</Text>
+                    </MenuOption>
+                    <MenuOption
+                      onSelect={() => alert(`Not called`)}
+                      disabled={true}
+                      text="Disabled"
+                    />
+                  </MenuOptions>
+                </Menu>
+              </>
             ),
           }}
         />
@@ -133,6 +163,7 @@ const TargetBank = () => {
             onEditModalSave={handleModalEdit}
           />
         </View>
+        <View></View>
       </>
     );
   }
