@@ -13,6 +13,7 @@ interface Props {
   nameRef: React.RefObject<TextInput>;
   typeRef: React.RefObject<TextInput>;
   quantityRef: React.RefObject<TextInput>;
+  onBackdropPress: () => void;
 }
 
 const NewTargetModal = ({
@@ -22,6 +23,7 @@ const NewTargetModal = ({
   quantityRef,
   onModalCancel,
   onModalSave,
+  onBackdropPress,
 }: Props) => {
   const theme = useColorScheme();
   const [nameValue, setNameValue] = useState<string | undefined>();
@@ -47,7 +49,12 @@ const NewTargetModal = ({
   };
 
   return (
-    <Modal isVisible={isVisible} style={styles.modal} useNativeDriverForBackdrop={true}>
+    <Modal
+      isVisible={isVisible}
+      style={styles.modal}
+      onBackdropPress={onBackdropPress}
+      useNativeDriverForBackdrop={true}
+    >
       <View style={styles.modalContainer}>
         <View style={styles.topControllers}>
           <Button
@@ -95,6 +102,8 @@ export default NewTargetModal;
 
 const styles = StyleSheet.create({
   modal: {
+    position: 'relative',
+    bottom: 100,
     justifyContent: 'center',
     alignItems: 'center',
   },

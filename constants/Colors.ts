@@ -6,6 +6,7 @@ export default {
     accent: 'red',
     secondary: 'rgba(255,0,0,0.25)',
     tertiary: 'rgba(116,166,128,0.08)',
+    seperator: 'rgba(60,60,67,0.36)',
   },
   dark: {
     text: '#fff',
@@ -14,5 +15,6 @@ export default {
     accent: 'red',
     secondary: 'rgba(255,0,0,0.25)',
     tertiary: 'rgba(116,166,128,0.18)',
+    seperator: 'rgba(84,84,88,0.65)',
   },
 };

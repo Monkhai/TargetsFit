@@ -36,8 +36,9 @@ export default FlatListView;
 const styles = StyleSheet.create({
   flatListContainer: {
     width: Dimensions.get('screen').width,
-    height: listItemHeight * 12,
+    height: listItemHeight * 15,
     alignItems: 'center',
+    justifyContent: 'center',
   },
 
   titleWrapper: {

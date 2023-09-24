@@ -1,6 +1,6 @@
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { StyleSheet, Text, View, useColorScheme } from 'react-native';
 import React from 'react';
-import { StyleSheet, View, useColorScheme } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import Colors from '../constants/Colors';
 
@@ -13,7 +13,7 @@ const ListItemDeleteAction = ({ onPress }: Props) => {
 
   return (
     <TouchableWithoutFeedback onPress={onPress}>
-      <View style={styles.container}>
+      <View style={[{ backgroundColor: Colors[theme ?? 'light'].accent }, styles.container]}>
         <MaterialCommunityIcons name="trash-can" size={24} color={Colors.light.background} />
       </View>
     </TouchableWithoutFeedback>
@@ -24,9 +24,8 @@ export default ListItemDeleteAction;
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'red',
     height: '100%',
-    width: 40,
+    width: 70,
     justifyContent: 'center',
     alignItems: 'center',
   },

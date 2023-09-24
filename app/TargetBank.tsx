@@ -1,13 +1,25 @@
 import { Stack } from 'expo-router';
 import React, { useContext, useRef, useState } from 'react';
-import { Alert, Button, StyleSheet, TextInput, useColorScheme } from 'react-native';
-import NewTargetModal from '../components/NewTargetModal';
-import TargetBankFlatListView from '../components/TargetBankFlatListView';
+import {
+  Alert,
+  Button,
+  Dimensions,
+  FlatList,
+  StyleSheet,
+  TextInput,
+  useColorScheme,
+} from 'react-native';
+import BankListItem from '../components/BankListItem';
+import ListItemDeleteAction from '../components/ListItemDeleteAction';
 import { Text, View } from '../components/Themed';
 import Colors from '../constants/Colors';
 import DBContext from '../context/DBLoadingContext';
 import { NewTarget, Target, TargetDAO } from '../db/db';
 import useGetAllTargets from '../hooks/useGetAllTargets';
+import FlexCard from '../components/FlexCard';
+import NewTargetModal from '../components/NewTargetModal';
+import { listItemHeight } from '../components/ListItem';
+import ListItemSeparator from '../components/ListItemSeparator';
 
 const Targets = new TargetDAO();
 
@@ -50,21 +62,35 @@ const TargetBank = () => {
       <>
         <Stack.Screen
           options={{
-            headerRight: () => (
-              <Button title="edit" color={Colors[colorScheme ?? 'light'].accent} />
-            ),
             headerLeft: () => (
               <Button
-                onPress={() => setIsModalVisible(true)}
                 title="new"
                 color={Colors[colorScheme ?? 'light'].accent}
+                onPress={() => setIsModalVisible(true)}
               />
             ),
           }}
         />
         <View style={styles.container}>
-          <TargetBankFlatListView targets={targets} onDelete={handleTargetDelete} />
+          <FlexCard>
+            <FlatList
+              ItemSeparatorComponent={() => <ListItemSeparator />}
+              data={targets}
+              keyExtractor={(target: Target) => target.id.toString()}
+              renderItem={({ item: target }) => (
+                <BankListItem
+                  name={target.name}
+                  type={target.type}
+                  quantity={target.quantity}
+                  renderRightActions={() => (
+                    <ListItemDeleteAction onPress={() => console.log(target)} />
+                  )}
+                />
+              )}
+            />
+          </FlexCard>
           <NewTargetModal
+            onBackdropPress={handleModalCancel}
             isVisible={isModalVisible}
             nameRef={nameRef}
             typeRef={typeRef}
@@ -85,5 +111,11 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  flatListContainer: {
+    width: Dimensions.get('screen').width,
+    height: listItemHeight * 15,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

@@ -2,6 +2,7 @@ import { Dimensions, StyleSheet, ViewProps, useColorScheme } from 'react-native'
 import React, { ReactNode } from 'react';
 import Colors from '../constants/Colors';
 import { View } from './Themed';
+import { listItemHeight } from './ListItem';
 
 interface Props extends ViewProps {
   children: ReactNode;
@@ -22,7 +23,7 @@ export default FlexCard;
 const styles = StyleSheet.create({
   card: {
     width: Dimensions.get('screen').width * 0.9,
-    flex: 1,
+    height: listItemHeight * 15,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 30,
@@ -30,5 +31,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowOffset: { height: 10, width: 0 },
     shadowRadius: 20,
+    paddingTop: 25,
   },
 });

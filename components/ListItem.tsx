@@ -41,7 +41,8 @@ const ListItem = ({ target, renderLeftActions, bank = false }: Props) => {
 
 export default ListItem;
 
-export const listItemHeight = (Dimensions.get('screen').height / 100) * 6;
+export const listItemHeight = (Dimensions.get('screen').height / 100) * 5;
+export const listItemWidth = (Dimensions.get('screen').width / 100) * 90;
 
 const styles = StyleSheet.create({
   listItem: {

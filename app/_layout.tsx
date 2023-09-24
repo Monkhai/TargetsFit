@@ -8,7 +8,6 @@ import Icon from '../components/Icon';
 import Colors from '../constants/Colors';
 import DBContext from '../context/DBLoadingContext';
 import useInitializeTables from '../hooks/useCreateDB';
-import { deleteAllTables } from '../db/db';
 export { ErrorBoundary } from 'expo-router';
 
 SplashScreen.preventAutoHideAsync();
@@ -72,7 +71,6 @@ function RootLayoutNav() {
           options={{
             title: 'Target Bank',
             tabBarShowLabel: false,
-
             tabBarIcon: ({ focused }) => (
               <Icon color={focused ? 'accent' : 'secondary'} icon="target" />
             ),
