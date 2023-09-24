@@ -1,27 +1,35 @@
 import React, { ReactNode } from 'react';
-import { StyleSheet, useColorScheme } from 'react-native';
+import { StyleSheet, TouchableOpacity, useColorScheme } from 'react-native';
 import { Swipeable } from 'react-native-gesture-handler';
 import Colors from '../constants/Colors';
 import { listItemHeight, listItemWidth } from './ListItem';
 import { Text, View } from './Themed';
+import { heavyHaptics } from '../utilityFunctions/haptics';
+import { Target } from '../db/db';
 
 interface Props {
-  name: string;
-  type: string;
-  quantity?: number;
+  target: Target;
+  onLongPress: (id: number) => void;
   renderRightActions?: () => ReactNode;
 }
 
-const BankListItem = ({ name: title, type, quantity, renderRightActions }: Props) => {
+const BankListItem = ({ target, onLongPress, renderRightActions }: Props) => {
   const theme = useColorScheme();
+
+  const handleLongPress = () => {
+    heavyHaptics();
+    onLongPress(target.id);
+  };
 
   return (
     <Swipeable renderRightActions={renderRightActions}>
-      <View style={[{ backgroundColor: Colors[theme ?? 'light'].background }, styles.container]}>
-        <Text style={[styles.title, styles.text]}>{title}</Text>
-        <Text style={styles.text}>{type}</Text>
-        {quantity && <Text style={styles.text}>{quantity}</Text>}
-      </View>
+      <TouchableOpacity onLongPress={handleLongPress}>
+        <View style={[{ backgroundColor: Colors[theme ?? 'light'].background }, styles.container]}>
+          <Text style={[styles.title, styles.text]}>{target.name}</Text>
+          <Text style={styles.text}>{target.type}</Text>
+          {target.quantity && <Text style={styles.text}>{target.quantity}</Text>}
+        </View>
+      </TouchableOpacity>
     </Swipeable>
   );
 };

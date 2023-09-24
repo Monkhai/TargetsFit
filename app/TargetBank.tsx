@@ -20,6 +20,8 @@ import FlexCard from '../components/FlexCard';
 import NewTargetModal from '../components/NewTargetModal';
 import { listItemHeight } from '../components/ListItem';
 import ListItemSeparator from '../components/ListItemSeparator';
+import EditTargetModal from '../components/EditTargetModal';
+import { setParams } from '@react-navigation/routers/lib/typescript/src/CommonActions';
 
 const Targets = new TargetDAO();
 
@@ -27,10 +29,19 @@ const TargetBank = () => {
   const colorScheme = useColorScheme();
   const { isLoading: isDBLoading } = useContext(DBContext);
   const { targets, isLoading, error, refetch } = useGetAllTargets(isDBLoading);
-  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const [editedTarget, setEditedTarget] = useState<Target>({} as Target);
+
+  const [isNewModalVisible, setIsNewModalVisible] = useState(false);
+  const [isEditModalVisible, setIsEditModalVisible] = useState(false);
+
   const nameRef = useRef<TextInput>(null);
   const typeRef = useRef<TextInput>(null);
   const quantityRef = useRef<TextInput>(null);
+
+  const editNameRef = useRef<TextInput>(null);
+  const editTypeRef = useRef<TextInput>(null);
+  const editQuantityRef = useRef<TextInput>(null);
 
   const handleTargetDelete = (target: Target) => {
     Targets.deleteTarget(target.id)
@@ -39,15 +50,25 @@ const TargetBank = () => {
   };
 
   const handleModalCancel = () => {
-    setIsModalVisible(false);
+    if (isNewModalVisible) setIsNewModalVisible(false);
+    if (isEditModalVisible) setIsEditModalVisible(false);
+  };
+
+  const handleTargetLongPress = (target: Target) => {
+    setEditedTarget(() => {
+      setIsEditModalVisible(true);
+      return target;
+    });
   };
 
   const handleModalSave = (newTarget: NewTarget) => {
     Targets.createNewTarget(newTarget)
       .then(() => refetch())
-      .then(() => setIsModalVisible(false))
+      .then(() => setIsNewModalVisible(false))
       .catch((error: Error) => Alert.alert(error.message));
   };
+
+  const handleModalEdit = (updatedTarget: Target) => {};
 
   if (isLoading || isDBLoading) {
     return (
@@ -70,7 +91,7 @@ const TargetBank = () => {
               <Button
                 title="new"
                 color={Colors[colorScheme ?? 'light'].accent}
-                onPress={() => setIsModalVisible(true)}
+                onPress={() => setIsNewModalVisible(true)}
               />
             ),
           }}
@@ -83,9 +104,8 @@ const TargetBank = () => {
               keyExtractor={(target: Target) => target.id.toString()}
               renderItem={({ item: target }) => (
                 <BankListItem
-                  name={target.name}
-                  type={target.type}
-                  quantity={target.quantity}
+                  target={target}
+                  onLongPress={() => handleTargetLongPress(target)}
                   renderRightActions={() => (
                     <ListItemDeleteAction onPress={() => handleTargetDelete(target)} />
                   )}
@@ -94,13 +114,23 @@ const TargetBank = () => {
             />
           </FlexCard>
           <NewTargetModal
+            onModalCancel={handleModalCancel}
             onBackdropPress={handleModalCancel}
-            isVisible={isModalVisible}
+            isVisible={isNewModalVisible}
             nameRef={nameRef}
             typeRef={typeRef}
             quantityRef={quantityRef}
-            onModalCancel={handleModalCancel}
             onModalSave={handleModalSave}
+          />
+          <EditTargetModal
+            onBackdropPress={handleModalCancel}
+            onModalCancel={handleModalCancel}
+            isVisible={isEditModalVisible}
+            editNameRef={editNameRef}
+            editQuantityRef={editQuantityRef}
+            editTypeRef={editTypeRef}
+            target={editedTarget!}
+            onEditModalSave={handleModalEdit}
           />
         </View>
       </>
