@@ -32,7 +32,11 @@ const TargetBank = () => {
   const typeRef = useRef<TextInput>(null);
   const quantityRef = useRef<TextInput>(null);
 
-  const handleTargetDelete = (target: Target) => {};
+  const handleTargetDelete = (target: Target) => {
+    Targets.deleteTarget(target.id)
+      .then(() => refetch())
+      .catch((error: Error) => Alert.alert(error.message));
+  };
 
   const handleModalCancel = () => {
     setIsModalVisible(false);
@@ -83,7 +87,7 @@ const TargetBank = () => {
                   type={target.type}
                   quantity={target.quantity}
                   renderRightActions={() => (
-                    <ListItemDeleteAction onPress={() => console.log(target)} />
+                    <ListItemDeleteAction onPress={() => handleTargetDelete(target)} />
                   )}
                 />
               )}
