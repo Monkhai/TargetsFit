@@ -313,4 +313,37 @@ export class TargetByDaysDAO {
   //   const targets = await AllTargets.getAllTargets()
 
   // }
+
+  public async getActiveTargetCount(): Promise<{ target: Target; activeCount: number }[]> {
+    const activeCountMap: Map<number, number> = new Map();
+
+    const TargetsDAO = new TargetDAO();
+    const allTargets = await TargetsDAO.getAllTargets();
+
+    // Initialize the Map with target ids.
+    allTargets.forEach((target) => {
+      activeCountMap.set(target.id, 0);
+    });
+
+    const allWeeklyTargets = await this.getWeeklyTargets();
+
+    allWeeklyTargets.forEach((day) => {
+      day.targets.forEach((target) => {
+        const count = activeCountMap.get(target.id) || 0;
+        activeCountMap.set(target.id, count + 1);
+      });
+    });
+
+    // Convert Map to the required array format.
+    const activeCountArray = Array.from(activeCountMap.entries())
+      .map(([id, activeCount]) => {
+        const target = allTargets.find((target) => target.id === id);
+        if (target) {
+          return { target, activeCount };
+        }
+      })
+      .filter((item): item is { target: Target; activeCount: number } => item !== undefined);
+
+    return activeCountArray;
+  }
 }
