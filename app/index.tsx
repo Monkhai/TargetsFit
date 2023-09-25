@@ -17,6 +17,7 @@ import FilterMenu from '../components/FilterMenu';
 import { Menu } from 'react-native-popup-menu';
 import { Stack } from 'expo-router';
 import { DayId } from '../db/db';
+import Modal from 'react-native-modal/dist/modal';
 
 const Home = () => {
   const colorScheme = useColorScheme();
@@ -28,6 +29,7 @@ const Home = () => {
   const { weeklyTargets, isLoading, error } = useGetWeeklyTargets(isDBLoading, filter);
 
   const menuRef = useRef<Menu>(null);
+  const modalRef = useRef<Modal>(null);
 
   const handleHViewScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const screenWidth = Dimensions.get('screen').width;
@@ -94,6 +96,29 @@ const Home = () => {
             <FlatListView dailyTargets={weeklyTargets![6]} />
           </HScrollView>
         </View>
+        <Modal
+          ref={modalRef}
+          style={{
+            justifyContent: 'center',
+            alignItems: 'center',
+            position: 'absolute',
+            bottom: 0,
+            margin: 0,
+          }}
+          isVisible
+          // hasBackdrop={false}
+          onBackdropPress={() => modalRef.current?.close()}
+        >
+          <View
+            style={{
+              backgroundColor: Colors[colorScheme ?? 'light'].background,
+              width: Dimensions.get('screen').width,
+              height: 500,
+              borderTopLeftRadius: 20,
+              borderTopRightRadius: 20,
+            }}
+          ></View>
+        </Modal>
       </>
     );
   }
