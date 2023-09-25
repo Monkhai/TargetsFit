@@ -13,6 +13,14 @@ export type Target = {
   type: TargetType;
 };
 
+export type TargetWithActive = {
+  id: number;
+  name: string;
+  quantity: number;
+  type: TargetType;
+  active: number;
+};
+
 export type NewTarget = Omit<Target, 'id'>;
 
 export type DayId = 1 | 2 | 3 | 4 | 5 | 6 | 7;
@@ -299,4 +307,10 @@ export class TargetByDaysDAO {
     const Targets = new TargetDAO();
     return Targets.getAllTargets();
   }
+
+  // public async getWeeklyTargetWithActive(): Promise<TargetWithActive[]> {
+  //   const AllTargets = new TargetDAO()
+  //   const targets = await AllTargets.getAllTargets()
+
+  // }
 }

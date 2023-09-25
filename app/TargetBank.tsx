@@ -23,7 +23,7 @@ import Colors from '../constants/Colors';
 import DBContext from '../context/DBLoadingContext';
 import { NewTarget, Target, TargetDAO } from '../db/db';
 import useGetAllTargets from '../hooks/useGetAllTargets';
-import ItemFlatList from '../components/ItemFlatList';
+import BankFlatList from '../components/BankFlatList';
 
 const Targets = new TargetDAO();
 
@@ -121,7 +121,7 @@ const TargetBank = () => {
         />
         <View style={styles.container}>
           <FlexCard>
-            <ItemFlatList
+            <BankFlatList
               targets={targets}
               onLongPress={handleTargetLongPress}
               onDeletePress={handleTargetDelete}

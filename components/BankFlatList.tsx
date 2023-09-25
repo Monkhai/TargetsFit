@@ -11,7 +11,7 @@ interface Props {
   onDeletePress: (target: Target) => void;
 }
 
-const ItemFlatList = ({ targets, onLongPress, onDeletePress }: Props) => {
+const BankFlatList = ({ targets, onLongPress, onDeletePress }: Props) => {
   return (
     <FlatList
       ItemSeparatorComponent={() => <ListItemSeparator />}
@@ -28,6 +28,6 @@ const ItemFlatList = ({ targets, onLongPress, onDeletePress }: Props) => {
   );
 };
 
-export default ItemFlatList;
+export default BankFlatList;
 
 const styles = StyleSheet.create({});

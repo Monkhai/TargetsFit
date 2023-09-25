@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useState } from 'react';
 import { StyleSheet, TouchableOpacity, useColorScheme } from 'react-native';
 import { Swipeable } from 'react-native-gesture-handler';
 import Colors from '../constants/Colors';
@@ -6,6 +6,7 @@ import { listItemHeight, listItemWidth } from './ListItem';
 import { Text, View } from './Themed';
 import { heavyHaptics } from '../utilityFunctions/haptics';
 import { Target } from '../db/db';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
 
 interface Props {
   target: Target;
@@ -58,14 +59,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: 'red',
     minWidth: 190,
-  },
-  subTitle: {
-    color: Colors.light.accent,
-  },
-  chevron: {
-    alignSelf: 'center',
-    position: 'absolute',
-    right: 20,
   },
 });
 
