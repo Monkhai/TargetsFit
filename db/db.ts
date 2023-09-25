@@ -223,6 +223,9 @@ export class TargetDAO {
   }
 }
 
+//WEEKLY-TARGETS
+//WEEKLY-TARGETS
+//WEEKLY-TARGETS
 export class TargetByDaysDAO {
   public async getDailyTargets(dayId: number): Promise<Target[]> {
     return handleQuery(
@@ -234,14 +237,24 @@ export class TargetByDaysDAO {
     );
   }
 
-  public async getWeeklyTargets(): Promise<WeeklyTargets> {
+  public async getWeeklyTargets(typeFilter?: string): Promise<WeeklyTargets> {
+    let sql = `SELECT days.id as day_id, days.name as day_name, targets.* FROM days `;
+    let params: any[] = [];
+
+    sql += `LEFT JOIN targets_by_days ON days.id = targets_by_days.day_id
+    LEFT JOIN targets ON targets.id = targets_by_days.target_id `;
+
+    if (typeFilter) {
+      sql += `AND targets.type = ?`;
+      params.push(typeFilter);
+    }
+
+    sql += ` ORDER BY days.id, targets.type, targets.name;`;
+
     const rawWeeklyTargets = await handleQuery<RawWeeklyTargets>(
-      `SELECT days.id as day_id, days.name as day_name, targets.* 
-        FROM days
-        LEFT JOIN targets_by_days ON days.id = targets_by_days.day_id
-        LEFT JOIN targets ON targets.id = targets_by_days.target_id
-        ORDER BY days.id, targets.type, targets.name;`,
-      'getting targets for the week'
+      sql,
+      'getting weekly targets',
+      params
     );
 
     return transformWeeklyTargets(rawWeeklyTargets);
