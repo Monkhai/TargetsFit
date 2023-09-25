@@ -15,7 +15,7 @@ export type Target = {
 
 export type NewTarget = Omit<Target, 'id'>;
 
-type DayId = 1 | 2 | 3 | 4 | 5 | 6 | 7;
+export type DayId = 1 | 2 | 3 | 4 | 5 | 6 | 7;
 
 type DayName = 'sunday' | 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday';
 
