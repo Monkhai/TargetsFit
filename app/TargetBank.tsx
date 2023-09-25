@@ -23,6 +23,7 @@ import Colors from '../constants/Colors';
 import DBContext from '../context/DBLoadingContext';
 import { NewTarget, Target, TargetDAO } from '../db/db';
 import useGetAllTargets from '../hooks/useGetAllTargets';
+import ItemFlatList from '../components/ItemFlatList';
 
 const Targets = new TargetDAO();
 
@@ -120,19 +121,10 @@ const TargetBank = () => {
         />
         <View style={styles.container}>
           <FlexCard>
-            <FlatList
-              ItemSeparatorComponent={() => <ListItemSeparator />}
-              data={targets}
-              keyExtractor={(target: Target) => target.id.toString()}
-              renderItem={({ item: target }) => (
-                <BankListItem
-                  target={target}
-                  onLongPress={() => handleTargetLongPress(target)}
-                  renderRightActions={() => (
-                    <ListItemDeleteAction onPress={() => handleTargetDelete(target)} />
-                  )}
-                />
-              )}
+            <ItemFlatList
+              targets={targets}
+              onLongPress={handleTargetLongPress}
+              onDeletePress={handleTargetDelete}
             />
           </FlexCard>
           <NewTargetModal
