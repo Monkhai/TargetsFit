@@ -16,7 +16,7 @@ const Home = () => {
   const [filter, setFilter] = useState<string>();
 
   const { isLoading: isDBLoading } = useContext(DBContext);
-  const { weeklyTargets, isLoading, error } = useGetWeeklyTargets(isDBLoading);
+  const { weeklyTargets, isLoading, error } = useGetWeeklyTargets(isDBLoading, filter);
 
   const menuRef = useRef<Menu>(null);
 
