@@ -9,7 +9,13 @@ import {
   TextInput,
   useColorScheme,
 } from 'react-native';
-import { Menu, MenuOption, MenuOptions, MenuTrigger } from 'react-native-popup-menu';
+import {
+  Menu,
+  MenuOption,
+  MenuOptionProps,
+  MenuOptions,
+  MenuTrigger,
+} from 'react-native-popup-menu';
 import BankListItem from '../components/BankListItem';
 import EditTargetModal from '../components/EditTargetModal';
 import FlexCard from '../components/FlexCard';
@@ -27,8 +33,11 @@ const Targets = new TargetDAO();
 
 const TargetBank = () => {
   const colorScheme = useColorScheme();
+
+  const [filter, setFilter] = useState<string>();
+
   const { isLoading: isDBLoading } = useContext(DBContext);
-  const { targets, isLoading, error, refetch } = useGetAllTargets(isDBLoading);
+  const { targets, isLoading, error, refetch } = useGetAllTargets(isDBLoading, filter);
 
   const [editedTarget, setEditedTarget] = useState<Target>({} as Target);
 
@@ -110,16 +119,30 @@ const TargetBank = () => {
                 />
                 <Menu ref={menuRef}>
                   <MenuTrigger />
-                  <MenuOptions>
-                    <MenuOption onSelect={() => alert(`Save`)} text="Save" />
-                    <MenuOption onSelect={() => alert(`Delete`)}>
-                      <Text style={{ color: 'red' }}>Delete</Text>
+                  <MenuOptions
+                    optionsContainerStyle={{ backgroundColor: '#f5f5f5', borderRadius: 15 }}
+                    customStyles={{
+                      optionWrapper: { padding: 15 },
+                    }}
+                  >
+                    <MenuOption value={undefined} onSelect={(value) => setFilter(value)}>
+                      <Text>Any</Text>
                     </MenuOption>
-                    <MenuOption
-                      onSelect={() => alert(`Not called`)}
-                      disabled={true}
-                      text="Disabled"
-                    />
+                    <MenuOption value={'strength'} onSelect={(value) => setFilter(value)}>
+                      <Text>Strength</Text>
+                    </MenuOption>
+                    <MenuOption value={'mobility'} onSelect={(value) => setFilter(value)}>
+                      <Text>Mobility</Text>
+                    </MenuOption>
+                    <MenuOption value={'flexibility'} onSelect={(value) => setFilter(value)}>
+                      <Text>Flexibility</Text>
+                    </MenuOption>
+                    <MenuOption value={'VO2'} onSelect={(value) => setFilter(value)}>
+                      <Text>VO2</Text>
+                    </MenuOption>
+                    <MenuOption value={'specific'} onSelect={(value) => setFilter(value)}>
+                      <Text>Specific</Text>
+                    </MenuOption>
                   </MenuOptions>
                 </Menu>
               </>
