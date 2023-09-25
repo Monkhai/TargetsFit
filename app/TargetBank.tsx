@@ -9,15 +9,10 @@ import {
   TextInput,
   useColorScheme,
 } from 'react-native';
-import {
-  Menu,
-  MenuOption,
-  MenuOptionProps,
-  MenuOptions,
-  MenuTrigger,
-} from 'react-native-popup-menu';
+import { Menu, MenuProvider } from 'react-native-popup-menu';
 import BankListItem from '../components/BankListItem';
 import EditTargetModal from '../components/EditTargetModal';
+import FilterMenu from '../components/FilterMenu';
 import FlexCard from '../components/FlexCard';
 import { listItemHeight } from '../components/ListItem';
 import ListItemDeleteAction from '../components/ListItemDeleteAction';
@@ -117,34 +112,8 @@ const TargetBank = () => {
                   color={Colors[colorScheme ?? 'light'].accent}
                   onPress={() => menuRef.current?.open()}
                 />
-                <Menu ref={menuRef}>
-                  <MenuTrigger />
-                  <MenuOptions
-                    optionsContainerStyle={{ backgroundColor: '#f5f5f5', borderRadius: 15 }}
-                    customStyles={{
-                      optionWrapper: { padding: 15 },
-                    }}
-                  >
-                    <MenuOption value={undefined} onSelect={(value) => setFilter(value)}>
-                      <Text>Any</Text>
-                    </MenuOption>
-                    <MenuOption value={'strength'} onSelect={(value) => setFilter(value)}>
-                      <Text>Strength</Text>
-                    </MenuOption>
-                    <MenuOption value={'mobility'} onSelect={(value) => setFilter(value)}>
-                      <Text>Mobility</Text>
-                    </MenuOption>
-                    <MenuOption value={'flexibility'} onSelect={(value) => setFilter(value)}>
-                      <Text>Flexibility</Text>
-                    </MenuOption>
-                    <MenuOption value={'VO2'} onSelect={(value) => setFilter(value)}>
-                      <Text>VO2</Text>
-                    </MenuOption>
-                    <MenuOption value={'specific'} onSelect={(value) => setFilter(value)}>
-                      <Text>Specific</Text>
-                    </MenuOption>
-                  </MenuOptions>
-                </Menu>
+
+                <FilterMenu colorScheme={colorScheme} menuRef={menuRef} setFilter={setFilter} />
               </>
             ),
           }}
