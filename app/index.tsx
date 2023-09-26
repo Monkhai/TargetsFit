@@ -129,18 +129,6 @@ const Home = () => {
   } else {
     return (
       <>
-        <Stack.Screen
-          options={{
-            headerLeft: () => (
-              <Button
-                title="edit"
-                color={Colors[colorScheme ?? 'light'].accent}
-                onPress={() => ''}
-              />
-            ),
-            headerRight: () => <></>,
-          }}
-        />
         <View style={styles.container}>
           <HScrollView onScroll={handleHViewScroll}>
             {/* SUNDAY */}

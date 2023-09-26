@@ -73,9 +73,6 @@ function RootLayoutNav() {
           options={{
             title: 'Home',
             tabBarShowLabel: false,
-            headerRight: () => (
-              <Button title="edit" color={Colors[colorScheme ?? 'light'].accent} />
-            ),
             tabBarIcon: ({ focused }) => (
               <Icon color={focused ? 'accent' : 'secondary'} icon="home" />
             ),
