@@ -20,7 +20,9 @@ const FilterMenu = ({ setFilter, menuRef, colorScheme }: Props) => {
           { backgroundColor: Colors[colorScheme ?? 'light'].menuBackground },
           styles.optionsContainerStyle,
         ]}
-        customStyles={{ optionWrapper: styles.optionWrapper }}
+        customStyles={{
+          optionWrapper: styles.optionWrapper,
+        }}
       >
         <FilterMenuOption colorScheme={colorScheme} setFilter={setFilter} value={undefined} />
         <FilterMenuOption colorScheme={colorScheme} setFilter={setFilter} value="strength" />
@@ -38,6 +40,7 @@ export default FilterMenu;
 const styles = StyleSheet.create({
   optionsContainerStyle: {
     borderRadius: 15,
+    overflow: 'hidden',
   },
   optionWrapper: {
     padding: 12,

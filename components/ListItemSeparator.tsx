@@ -13,6 +13,8 @@ export default ListItemSeparator;
 const styles = StyleSheet.create({
   separator: {
     width: '100%',
-    height: 0.33,
+    height: 0.5,
+    // borderWidth: 1,
+    borderColor: 'white',
   },
 });

@@ -8,23 +8,18 @@ import { Text } from './Themed';
 
 interface Props {
   target: Target;
-  activeQuantity?: ActiveTargetQuantity;
+  activeQuantity: ActiveTargetQuantity;
+  onPress: (target: Target) => void;
 }
 
-const EditDayListItem = ({ target, activeQuantity }: Props) => {
+const EditDayListItem = ({ target, onPress, activeQuantity }: Props) => {
   const theme = useColorScheme();
 
-  const [calculatedActiveCount, setCalculatedActiveCount] = useState(0);
-
-  useEffect(() => {
-    if (activeQuantity) {
-      if (activeQuantity?.activeCount > 0) setCalculatedActiveCount(activeQuantity.activeCount);
-    }
-  }, [activeQuantity]);
+  const leftCount = target.quantity - activeQuantity?.activeCount;
 
   return (
     <View style={[{ backgroundColor: Colors[theme ?? 'light'].background }, styles.container]}>
-      <View style={{ flex: 1.5, justifyContent: 'center', alignItems: 'flex-start' }}>
+      <View style={{ flex: 1.8, justifyContent: 'center', alignItems: 'flex-start' }}>
         <Text style={[styles.title, styles.text]}>{target.name}</Text>
       </View>
       <View
@@ -40,33 +35,19 @@ const EditDayListItem = ({ target, activeQuantity }: Props) => {
       {target.quantity && (
         <View
           style={{
-            flex: 0.5,
+            flex: 0.3,
             marginHorizontal: 10,
             justifyContent: 'center',
             alignItems: 'flex-start',
           }}
         >
-          <Text style={styles.text}>
-            {calculatedActiveCount}/{target.quantity}
-          </Text>
+          <Text style={styles.text}>{leftCount}</Text>
         </View>
       )}
-      <View style={{ flex: 1 }}>
-        <View style={styles.addRemoveBtns}>
-          <TouchableOpacity
-            onPress={() => setCalculatedActiveCount((c) => c - 1)}
-            style={{ justifyContent: 'center', alignItems: 'center', width: 18 }}
-          >
-            <Text style={{ fontSize: 18 }}>-</Text>
-          </TouchableOpacity>
-          <View style={{ width: 1, height: 18, backgroundColor: 'rgba(60,60,67,0.3)' }} />
-          <TouchableOpacity
-            onPress={() => setCalculatedActiveCount((c) => c + 1)}
-            style={{ justifyContent: 'center', alignItems: 'center', width: 18 }}
-          >
-            <Text style={{ fontSize: 18 }}>+</Text>
-          </TouchableOpacity>
-        </View>
+      <View style={{ flex: 0.5 }}>
+        <TouchableOpacity onPress={() => onPress(target)} style={styles.addButton}>
+          <Text style={{ fontSize: 18, color: 'red' }}>+</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -101,13 +82,12 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: 'red',
   },
-  addRemoveBtns: {
-    width: 94,
+  addButton: {
     height: 36,
     backgroundColor: 'rgba(118,118,128,0.12)',
     borderRadius: 8,
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 14,
   },

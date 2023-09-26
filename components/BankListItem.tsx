@@ -43,7 +43,6 @@ const styles = StyleSheet.create({
     width: listItemWidth,
     // marginVertical: 1,
     paddingHorizontal: 30,
-    backgroundColor: 'red',
   },
   text: {
     fontSize: 17,

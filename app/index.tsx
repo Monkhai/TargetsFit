@@ -19,13 +19,24 @@ import { Text, View } from '../components/Themed';
 import Colors from '../constants/Colors';
 import DBContext from '../context/DBLoadingContext';
 import TargetsContext from '../context/TargetsContext';
-import { DayId } from '../db/db';
+import { DayId, Target } from '../db/db';
 import useGetActiveQuantity from '../hooks/useGetActiveQuantity';
 import useGetWeeklyTargets from '../hooks/useGetWeeklyTargets';
+import ListItemSeparator from '../components/ListItemSeparator';
 
 const Home = () => {
   const colorScheme = useColorScheme();
   const [dayPage, setDayPage] = useState<1 | 2 | 3 | 4 | 5 | 6 | 7>(1);
+
+  const dayMap = {
+    1: 'Sunday',
+    2: 'Monday',
+    3: 'Tuesday',
+    4: 'Wednesday',
+    5: 'Thursday',
+    6: 'Friday',
+    7: 'Saturday',
+  };
 
   const { isLoading: isDBLoading } = useContext(DBContext);
 
@@ -64,6 +75,8 @@ const Home = () => {
     }
   };
 
+  const handleAddToDay = (target: Target) => {};
+
   if (allTargetsIsLoading || weeklyTaretsIsLoading || isDBLoading || isActiveCountLoading) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -100,17 +113,7 @@ const Home = () => {
                 onPress={() => ''}
               />
             ),
-            headerRight: () => (
-              <>
-                <Button
-                  title="filter"
-                  color={Colors[colorScheme ?? 'light'].accent}
-                  onPress={() => menuRef.current?.open()}
-                />
-
-                <FilterMenu colorScheme={colorScheme} menuRef={menuRef} setFilter={setFilter} />
-              </>
-            ),
+            headerRight: () => <></>,
           }}
         />
         <View style={styles.container}>
@@ -138,23 +141,62 @@ const Home = () => {
                 justifyContent: 'space-between',
                 alignItems: 'center',
                 backgroundColor: Colors[colorScheme ?? 'light'].background,
-                paddingHorizontal: 10,
-                paddingVertical: 10,
+                paddingTop: 10,
                 borderRadius: 20,
               }}
             >
-              <Button title="save" color={'red'} />
-              <Text style={{ fontSize: 18, fontWeight: 'bold' }}>Edit insert day</Text>
-              <Button color={'red'} title="cancel" />
+              <View
+                style={{
+                  flex: 0.4,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  backgroundColor: 'transparent',
+                }}
+              >
+                <Button title="save" color={'red'} />
+              </View>
+              <View
+                style={{
+                  flex: 1,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  backgroundColor: 'transparent',
+                }}
+              >
+                <Text style={{ fontSize: 18, fontWeight: 'bold' }}>Edit {dayMap[dayPage]}</Text>
+              </View>
+              <View
+                style={{
+                  flex: 0.4,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  backgroundColor: 'transparent',
+                }}
+              >
+                <Button
+                  title="filter"
+                  color={Colors[colorScheme ?? 'light'].accent}
+                  onPress={() => menuRef.current?.open()}
+                />
+                <FilterMenu colorScheme={colorScheme} menuRef={menuRef} setFilter={setFilter} />
+              </View>
             </View>
             <FlatList
+              showsVerticalScrollIndicator={false}
+              ItemSeparatorComponent={() => <ListItemSeparator />}
               style={{ width: '100%' }}
               data={allTargets}
               renderItem={({ item: target }) => {
                 const activeQuantity = activeTarrgetQuantity.find(
                   (count) => count.target.id === target.id
                 );
-                return <EditDayListItem activeQuantity={activeQuantity} target={target} />;
+                return (
+                  <EditDayListItem
+                    activeQuantity={activeQuantity!}
+                    onPress={handleAddToDay}
+                    target={target}
+                  />
+                );
               }}
             />
           </FlexCard>
