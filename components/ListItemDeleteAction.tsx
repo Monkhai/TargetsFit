@@ -1,6 +1,6 @@
-import { StyleSheet, Text, View, useColorScheme } from 'react-native';
-import React from 'react';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import React from 'react';
+import { StyleSheet, View, useColorScheme } from 'react-native';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import Colors from '../constants/Colors';
 import { listItemHeight } from './ListItem';
@@ -25,7 +25,7 @@ export default ListItemDeleteAction;
 
 const styles = StyleSheet.create({
   container: {
-    height: listItemHeight - 10,
+    height: listItemHeight,
     width: 70,
     justifyContent: 'center',
     alignItems: 'center',

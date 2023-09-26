@@ -1,6 +1,7 @@
 import { Stack } from 'expo-router';
 import React, { useContext, useRef, useState } from 'react';
 import {
+  Alert,
   Button,
   Dimensions,
   FlatList,
@@ -19,10 +20,12 @@ import { Text, View } from '../components/Themed';
 import Colors from '../constants/Colors';
 import DBContext from '../context/DBLoadingContext';
 import TargetsContext from '../context/TargetsContext';
-import { DayId, Target } from '../db/db';
+import { DayId, Target, TargetByDaysDAO } from '../db/db';
 import useGetActiveQuantity from '../hooks/useGetActiveQuantity';
 import useGetWeeklyTargets from '../hooks/useGetWeeklyTargets';
 import ListItemSeparator from '../components/ListItemSeparator';
+
+const WeeklyTargets = new TargetByDaysDAO();
 
 const Home = () => {
   const colorScheme = useColorScheme();
@@ -75,7 +78,19 @@ const Home = () => {
     }
   };
 
-  const handleAddToDay = (target: Target) => {};
+  const handleAddToDay = (target: Target) => {
+    WeeklyTargets.addTargetToDay(dayPage, target.id)
+      .then(() => {
+        refetchActiveCount();
+        refetchAllTargets();
+        refetchWeeklyTergets();
+      })
+      .catch((error: Error) => {
+        Alert.alert(error.message);
+      });
+  };
+
+  const handleItemDelete = (target: Target) => {};
 
   if (allTargetsIsLoading || weeklyTaretsIsLoading || isDBLoading || isActiveCountLoading) {
     return (
@@ -119,19 +134,19 @@ const Home = () => {
         <View style={styles.container}>
           <HScrollView onScroll={handleHViewScroll}>
             {/* SUNDAY */}
-            <FlatListView dailyTargets={weeklyTargets![0]} />
+            <FlatListView onItemDelete={handleItemDelete} dailyTargets={weeklyTargets![0]} />
             {/* MONDAY */}
-            <FlatListView dailyTargets={weeklyTargets![1]} />
+            <FlatListView onItemDelete={handleItemDelete} dailyTargets={weeklyTargets![1]} />
             {/* TUESDAY */}
-            <FlatListView dailyTargets={weeklyTargets![2]} />
+            <FlatListView onItemDelete={handleItemDelete} dailyTargets={weeklyTargets![2]} />
             {/* WEDNESDAY */}
-            <FlatListView dailyTargets={weeklyTargets![3]} />
+            <FlatListView onItemDelete={handleItemDelete} dailyTargets={weeklyTargets![3]} />
             {/* THURSDAY */}
-            <FlatListView dailyTargets={weeklyTargets![4]} />
+            <FlatListView onItemDelete={handleItemDelete} dailyTargets={weeklyTargets![4]} />
             {/* FRIDAY */}
-            <FlatListView dailyTargets={weeklyTargets![5]} />
+            <FlatListView onItemDelete={handleItemDelete} dailyTargets={weeklyTargets![5]} />
             {/* SATURDAY */}
-            <FlatListView dailyTargets={weeklyTargets![6]} />
+            <FlatListView onItemDelete={handleItemDelete} dailyTargets={weeklyTargets![6]} />
           </HScrollView>
           <FlexCard height={6}>
             <View

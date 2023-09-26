@@ -1,4 +1,11 @@
-import { Dimensions, StyleSheet, TouchableOpacity, View, useColorScheme } from 'react-native';
+import {
+  Dimensions,
+  StyleSheet,
+  TouchableHighlight,
+  TouchableOpacity,
+  View,
+  useColorScheme,
+} from 'react-native';
 import React, { ReactNode, useState } from 'react';
 import { FontAwesome } from '@expo/vector-icons';
 import { Target } from '../db/db';
@@ -9,30 +16,26 @@ import Swipeable from 'react-native-gesture-handler/Swipeable';
 
 interface Props {
   target: Target;
-  bank?: boolean;
   renderLeftActions?: () => ReactNode;
 }
 
-const ListItem = ({ target, renderLeftActions, bank = false }: Props) => {
+const ListItem = ({ target, renderLeftActions }: Props) => {
   const theme = useColorScheme();
   const [isDone, setIsDone] = useState(false);
 
   return (
     <Swipeable renderRightActions={renderLeftActions}>
-      <View style={[styles.listItem]}>
+      <View style={[{ backgroundColor: Colors[theme ?? 'light'].background }, styles.listItem]}>
         <View style={styles.exerciseName}>
-          {!bank && (
-            <TouchableOpacity onPress={() => setIsDone(!isDone)}>
-              {!isDone ? (
-                <FontAwesome name="circle-o" size={24} color={Colors[theme!].accent} />
-              ) : (
-                <FontAwesome name="circle" size={24} color={Colors[theme!].accent} />
-              )}
-            </TouchableOpacity>
-          )}
+          <TouchableHighlight onPress={() => setIsDone(!isDone)}>
+            {!isDone ? (
+              <FontAwesome name="circle-o" size={24} color={Colors[theme!].accent} />
+            ) : (
+              <FontAwesome name="circle" size={24} color={Colors[theme!].accent} />
+            )}
+          </TouchableHighlight>
           <Text style={[{ fontWeight: 'bold' }, styles.text]}>{target.name}</Text>
         </View>
-        {bank && <Text style={styles.text}>{target.quantity}</Text>}
         <Text style={[{ color: 'red' }, styles.text]}>{target.type}</Text>
       </View>
     </Swipeable>
@@ -46,11 +49,12 @@ export const listItemWidth = (Dimensions.get('screen').width / 100) * 90;
 
 const styles = StyleSheet.create({
   listItem: {
-    height: listItemHeight,
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: 'transparent',
+    justifyContent: 'space-between',
+    height: listItemHeight,
+    width: listItemWidth,
+    paddingHorizontal: 30,
   },
   exerciseName: {
     flexDirection: 'row',

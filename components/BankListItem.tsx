@@ -41,7 +41,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     height: listItemHeight,
     width: listItemWidth,
-    // marginVertical: 1,
     paddingHorizontal: 30,
   },
   text: {

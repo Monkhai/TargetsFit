@@ -1,16 +1,18 @@
-import { Dimensions, FlatList, StyleSheet, useColorScheme } from 'react-native';
 import React from 'react';
-import { Text, View } from './Themed';
-import Colors from '../constants/Colors';
-import ListItem, { listItemHeight } from './ListItem';
-import { DailyTargets } from '../db/db';
+import { Dimensions, FlatList, StyleSheet } from 'react-native';
+import { DailyTargets, Target } from '../db/db';
 import FlexCard from './FlexCard';
+import ListItem, { listItemHeight, listItemWidth } from './ListItem';
+import ListItemDeleteAction from './ListItemDeleteAction';
+import { Text, View } from './Themed';
+import ListItemSeparator from './ListItemSeparator';
 
 interface Props {
   dailyTargets: DailyTargets;
+  onItemDelete: (target: Target) => void;
 }
 
-const FlatListView = ({ dailyTargets }: Props) => {
+const FlatListView = ({ dailyTargets, onItemDelete }: Props) => {
   return (
     <View style={styles.flatListContainer}>
       <FlexCard height={9}>
@@ -18,13 +20,21 @@ const FlatListView = ({ dailyTargets }: Props) => {
           <Text style={styles.title}>{dailyTargets.day.name}</Text>
         </View>
         <FlatList
+          ItemSeparatorComponent={() => <ListItemSeparator />}
           contentContainerStyle={styles.flatList}
           showsVerticalScrollIndicator={false}
           scrollEnabled={true}
           data={dailyTargets.targets}
           snapToInterval={listItemHeight}
           keyExtractor={(_, index) => index.toString()}
-          renderItem={({ item: target }) => <ListItem target={target} />}
+          renderItem={({ item: target }) => (
+            <ListItem
+              renderLeftActions={() => (
+                <ListItemDeleteAction onPress={() => onItemDelete(target)} />
+              )}
+              target={target}
+            />
+          )}
         />
       </FlexCard>
     </View>
@@ -56,6 +66,6 @@ const styles = StyleSheet.create({
   },
 
   flatList: {
-    width: Dimensions.get('screen').width * 0.8,
+    width: listItemWidth,
   },
 });
