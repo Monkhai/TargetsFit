@@ -13,13 +13,7 @@ export type Target = {
   type: TargetType;
 };
 
-export type TargetWithActive = {
-  id: number;
-  name: string;
-  quantity: number;
-  type: TargetType;
-  active: number;
-};
+export type ActiveTargetQuantity = { target: Target; activeCount: number };
 
 export type NewTarget = Omit<Target, 'id'>;
 
@@ -314,7 +308,7 @@ export class TargetByDaysDAO {
 
   // }
 
-  public async getActiveTargetCount(): Promise<{ target: Target; activeCount: number }[]> {
+  public async getActiveTargetCount(): Promise<ActiveTargetQuantity[]> {
     const activeCountMap: Map<number, number> = new Map();
 
     const TargetsDAO = new TargetDAO();
@@ -342,7 +336,7 @@ export class TargetByDaysDAO {
           return { target, activeCount };
         }
       })
-      .filter((item): item is { target: Target; activeCount: number } => item !== undefined);
+      .filter((item): item is ActiveTargetQuantity => item !== undefined);
 
     return activeCountArray;
   }

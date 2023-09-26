@@ -21,6 +21,7 @@ import DBContext from '../context/DBLoadingContext';
 import { DayId, Target } from '../db/db';
 import useGetAllTargets from '../hooks/useGetAllTargets';
 import useGetWeeklyTargets from '../hooks/useGetWeeklyTargets';
+import useGetActiveQuantity from '../hooks/useGetActiveQuantity';
 
 const Home = () => {
   const colorScheme = useColorScheme();
@@ -43,6 +44,13 @@ const Home = () => {
     error: allTargetsError,
     refetch: refetchAllTargets,
   } = useGetAllTargets(isDBLoading, filter);
+
+  const {
+    activeTarrgetQuantity,
+    isLoading: isActiveCountLoading,
+    error: activeCountError,
+    refetch: refetchActiveCount,
+  } = useGetActiveQuantity(isDBLoading);
 
   const menuRef = useRef<Menu>(null);
   const modalRef = useRef<Modal>(null);
@@ -169,8 +177,11 @@ const Home = () => {
               contentContainerStyle={{ paddingHorizontal: 10 }}
               data={allTargets}
               renderItem={({ item: target }) => {
-                const addedTarget = addedTargets.filter((a) => a.id === target.id);
-                return <EditDayListItem target={target} />;
+                // const addedTarget = addedTargets.filter((a) => a.id === target.id);
+                const activeQuantity = activeTarrgetQuantity.find(
+                  (count) => count.target.id === target.id
+                );
+                return <EditDayListItem activeQuantity={activeQuantity} target={target} />;
               }}
             />
           </View>
