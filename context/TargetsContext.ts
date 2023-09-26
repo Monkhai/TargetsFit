@@ -1,32 +1,22 @@
 import React, { useContext } from 'react';
-
-type Target = {
-  // Define the structure of your target here
-};
+import { Target } from '../db/db';
 
 type TargetsContextType = {
   targets: Target[];
   isLoading: boolean;
-  error: Error | null;
-  setTargets: React.Dispatch<React.SetStateAction<Target[]>>;
-  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
-  setError: React.Dispatch<React.SetStateAction<Error | null>>;
+  error: Error | undefined;
+  refetch: () => void;
+  filter: string | undefined;
+  setFilter: React.Dispatch<React.SetStateAction<string | undefined>>;
 };
 
 const TargetsContext = React.createContext<TargetsContextType>({
   targets: [],
   isLoading: false,
-  error: null,
-  // These are placeholder functions and will be overridden by actual implementations in the provider
-  setTargets: () => {},
-  setIsLoading: () => {},
-  setError: () => {},
+  error: undefined,
+  refetch: () => {},
+  filter: undefined,
+  setFilter: () => {},
 });
 
 export default TargetsContext;
-
-export const useTargets = () => {
-  const context = useContext(TargetsContext);
-  if (!context) throw new Error('useTargets must be used within a TargetsProvider');
-  return context;
-};

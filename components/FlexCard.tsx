@@ -3,16 +3,24 @@ import React, { ReactNode } from 'react';
 import Colors from '../constants/Colors';
 import { View } from './Themed';
 import { listItemHeight } from './ListItem';
+import { dimensions } from '../constants/dimensions';
 
 interface Props extends ViewProps {
   children: ReactNode;
+  height: number;
 }
 
-const FlexCard = ({ children, style }: Props) => {
+const FlexCard = ({ children, height, style }: Props) => {
   const theme = useColorScheme();
 
   return (
-    <View style={[{ backgroundColor: Colors[theme ?? 'light'].background }, style, styles.card]}>
+    <View
+      style={[
+        { backgroundColor: Colors[theme ?? 'light'].background, height: listItemHeight * height },
+        style,
+        styles.card,
+      ]}
+    >
       {children}
     </View>
   );
@@ -22,15 +30,14 @@ export default FlexCard;
 
 const styles = StyleSheet.create({
   card: {
-    width: Dimensions.get('screen').width * 0.9,
-    height: listItemHeight * 15,
+    width: dimensions.width * 0.9,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 30,
     shadowColor: 'black',
     shadowOpacity: 0.2,
     shadowOffset: { height: 10, width: 0 },
-    shadowRadius: 20,
-    paddingTop: 25,
+    shadowRadius: 10,
+    overflow: 'hidden',
   },
 });

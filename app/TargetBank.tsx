@@ -24,16 +24,15 @@ import DBContext from '../context/DBLoadingContext';
 import { NewTarget, Target, TargetDAO } from '../db/db';
 import useGetAllTargets from '../hooks/useGetAllTargets';
 import BankFlatList from '../components/BankFlatList';
+import TargetsContext from '../context/TargetsContext';
 
 const Targets = new TargetDAO();
 
 const TargetBank = () => {
   const colorScheme = useColorScheme();
 
-  const [filter, setFilter] = useState<string>();
-
   const { isLoading: isDBLoading } = useContext(DBContext);
-  const { targets, isLoading, error, refetch } = useGetAllTargets(isDBLoading, filter);
+  const { targets, isLoading, error, refetch, filter, setFilter } = useContext(TargetsContext);
 
   const [editedTarget, setEditedTarget] = useState<Target>({} as Target);
 
@@ -120,7 +119,7 @@ const TargetBank = () => {
           }}
         />
         <View style={styles.container}>
-          <FlexCard>
+          <FlexCard height={15}>
             <BankFlatList
               targets={targets}
               onLongPress={handleTargetLongPress}

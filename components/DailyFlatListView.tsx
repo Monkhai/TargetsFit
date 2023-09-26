@@ -12,8 +12,8 @@ interface Props {
 
 const FlatListView = ({ dailyTargets }: Props) => {
   return (
-    <View style={[styles.flatListContainer]}>
-      <FlexCard>
+    <View style={styles.flatListContainer}>
+      <FlexCard height={9}>
         <View style={styles.titleWrapper}>
           <Text style={styles.title}>{dailyTargets.day.name}</Text>
         </View>
@@ -36,9 +36,9 @@ export default FlatListView;
 const styles = StyleSheet.create({
   flatListContainer: {
     width: Dimensions.get('screen').width,
-    height: listItemHeight * 15,
+    height: listItemHeight * 8,
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
   },
 
   titleWrapper: {

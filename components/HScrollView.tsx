@@ -8,6 +8,7 @@ import {
   View,
 } from 'react-native';
 import React, { ReactNode } from 'react';
+import { dimensions } from '../constants/dimensions';
 
 interface Props {
   children: ReactNode;
@@ -15,14 +16,12 @@ interface Props {
 }
 
 const HScrollView = ({ children, onScroll }: Props) => {
-  const screenWidth = Dimensions.get('screen').width;
-
   return (
     <ScrollView
       scrollEventThrottle={16}
       onScroll={onScroll}
       horizontal
-      snapToInterval={screenWidth}
+      snapToInterval={dimensions.width}
       decelerationRate={'fast'}
       showsHorizontalScrollIndicator={false}
       contentContainerStyle={styles.container}
@@ -36,7 +35,10 @@ export default HScrollView;
 
 const styles = StyleSheet.create({
   container: {
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
+    paddingTop: 10,
+    height: 'auto',
+    // borderWidth: 1,
   },
 });

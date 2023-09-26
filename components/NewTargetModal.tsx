@@ -27,13 +27,13 @@ const NewTargetModal = ({
 }: Props) => {
   const theme = useColorScheme();
   const [nameValue, setNameValue] = useState<string | undefined>();
-  const [typeValue, setTypeValue] = useState<TargetType>();
+  const [typeValue, setTypeValue] = useState<TargetType>('mobility');
   const [quantityValue, setQuantityValue] = useState<number>(0);
 
   useEffect(() => {
     if (!isVisible) {
       setNameValue(undefined);
-      setTypeValue(undefined);
+      setTypeValue('mobility');
       setQuantityValue(0);
     }
   }, [isVisible]);

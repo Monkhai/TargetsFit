@@ -1,12 +1,12 @@
 import React, { ReactNode, useState } from 'react';
-import { StyleSheet, TouchableOpacity, useColorScheme } from 'react-native';
-import { Swipeable } from 'react-native-gesture-handler';
+import { StyleSheet, TouchableHighlight, TouchableOpacity, useColorScheme } from 'react-native';
 import Colors from '../constants/Colors';
 import { listItemHeight, listItemWidth } from './ListItem';
 import { Text, View } from './Themed';
 import { heavyHaptics } from '../utilityFunctions/haptics';
 import { Target } from '../db/db';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
+import Swipeable from 'react-native-gesture-handler/Swipeable';
 
 interface Props {
   target: Target;
@@ -24,13 +24,13 @@ const BankListItem = ({ target, onLongPress, renderRightActions }: Props) => {
 
   return (
     <Swipeable renderRightActions={renderRightActions}>
-      <TouchableOpacity onLongPress={handleLongPress}>
+      <TouchableHighlight delayPressIn={200} onLongPress={handleLongPress}>
         <View style={[{ backgroundColor: Colors[theme ?? 'light'].background }, styles.container]}>
           <Text style={[styles.title, styles.text]}>{target.name}</Text>
           <Text style={styles.text}>{target.type}</Text>
           {target.quantity && <Text style={styles.text}>{target.quantity}</Text>}
         </View>
-      </TouchableOpacity>
+      </TouchableHighlight>
     </Swipeable>
   );
 };
@@ -40,17 +40,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     height: listItemHeight,
-    paddingHorizontal: 30,
     width: listItemWidth,
-  },
-  image: {
-    width: 70,
-    height: 70,
-    borderRadius: 35,
-  },
-  detailsContainer: {
-    paddingLeft: 10,
-    justifyContent: 'center',
+    // marginVertical: 1,
+    paddingHorizontal: 30,
+    backgroundColor: 'red',
   },
   text: {
     fontSize: 17,

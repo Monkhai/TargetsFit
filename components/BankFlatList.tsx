@@ -1,4 +1,4 @@
-import { FlatList, StyleSheet, Text, View } from 'react-native';
+import { FlatList, StyleSheet } from 'react-native';
 import React from 'react';
 import ListItemSeparator from './ListItemSeparator';
 import ListItemDeleteAction from './ListItemDeleteAction';
@@ -29,5 +29,3 @@ const BankFlatList = ({ targets, onLongPress, onDeletePress }: Props) => {
 };
 
 export default BankFlatList;
-
-const styles = StyleSheet.create({});

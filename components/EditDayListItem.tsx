@@ -1,4 +1,4 @@
-import { StyleSheet, TouchableOpacity, View, useColorScheme } from 'react-native';
+import { Dimensions, StyleSheet, TouchableOpacity, View, useColorScheme } from 'react-native';
 import React, { ReactNode, useEffect, useState } from 'react';
 import { FontAwesome } from '@expo/vector-icons';
 import { ActiveTargetQuantity, Target } from '../db/db';
@@ -24,32 +24,49 @@ const EditDayListItem = ({ target, activeQuantity }: Props) => {
 
   return (
     <View style={[{ backgroundColor: Colors[theme ?? 'light'].background }, styles.container]}>
-      <Text style={[styles.title, styles.text]}>{target.name}</Text>
-      <Text style={styles.text}>{target.type}</Text>
-      {target.quantity && (
-        <Text style={styles.text}>
-          {calculatedActiveCount}/{target.quantity}
-        </Text>
-      )}
+      <View style={{ flex: 1.5, justifyContent: 'center', alignItems: 'flex-start' }}>
+        <Text style={[styles.title, styles.text]}>{target.name}</Text>
+      </View>
       <View
         style={{
-          width: 94,
-          height: 32,
-          backgroundColor: 'rgba(118,118,128,0.12)',
-          borderRadius: 8,
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          paddingHorizontal: 14,
+          flex: 0.7,
+          marginHorizontal: 10,
+          justifyContent: 'center',
+          alignItems: 'flex-start',
         }}
       >
-        <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center', width: 18 }}>
-          <Text style={{ fontSize: 18 }}>-</Text>
-        </TouchableOpacity>
-        <View style={{ width: 1, height: 18, backgroundColor: 'rgba(60,60,67,0.3)' }} />
-        <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center', width: 18 }}>
-          <Text style={{ fontSize: 18 }}>+</Text>
-        </TouchableOpacity>
+        <Text style={styles.text}>{target.type}</Text>
+      </View>
+      {target.quantity && (
+        <View
+          style={{
+            flex: 0.5,
+            marginHorizontal: 10,
+            justifyContent: 'center',
+            alignItems: 'flex-start',
+          }}
+        >
+          <Text style={styles.text}>
+            {calculatedActiveCount}/{target.quantity}
+          </Text>
+        </View>
+      )}
+      <View style={{ flex: 1 }}>
+        <View style={styles.addRemoveBtns}>
+          <TouchableOpacity
+            onPress={() => setCalculatedActiveCount((c) => c - 1)}
+            style={{ justifyContent: 'center', alignItems: 'center', width: 18 }}
+          >
+            <Text style={{ fontSize: 18 }}>-</Text>
+          </TouchableOpacity>
+          <View style={{ width: 1, height: 18, backgroundColor: 'rgba(60,60,67,0.3)' }} />
+          <TouchableOpacity
+            onPress={() => setCalculatedActiveCount((c) => c + 1)}
+            style={{ justifyContent: 'center', alignItems: 'center', width: 18 }}
+          >
+            <Text style={{ fontSize: 18 }}>+</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
@@ -63,7 +80,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     height: listItemHeight,
-    padding: 10,
+    width: '100%',
+    paddingHorizontal: 10,
+    marginTop: 10,
+    borderRadius: 20,
   },
   image: {
     width: 70,
@@ -80,6 +100,15 @@ const styles = StyleSheet.create({
   title: {
     fontWeight: 'bold',
     color: 'red',
-    minWidth: 190,
+  },
+  addRemoveBtns: {
+    width: 94,
+    height: 36,
+    backgroundColor: 'rgba(118,118,128,0.12)',
+    borderRadius: 8,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 14,
   },
 });

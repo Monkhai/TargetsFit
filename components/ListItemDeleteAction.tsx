@@ -3,6 +3,7 @@ import React from 'react';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import Colors from '../constants/Colors';
+import { listItemHeight } from './ListItem';
 
 interface Props {
   onPress: () => void;
@@ -24,7 +25,7 @@ export default ListItemDeleteAction;
 
 const styles = StyleSheet.create({
   container: {
-    height: '100%',
+    height: listItemHeight - 10,
     width: 70,
     justifyContent: 'center',
     alignItems: 'center',

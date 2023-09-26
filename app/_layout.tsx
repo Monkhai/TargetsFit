@@ -1,46 +1,58 @@
-import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
 import { SplashScreen, Tabs } from 'expo-router';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, useColorScheme } from 'react-native';
+import { MenuProvider } from 'react-native-popup-menu';
 import Icon from '../components/Icon';
 import Colors from '../constants/Colors';
 import DBContext from '../context/DBLoadingContext';
+import TargetsContext from '../context/TargetsContext';
 import useInitializeTables from '../hooks/useCreateDB';
-import { MenuProvider } from 'react-native-popup-menu';
+import useGetAllTargets from '../hooks/useGetAllTargets';
 
 export { ErrorBoundary } from 'expo-router';
 
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const [loaded, error] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-    ...FontAwesome.font,
-  });
-
-  const { isLoading, error: dbError } = useInitializeTables();
+  const { isLoading: isDBLoading, error: dbError } = useInitializeTables();
+  const [filter, setFilter] = useState<string>();
+  const {
+    targets,
+    isLoading: isAllTargetsLoading,
+    error: allTargetsError,
+    refetch,
+  } = useGetAllTargets(isDBLoading, filter);
+  useEffect(() => {
+    if (dbError) throw dbError;
+  }, [dbError]);
 
   useEffect(() => {
-    if (error || dbError) throw error;
-  }, [error, dbError]);
-
-  useEffect(() => {
-    if (loaded && !isLoading) {
+    if (!isDBLoading && isAllTargetsLoading) {
       SplashScreen.hideAsync();
     }
-  }, [loaded, isLoading]);
+  }, [isDBLoading, isAllTargetsLoading]);
 
-  if (!loaded && isLoading) {
+  if (isDBLoading && isAllTargetsLoading) {
     return null;
   }
 
   return (
-    <DBContext.Provider value={{ isLoading: isLoading, error: dbError }}>
-      <MenuProvider>
-        <RootLayoutNav />
-      </MenuProvider>
+    <DBContext.Provider value={{ isLoading: isDBLoading, error: dbError }}>
+      <TargetsContext.Provider
+        value={{
+          targets: targets,
+          isLoading: isAllTargetsLoading,
+          error: allTargetsError,
+          refetch: refetch,
+          filter,
+          setFilter,
+        }}
+      >
+        <MenuProvider>
+          <RootLayoutNav />
+        </MenuProvider>
+      </TargetsContext.Provider>
     </DBContext.Provider>
   );
 }

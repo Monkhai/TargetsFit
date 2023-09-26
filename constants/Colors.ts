@@ -17,6 +17,6 @@ export default {
     accent: 'red',
     secondary: 'rgba(255,0,0,0.25)',
     tertiary: 'rgba(116,166,128,0.18)',
-    seperator: 'rgba(84,84,88,0.65)',
+    seperator: 'rgba(94,84,88,0.65)',
   },
 };

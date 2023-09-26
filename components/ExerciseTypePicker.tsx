@@ -6,7 +6,7 @@ import { TargetType } from '../db/db';
 
 interface Props {
   typeValue: TargetType | undefined;
-  setTypeValue: React.Dispatch<React.SetStateAction<TargetType | undefined>>;
+  setTypeValue: React.Dispatch<React.SetStateAction<TargetType>>;
 }
 
 const ExerciseTypePicker = ({ typeValue, setTypeValue }: Props) => {
