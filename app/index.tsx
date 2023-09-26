@@ -1,10 +1,7 @@
-import { Stack } from 'expo-router';
 import React, { useContext, useRef, useState } from 'react';
 import {
   Alert,
-  Button,
   Dimensions,
-  FlatList,
   NativeScrollEvent,
   NativeSyntheticEvent,
   StyleSheet,
@@ -12,34 +9,20 @@ import {
 } from 'react-native';
 import { Menu } from 'react-native-popup-menu';
 import FlatListView from '../components/DailyFlatListView';
-import EditDayListItem from '../components/EditDayListItem';
-import FilterMenu from '../components/FilterMenu';
-import FlexCard from '../components/FlexCard';
+import DailyTargetController from '../components/DailyTargetController';
 import HScrollView from '../components/HScrollView';
 import { Text, View } from '../components/Themed';
-import Colors from '../constants/Colors';
 import DBContext from '../context/DBLoadingContext';
 import TargetsContext from '../context/TargetsContext';
 import { DayId, Target, TargetByDaysDAO, TargetInWeeklyTargets } from '../db/db';
 import useGetActiveQuantity from '../hooks/useGetActiveQuantity';
 import useGetWeeklyTargets from '../hooks/useGetWeeklyTargets';
-import ListItemSeparator from '../components/ListItemSeparator';
 
 const WeeklyTargets = new TargetByDaysDAO();
 
 const Home = () => {
   const colorScheme = useColorScheme();
   const [dayPage, setDayPage] = useState<1 | 2 | 3 | 4 | 5 | 6 | 7>(1);
-
-  const dayMap = {
-    1: 'Sunday',
-    2: 'Monday',
-    3: 'Tuesday',
-    4: 'Wednesday',
-    5: 'Thursday',
-    6: 'Friday',
-    7: 'Saturday',
-  };
 
   const { isLoading: isDBLoading } = useContext(DBContext);
 
@@ -60,7 +43,7 @@ const Home = () => {
   } = useGetWeeklyTargets(isDBLoading, filter);
 
   const {
-    activeTarrgetQuantity,
+    activeTargetQuantity,
     isLoading: isActiveCountLoading,
     error: activeCountError,
     refetch: refetchActiveCount,
@@ -146,73 +129,15 @@ const Home = () => {
             {/* SATURDAY */}
             <FlatListView onItemDelete={handleItemDelete} dailyTargets={weeklyTargets![6]} />
           </HScrollView>
-          <FlexCard height={6}>
-            <View
-              style={{
-                width: '100%',
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                backgroundColor: Colors[colorScheme ?? 'light'].background,
-                paddingTop: 10,
-                borderRadius: 20,
-              }}
-            >
-              <View
-                style={{
-                  flex: 0.4,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  backgroundColor: 'transparent',
-                }}
-              >
-                <Button title="save" color={'red'} />
-              </View>
-              <View
-                style={{
-                  flex: 1,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  backgroundColor: 'transparent',
-                }}
-              >
-                <Text style={{ fontSize: 18, fontWeight: 'bold' }}>Edit {dayMap[dayPage]}</Text>
-              </View>
-              <View
-                style={{
-                  flex: 0.4,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  backgroundColor: 'transparent',
-                }}
-              >
-                <Button
-                  title="filter"
-                  color={Colors[colorScheme ?? 'light'].accent}
-                  onPress={() => menuRef.current?.open()}
-                />
-                <FilterMenu colorScheme={colorScheme} menuRef={menuRef} setFilter={setFilter} />
-              </View>
-            </View>
-            <FlatList
-              showsVerticalScrollIndicator={false}
-              ItemSeparatorComponent={() => <ListItemSeparator />}
-              style={{ width: '100%' }}
-              data={allTargets}
-              renderItem={({ item: target }) => {
-                const activeQuantity = activeTarrgetQuantity.find(
-                  (count) => count.target.id === target.id
-                );
-                return (
-                  <EditDayListItem
-                    activeQuantity={activeQuantity!}
-                    onPress={handleAddToDay}
-                    target={target}
-                  />
-                );
-              }}
-            />
-          </FlexCard>
+          <DailyTargetController
+            activeTargetQuantity={activeTargetQuantity}
+            allTargets={allTargets}
+            colorScheme={colorScheme}
+            dayPage={dayPage}
+            menuRef={menuRef}
+            onAddToDay={handleAddToDay}
+            setFilter={setFilter}
+          />
         </View>
       </>
     );
