@@ -1,8 +1,8 @@
 {
   "expo": {
     "name": "TargetsFit",
-    "slug": "TargetsFit",
-    "version": "0.1.0",
+    "slug": "TargetsFits",
+    "version": "0.1.1",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "myapp",
@@ -14,7 +14,8 @@
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.yohaiwiener.TargetsFit"
     },
     "android": {
       "adaptiveIcon": {
@@ -25,6 +26,11 @@
     "plugins": ["expo-router"],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      }
     }
   }
 }
