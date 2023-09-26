@@ -28,14 +28,17 @@ export type Day = {
 
 export type DailyTargets = {
   day: Day;
-  targets: Target[];
+  targets: Array<Target & { tb_id: number }>;
 };
+
+export type TargetInWeeklyTargets = Target & { tb_id: number };
 
 export type WeeklyTargets = DailyTargets[];
 
 type RawDailyTargets = {
   day_id: DayId;
   day_name: DayName;
+  tb_id: number;
   id: number;
   name: string;
   quantity: number;
@@ -239,57 +242,16 @@ export class TargetByDaysDAO {
     );
   }
 
-  public async getWeeklyTargets(typeFilter?: string): Promise<WeeklyTargets> {
-    let sql = `SELECT days.id as day_id, days.name as day_name, targets.* FROM days `;
-    let params: any[] = [];
+  public async getWeeklyTargets(): Promise<WeeklyTargets> {
+    const sql = `SELECT days.id as day_id, days.name as day_name, targets_by_days.id as tb_id, targets.* 
+                 FROM days 
+                 LEFT JOIN targets_by_days ON days.id = targets_by_days.day_id
+                 LEFT JOIN targets ON targets.id = targets_by_days.target_id 
+                 ORDER BY days.id, targets.type, targets.name;`;
 
-    sql += `LEFT JOIN targets_by_days ON days.id = targets_by_days.day_id
-    LEFT JOIN targets ON targets.id = targets_by_days.target_id `;
-
-    if (typeFilter) {
-      sql += `AND targets.type = ?`;
-      params.push(typeFilter);
-    }
-
-    sql += ` ORDER BY days.id, targets.type, targets.name;`;
-
-    const rawWeeklyTargets = await handleQuery<RawWeeklyTargets>(
-      sql,
-      'getting weekly targets',
-      params
-    );
+    const rawWeeklyTargets = await handleQuery<RawWeeklyTargets>(sql, 'getting weekly targets');
 
     return transformWeeklyTargets(rawWeeklyTargets);
-  }
-
-  public async saveWeeklyTargets(weeklyTargets: WeeklyTargets): Promise<WeeklyTargets> {
-    return new Promise((resolve, reject) => {
-      db.transaction(
-        (tx: SQLite.SQLTransaction) => {
-          weeklyTargets.forEach((day) => {
-            day.targets.forEach((target) => {
-              tx.executeSql(
-                `INSERT INTO targets_by_days (day_id, target_id) VALUES (?, ?);`,
-                [day.day.id, target.id],
-                undefined,
-                (_, error: SQLite.SQLError) => {
-                  handleError(`saving ${target.name} into ${day.day.name}`, error, reject);
-                  return false; // This will roll back the transaction
-                }
-              );
-            });
-          });
-        },
-        (error: Error) => {
-          handleError('Error saving weekly targets', error, reject);
-          reject(error);
-        },
-        async () => {
-          const updatedTargets = await this.getWeeklyTargets();
-          resolve(updatedTargets);
-        }
-      );
-    });
   }
 
   public async addTargetToDay(dayId: number, targetId: number): Promise<Target[]> {
@@ -301,12 +263,6 @@ export class TargetByDaysDAO {
     const Targets = new TargetDAO();
     return Targets.getAllTargets();
   }
-
-  // public async getWeeklyTargetWithActive(): Promise<TargetWithActive[]> {
-  //   const AllTargets = new TargetDAO()
-  //   const targets = await AllTargets.getAllTargets()
-
-  // }
 
   public async getActiveTargetCount(): Promise<ActiveTargetQuantity[]> {
     const activeCountMap: Map<number, number> = new Map();
@@ -339,5 +295,10 @@ export class TargetByDaysDAO {
       .filter((item): item is ActiveTargetQuantity => item !== undefined);
 
     return activeCountArray;
+  }
+
+  public async deleteTargetFromWeeklyTargets(id: number): Promise<void> {
+    const sql = `DELETE FROM targets_by_days WHERE id = (?)`;
+    handleQuery(sql, 'deleting target', [id]);
   }
 }

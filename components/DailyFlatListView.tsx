@@ -1,6 +1,6 @@
 import React from 'react';
 import { Dimensions, FlatList, StyleSheet } from 'react-native';
-import { DailyTargets, Target } from '../db/db';
+import { DailyTargets, Target, TargetInWeeklyTargets } from '../db/db';
 import FlexCard from './FlexCard';
 import ListItem, { listItemHeight, listItemWidth } from './ListItem';
 import ListItemDeleteAction from './ListItemDeleteAction';
@@ -9,7 +9,7 @@ import ListItemSeparator from './ListItemSeparator';
 
 interface Props {
   dailyTargets: DailyTargets;
-  onItemDelete: (target: Target) => void;
+  onItemDelete: (target: TargetInWeeklyTargets) => void;
 }
 
 const FlatListView = ({ dailyTargets, onItemDelete }: Props) => {

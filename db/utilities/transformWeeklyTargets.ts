@@ -17,9 +17,9 @@ export const transformWeeklyTargets = (rawTargets: RawWeeklyTargets) => {
       week.push(day);
     }
 
-    // Only add target to day if target exists
     if (row.id !== null) {
       const target = {
+        tb_id: row.tb_id,
         id: row.id,
         name: row.name,
         quantity: row.quantity,

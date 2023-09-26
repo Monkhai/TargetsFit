@@ -20,7 +20,7 @@ import { Text, View } from '../components/Themed';
 import Colors from '../constants/Colors';
 import DBContext from '../context/DBLoadingContext';
 import TargetsContext from '../context/TargetsContext';
-import { DayId, Target, TargetByDaysDAO } from '../db/db';
+import { DayId, Target, TargetByDaysDAO, TargetInWeeklyTargets } from '../db/db';
 import useGetActiveQuantity from '../hooks/useGetActiveQuantity';
 import useGetWeeklyTargets from '../hooks/useGetWeeklyTargets';
 import ListItemSeparator from '../components/ListItemSeparator';
@@ -90,7 +90,17 @@ const Home = () => {
       });
   };
 
-  const handleItemDelete = (target: Target) => {};
+  const handleItemDelete = (target: TargetInWeeklyTargets) => {
+    WeeklyTargets.deleteTargetFromWeeklyTargets(target.tb_id)
+      .then(() => {
+        refetchActiveCount();
+        refetchAllTargets();
+        refetchWeeklyTergets();
+      })
+      .catch((error: Error) => {
+        Alert.alert(error.message);
+      });
+  };
 
   if (allTargetsIsLoading || weeklyTaretsIsLoading || isDBLoading || isActiveCountLoading) {
     return (
