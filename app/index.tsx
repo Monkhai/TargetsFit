@@ -17,6 +17,7 @@ import TargetsContext from '../context/TargetsContext';
 import { DayId, Target, TargetByDaysDAO, TargetInWeeklyTargets } from '../db/db';
 import useGetActiveQuantity from '../hooks/useGetActiveQuantity';
 import useGetWeeklyTargets from '../hooks/useGetWeeklyTargets';
+import ActiveQuantityContext from '../context/ActiveQuantityContext';
 
 const WeeklyTargets = new TargetByDaysDAO();
 
@@ -47,7 +48,7 @@ const Home = () => {
     isLoading: isActiveCountLoading,
     error: activeCountError,
     refetch: refetchActiveCount,
-  } = useGetActiveQuantity(isDBLoading);
+  } = useContext(ActiveQuantityContext);
 
   const menuRef = useRef<Menu>(null);
 

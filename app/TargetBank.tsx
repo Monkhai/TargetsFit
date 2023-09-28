@@ -1,30 +1,19 @@
 import { Stack } from 'expo-router';
 import React, { useContext, useRef, useState } from 'react';
-import {
-  Alert,
-  Button,
-  Dimensions,
-  FlatList,
-  StyleSheet,
-  TextInput,
-  useColorScheme,
-} from 'react-native';
-import { Menu, MenuProvider } from 'react-native-popup-menu';
-import BankListItem from '../components/BankListItem';
+import { Alert, Button, Dimensions, StyleSheet, TextInput, useColorScheme } from 'react-native';
+import { Menu } from 'react-native-popup-menu';
+import BankFlatList from '../components/BankFlatList';
 import EditTargetModal from '../components/EditTargetModal';
 import FilterMenu from '../components/FilterMenu';
 import FlexCard from '../components/FlexCard';
 import { listItemHeight } from '../components/ListItem';
-import ListItemDeleteAction from '../components/ListItemDeleteAction';
-import ListItemSeparator from '../components/ListItemSeparator';
 import NewTargetModal from '../components/NewTargetModal';
 import { Text, View } from '../components/Themed';
 import Colors from '../constants/Colors';
 import DBContext from '../context/DBLoadingContext';
-import { NewTarget, Target, TargetDAO } from '../db/db';
-import useGetAllTargets from '../hooks/useGetAllTargets';
-import BankFlatList from '../components/BankFlatList';
 import TargetsContext from '../context/TargetsContext';
+import { NewTarget, Target, TargetDAO } from '../db/db';
+import ActiveQuantityContext from '../context/ActiveQuantityContext';
 
 const Targets = new TargetDAO();
 
@@ -34,6 +23,8 @@ const TargetBank = () => {
   const { isLoading: isDBLoading } = useContext(DBContext);
   const { targets, isLoading, error, refetch, filter, setFilter } = useContext(TargetsContext);
 
+  const { refetch: refetchActiveCount } = useContext(ActiveQuantityContext);
+
   const [editedTarget, setEditedTarget] = useState<Target>({} as Target);
 
   const [isNewModalVisible, setIsNewModalVisible] = useState(false);
@@ -41,9 +32,9 @@ const TargetBank = () => {
 
   const menuRef = useRef<Menu>(null);
 
-  const nameRef = useRef<TextInput>(null);
-  const typeRef = useRef<TextInput>(null);
-  const quantityRef = useRef<TextInput>(null);
+  const newNameRef = useRef<TextInput>(null);
+  const nweTypeRef = useRef<TextInput>(null);
+  const newQuantityRef = useRef<TextInput>(null);
 
   const editNameRef = useRef<TextInput>(null);
   const editTypeRef = useRef<TextInput>(null);
@@ -51,7 +42,10 @@ const TargetBank = () => {
 
   const handleTargetDelete = (target: Target) => {
     Targets.deleteTarget(target.id)
-      .then(() => refetch())
+      .then(() => {
+        refetch();
+        refetchActiveCount();
+      })
       .catch((error: Error) => Alert.alert(error.message));
   };
 
@@ -69,7 +63,10 @@ const TargetBank = () => {
 
   const handleModalSave = (newTarget: NewTarget) => {
     Targets.createNewTarget(newTarget)
-      .then(() => refetch())
+      .then(() => {
+        refetch();
+        refetchActiveCount();
+      })
       .then(() => setIsNewModalVisible(false))
       .catch((error: Error) => Alert.alert(error.message));
   };
@@ -130,9 +127,9 @@ const TargetBank = () => {
             onModalCancel={handleModalCancel}
             onBackdropPress={handleModalCancel}
             isVisible={isNewModalVisible}
-            nameRef={nameRef}
-            typeRef={typeRef}
-            quantityRef={quantityRef}
+            nameRef={newNameRef}
+            typeRef={nweTypeRef}
+            quantityRef={newQuantityRef}
             onModalSave={handleModalSave}
           />
           <EditTargetModal

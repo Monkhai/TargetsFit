@@ -9,6 +9,8 @@ import DBContext from '../context/DBLoadingContext';
 import TargetsContext from '../context/TargetsContext';
 import useInitializeTables from '../hooks/useCreateDB';
 import useGetAllTargets from '../hooks/useGetAllTargets';
+import useGetActiveQuantity from '../hooks/useGetActiveQuantity';
+import ActiveQuantityContext from '../context/ActiveQuantityContext';
 
 export { ErrorBoundary } from 'expo-router';
 
@@ -23,6 +25,14 @@ export default function RootLayout() {
     error: allTargetsError,
     refetch,
   } = useGetAllTargets(isDBLoading, filter);
+
+  const {
+    activeTargetQuantity,
+    isLoading: isActiveCountLoading,
+    error: activeCountError,
+    refetch: refetchActiveCount,
+  } = useGetActiveQuantity(isDBLoading);
+
   useEffect(() => {
     if (dbError) throw dbError;
   }, [dbError]);
@@ -49,9 +59,18 @@ export default function RootLayout() {
           setFilter,
         }}
       >
-        <MenuProvider>
-          <RootLayoutNav />
-        </MenuProvider>
+        <ActiveQuantityContext.Provider
+          value={{
+            activeTargetQuantity: activeTargetQuantity,
+            isLoading: isActiveCountLoading,
+            error: activeCountError,
+            refetch: refetchActiveCount,
+          }}
+        >
+          <MenuProvider>
+            <RootLayoutNav />
+          </MenuProvider>
+        </ActiveQuantityContext.Provider>
       </TargetsContext.Provider>
     </DBContext.Provider>
   );

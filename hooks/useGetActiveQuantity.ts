@@ -5,7 +5,7 @@ const WeeklyTargets = new TargetByDaysDAO();
 
 const useGetActiveQuantity = (isDBLoading: boolean) => {
   const [isLoading, setIsloading] = useState(true);
-  const [error, setError] = useState<Error | null>();
+  const [error, setError] = useState<Error | undefined>();
   const [activeTargetQuantity, setActiveTargetQuantity] = useState<ActiveTargetQuantity[]>([]);
 
   const fetchActiveCount = useCallback(() => {
