@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import React, { ReactNode } from 'react';
 import { dimensions } from '../constants/dimensions';
+import { listItemHeight } from './ListItem';
 
 interface Props {
   children: ReactNode;
@@ -37,8 +38,6 @@ const styles = StyleSheet.create({
   container: {
     justifyContent: 'flex-start',
     alignItems: 'flex-start',
-    paddingTop: 10,
-    height: 'auto',
-    // borderWidth: 1,
+    height: listItemHeight * 9,
   },
 });

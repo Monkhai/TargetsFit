@@ -25,6 +25,7 @@ const FlatListView = ({ dailyTargets, onItemDelete }: Props) => {
           showsVerticalScrollIndicator={false}
           scrollEnabled={true}
           data={dailyTargets.targets}
+          // style={{ borderWidth: 1, borderColor: 'white' }}
           snapToInterval={listItemHeight}
           keyExtractor={(_, index) => index.toString()}
           renderItem={({ item: target }) => (
@@ -46,9 +47,7 @@ export default FlatListView;
 const styles = StyleSheet.create({
   flatListContainer: {
     width: Dimensions.get('screen').width,
-    height: listItemHeight * 8,
     alignItems: 'center',
-    justifyContent: 'flex-start',
   },
 
   titleWrapper: {

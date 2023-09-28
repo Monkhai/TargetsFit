@@ -12,12 +12,11 @@ import FlatListView from '../components/DailyFlatListView';
 import DailyTargetController from '../components/DailyTargetController';
 import HScrollView from '../components/HScrollView';
 import { Text, View } from '../components/Themed';
+import ActiveQuantityContext from '../context/ActiveQuantityContext';
 import DBContext from '../context/DBLoadingContext';
 import TargetsContext from '../context/TargetsContext';
 import { DayId, Target, TargetByDaysDAO, TargetInWeeklyTargets } from '../db/db';
-import useGetActiveQuantity from '../hooks/useGetActiveQuantity';
 import useGetWeeklyTargets from '../hooks/useGetWeeklyTargets';
-import ActiveQuantityContext from '../context/ActiveQuantityContext';
 
 const WeeklyTargets = new TargetByDaysDAO();
 
@@ -112,35 +111,33 @@ const Home = () => {
     );
   } else {
     return (
-      <>
-        <View style={styles.container}>
-          <HScrollView onScroll={handleHViewScroll}>
-            {/* SUNDAY */}
-            <FlatListView onItemDelete={handleItemDelete} dailyTargets={weeklyTargets![0]} />
-            {/* MONDAY */}
-            <FlatListView onItemDelete={handleItemDelete} dailyTargets={weeklyTargets![1]} />
-            {/* TUESDAY */}
-            <FlatListView onItemDelete={handleItemDelete} dailyTargets={weeklyTargets![2]} />
-            {/* WEDNESDAY */}
-            <FlatListView onItemDelete={handleItemDelete} dailyTargets={weeklyTargets![3]} />
-            {/* THURSDAY */}
-            <FlatListView onItemDelete={handleItemDelete} dailyTargets={weeklyTargets![4]} />
-            {/* FRIDAY */}
-            <FlatListView onItemDelete={handleItemDelete} dailyTargets={weeklyTargets![5]} />
-            {/* SATURDAY */}
-            <FlatListView onItemDelete={handleItemDelete} dailyTargets={weeklyTargets![6]} />
-          </HScrollView>
-          <DailyTargetController
-            activeTargetQuantity={activeTargetQuantity}
-            allTargets={allTargets}
-            colorScheme={colorScheme}
-            dayPage={dayPage}
-            menuRef={menuRef}
-            onAddToDay={handleAddToDay}
-            setFilter={setFilter}
-          />
-        </View>
-      </>
+      <View style={styles.container}>
+        <HScrollView onScroll={handleHViewScroll}>
+          {/* SUNDAY */}
+          <FlatListView onItemDelete={handleItemDelete} dailyTargets={weeklyTargets![0]} />
+          {/* MONDAY */}
+          <FlatListView onItemDelete={handleItemDelete} dailyTargets={weeklyTargets![1]} />
+          {/* TUESDAY */}
+          <FlatListView onItemDelete={handleItemDelete} dailyTargets={weeklyTargets![2]} />
+          {/* WEDNESDAY */}
+          <FlatListView onItemDelete={handleItemDelete} dailyTargets={weeklyTargets![3]} />
+          {/* THURSDAY */}
+          <FlatListView onItemDelete={handleItemDelete} dailyTargets={weeklyTargets![4]} />
+          {/* FRIDAY */}
+          <FlatListView onItemDelete={handleItemDelete} dailyTargets={weeklyTargets![5]} />
+          {/* SATURDAY */}
+          <FlatListView onItemDelete={handleItemDelete} dailyTargets={weeklyTargets![6]} />
+        </HScrollView>
+        <DailyTargetController
+          activeTargetQuantity={activeTargetQuantity}
+          allTargets={allTargets}
+          colorScheme={colorScheme}
+          dayPage={dayPage}
+          menuRef={menuRef}
+          onAddToDay={handleAddToDay}
+          setFilter={setFilter}
+        />
+      </View>
     );
   }
 };
@@ -151,6 +148,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    paddingBottom: 20,
+    paddingVertical: 15,
   },
 });
