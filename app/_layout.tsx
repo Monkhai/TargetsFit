@@ -3,7 +3,6 @@ import { SplashScreen, Tabs } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { Button, useColorScheme } from 'react-native';
 import { MenuProvider } from 'react-native-popup-menu';
-import Icon from '../components/Icon';
 import Colors from '../constants/Colors';
 import DBContext from '../context/DBLoadingContext';
 import TargetsContext from '../context/TargetsContext';
@@ -80,21 +79,12 @@ function RootLayoutNav() {
   const colorScheme = useColorScheme();
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Tabs
-        screenOptions={{
-          headerTitleStyle: { fontSize: 22 },
-          headerLeftContainerStyle: { paddingLeft: 20 },
-          headerRightContainerStyle: { paddingRight: 20 },
-        }}
-      >
+      <Tabs>
         <Tabs.Screen
           name="index"
           options={{
             title: 'Home',
             tabBarShowLabel: false,
-            tabBarIcon: ({ focused }) => (
-              <Icon color={focused ? 'accent' : 'secondary'} icon="home" />
-            ),
           }}
         />
 
@@ -103,9 +93,6 @@ function RootLayoutNav() {
           options={{
             title: 'Target Bank',
             tabBarShowLabel: false,
-            tabBarIcon: ({ focused }) => (
-              <Icon color={focused ? 'accent' : 'secondary'} icon="target" />
-            ),
           }}
         />
       </Tabs>

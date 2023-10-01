@@ -1,19 +1,17 @@
-import { Stack } from 'expo-router';
 import React, { useContext, useRef, useState } from 'react';
-import { Alert, Button, Dimensions, StyleSheet, TextInput, useColorScheme } from 'react-native';
+import { Alert, StyleSheet, TextInput, useColorScheme } from 'react-native';
+import Modal from 'react-native-modal';
 import { Menu } from 'react-native-popup-menu';
-import BankFlatList from '../components/BankFlatList';
-import EditTargetModal from '../components/EditTargetModal';
-import FilterMenu from '../components/FilterMenu';
-import FlexCard from '../components/FlexCard';
-import { listItemHeight } from '../components/ListItem';
-import NewTargetModal from '../components/NewTargetModal';
+import Button from '../components/Button';
+import LoadingErrorHome from '../components/LoadingErrorHome';
 import { Text, View } from '../components/Themed';
 import Colors from '../constants/Colors';
+import { BORDER_RADIUS } from '../constants/SIZES';
+import ActiveQuantityContext from '../context/ActiveQuantityContext';
 import DBContext from '../context/DBLoadingContext';
 import TargetsContext from '../context/TargetsContext';
-import { NewTarget, Target, TargetDAO } from '../db/db';
-import ActiveQuantityContext from '../context/ActiveQuantityContext';
+import { NewTarget, Target, TargetDAO, TargetType } from '../db/db';
+import { Picker } from '@react-native-picker/picker';
 
 const Targets = new TargetDAO();
 
@@ -33,12 +31,20 @@ const TargetBank = () => {
   const menuRef = useRef<Menu>(null);
 
   const newNameRef = useRef<TextInput>(null);
-  const nweTypeRef = useRef<TextInput>(null);
+  const newTypeRef = useRef<TextInput>(null);
   const newQuantityRef = useRef<TextInput>(null);
 
   const editNameRef = useRef<TextInput>(null);
   const editTypeRef = useRef<TextInput>(null);
   const editQuantityRef = useRef<TextInput>(null);
+
+  //add new target modal
+  //add new target modal
+  //add new target modal
+  const [selectedType, setSelectedType] = useState<TargetType>('strength');
+  //add new target modal
+  //add new target modal
+  //add new target modal
 
   const handleTargetDelete = (target: Target) => {
     Targets.deleteTarget(target.id)
@@ -79,72 +85,54 @@ const TargetBank = () => {
   };
 
   if (isLoading || isDBLoading) {
-    return (
-      <View style={styles.container}>
-        <Text>Loading...</Text>
-      </View>
-    );
+    return <LoadingErrorHome message="Loading..." />;
   } else if (error) {
-    return (
-      <View>
-        <Text>{error.message}</Text>
-      </View>
-    );
+    return <LoadingErrorHome message={error.message} />;
   } else {
     return (
-      <>
-        <Stack.Screen
-          options={{
-            headerLeft: () => (
-              <Button
-                title="new"
-                color={Colors[colorScheme ?? 'light'].accent}
-                onPress={() => setIsNewModalVisible(true)}
-              />
-            ),
-            headerRight: () => (
-              <>
-                <Button
-                  title="filter"
-                  color={Colors[colorScheme ?? 'light'].accent}
-                  onPress={() => menuRef.current?.open()}
-                />
+      <View style={styles.container}>
+        <Button title="new" onPress={() => setIsNewModalVisible(true)} />
+        <Modal
+          onBackdropPress={() => setIsNewModalVisible(false)}
+          useNativeDriverForBackdrop
+          isVisible={isNewModalVisible}
+        >
+          <View
+            style={{
+              alignSelf: 'center',
+              width: 300,
+              height: 'auto',
+              justifyContent: 'center',
+              alignItems: 'center',
+              backgroundColor: Colors[colorScheme ?? 'light'].backgroundSecondary,
+              borderRadius: BORDER_RADIUS,
+              gap: 10,
 
-                <FilterMenu colorScheme={colorScheme} menuRef={menuRef} setFilter={setFilter} />
-              </>
-            ),
-          }}
-        />
-        <View style={styles.container}>
-          <FlexCard height={15}>
-            <BankFlatList
-              targets={targets}
-              onLongPress={handleTargetLongPress}
-              onDeletePress={handleTargetDelete}
-            />
-          </FlexCard>
-          <NewTargetModal
-            onModalCancel={handleModalCancel}
-            onBackdropPress={handleModalCancel}
-            isVisible={isNewModalVisible}
-            nameRef={newNameRef}
-            typeRef={nweTypeRef}
-            quantityRef={newQuantityRef}
-            onModalSave={handleModalSave}
-          />
-          <EditTargetModal
-            onBackdropPress={handleModalCancel}
-            onModalCancel={handleModalCancel}
-            isVisible={isEditModalVisible}
-            editNameRef={editNameRef}
-            editQuantityRef={editQuantityRef}
-            editTypeRef={editTypeRef}
-            target={editedTarget!}
-            onEditModalSave={handleModalEdit}
-          />
-        </View>
-        <View></View>
-      </>
+              borderWidth: 1,
+              borderColor: 'white',
+            }}
+          >
+            <Text>Create new target</Text>
+            <TextInput ref={newNameRef} placeholder="Target name" />
+            <TextInput ref={newQuantityRef} placeholder="Target quantity" />
+            <Picker
+              selectedValue={selectedType}
+              onValueChange={(itemValue) => setSelectedType(itemValue)}
+              style={{
+                width: '100%',
+                height: 59,
+                overflow: 'hidden',
+              }}
+            >
+              <Picker.Item style={{ color: 'white' }} label="strength" value={'strength'} />
+              <Picker.Item label="mobility" value={'mobility'} />
+              <Picker.Item label="VO2" value={'VO2'} />
+              <Picker.Item label="Flexibility" value={'flexibilty'} />
+              <Picker.Item label="specific" value={'specific'} />
+            </Picker>
+          </View>
+        </Modal>
+      </View>
     );
   }
 };
@@ -156,11 +144,5 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  flatListContainer: {
-    width: Dimensions.get('screen').width,
-    height: listItemHeight * 15,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
 });

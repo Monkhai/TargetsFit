@@ -2,21 +2,22 @@ import React, { useContext, useRef, useState } from 'react';
 import {
   Alert,
   Dimensions,
+  FlatList,
   NativeScrollEvent,
   NativeSyntheticEvent,
   StyleSheet,
   useColorScheme,
 } from 'react-native';
 import { Menu } from 'react-native-popup-menu';
-import FlatListView from '../components/DailyFlatListView';
-import DailyTargetController from '../components/DailyTargetController';
-import HScrollView from '../components/HScrollView';
 import { Text, View } from '../components/Themed';
 import ActiveQuantityContext from '../context/ActiveQuantityContext';
 import DBContext from '../context/DBLoadingContext';
 import TargetsContext from '../context/TargetsContext';
 import { DayId, Target, TargetByDaysDAO, TargetInWeeklyTargets } from '../db/db';
 import useGetWeeklyTargets from '../hooks/useGetWeeklyTargets';
+import Colors from '../constants/Colors';
+import LoadingErrorHome from '../components/LoadingErrorHome';
+import AddToDayList from '../components/AddToDayList';
 
 const WeeklyTargets = new TargetByDaysDAO();
 
@@ -86,23 +87,11 @@ const Home = () => {
   };
 
   if (allTargetsIsLoading || weeklyTaretsIsLoading || isDBLoading || isActiveCountLoading) {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Text>Loading...</Text>
-      </View>
-    );
+    return <LoadingErrorHome message="Loading..." />;
   } else if (weeklyTaretsError) {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Text>{weeklyTaretsError.message}</Text>
-      </View>
-    );
+    return <LoadingErrorHome message={weeklyTaretsError.message} />;
   } else if (allTargetsError) {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Text>{allTargetsError.message}</Text>
-      </View>
-    );
+    return <LoadingErrorHome message={allTargetsError.message} />;
   } else if (activeCountError) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -112,31 +101,7 @@ const Home = () => {
   } else {
     return (
       <View style={styles.container}>
-        <HScrollView onScroll={handleHViewScroll}>
-          {/* SUNDAY */}
-          <FlatListView onItemDelete={handleItemDelete} dailyTargets={weeklyTargets![0]} />
-          {/* MONDAY */}
-          <FlatListView onItemDelete={handleItemDelete} dailyTargets={weeklyTargets![1]} />
-          {/* TUESDAY */}
-          <FlatListView onItemDelete={handleItemDelete} dailyTargets={weeklyTargets![2]} />
-          {/* WEDNESDAY */}
-          <FlatListView onItemDelete={handleItemDelete} dailyTargets={weeklyTargets![3]} />
-          {/* THURSDAY */}
-          <FlatListView onItemDelete={handleItemDelete} dailyTargets={weeklyTargets![4]} />
-          {/* FRIDAY */}
-          <FlatListView onItemDelete={handleItemDelete} dailyTargets={weeklyTargets![5]} />
-          {/* SATURDAY */}
-          <FlatListView onItemDelete={handleItemDelete} dailyTargets={weeklyTargets![6]} />
-        </HScrollView>
-        <DailyTargetController
-          activeTargetQuantity={activeTargetQuantity}
-          allTargets={allTargets}
-          colorScheme={colorScheme}
-          dayPage={dayPage}
-          menuRef={menuRef}
-          onAddToDay={handleAddToDay}
-          setFilter={setFilter}
-        />
+        <AddToDayList colorScheme={colorScheme} activeTargetQuantity={activeTargetQuantity} />
       </View>
     );
   }
@@ -148,6 +113,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    paddingVertical: 15,
+    paddingVertical: 10,
   },
 });
