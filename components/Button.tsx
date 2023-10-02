@@ -1,7 +1,7 @@
-import { Button as NativeButton } from 'react-native';
+import { ButtonProps, Button as NativeButton } from 'react-native';
 import React from 'react';
 
-interface Props {
+interface Props extends ButtonProps {
   title: string;
   onPress?: () => void;
 }

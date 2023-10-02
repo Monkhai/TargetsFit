@@ -2,22 +2,20 @@ import React, { useContext, useRef, useState } from 'react';
 import {
   Alert,
   Dimensions,
-  FlatList,
   NativeScrollEvent,
   NativeSyntheticEvent,
   StyleSheet,
   useColorScheme,
 } from 'react-native';
 import { Menu } from 'react-native-popup-menu';
+import AddToDayList from '../components/Home/AddToDayList';
+import LoadingErrorHome from '../components/LoadingErrorHome';
 import { Text, View } from '../components/Themed';
 import ActiveQuantityContext from '../context/ActiveQuantityContext';
 import DBContext from '../context/DBLoadingContext';
 import TargetsContext from '../context/TargetsContext';
 import { DayId, Target, TargetByDaysDAO, TargetInWeeklyTargets } from '../db/db';
 import useGetWeeklyTargets from '../hooks/useGetWeeklyTargets';
-import Colors from '../constants/Colors';
-import LoadingErrorHome from '../components/LoadingErrorHome';
-import AddToDayList from '../components/AddToDayList';
 
 const WeeklyTargets = new TargetByDaysDAO();
 
@@ -101,7 +99,12 @@ const Home = () => {
   } else {
     return (
       <View style={styles.container}>
-        <AddToDayList colorScheme={colorScheme} activeTargetQuantity={activeTargetQuantity} />
+        <AddToDayList
+          onAddPress={handleAddToDay}
+          allTargets={allTargets}
+          colorScheme={colorScheme}
+          activeTargetQuantity={activeTargetQuantity}
+        />
       </View>
     );
   }
@@ -113,6 +116,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    paddingVertical: 10,
+    // padding: 20,
   },
 });

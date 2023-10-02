@@ -1,12 +1,12 @@
 export default {
   light: {
     text: '#000',
-    background: '#fff',
-    backgroundSecondary: '#F2F2F7',
+    backgroundSecondary: '#fff',
+    background: '#F2F2F7',
     menuBackground: '#fafafa',
     accent: 'red',
     secondary: 'rgba(255,0,0,0.25)',
-    tertiary: 'rgba(116,166,128,0.08)',
+    tertiary: 'rgba(118,118,128,0.12)',
     seperator: 'rgba(60,60,67,0.36)',
   },
   dark: {
@@ -16,7 +16,7 @@ export default {
     menuBackground: '#272727',
     accent: 'red',
     secondary: 'rgba(255,0,0,0.25)',
-    tertiary: 'rgba(116,166,128,0.18)',
+    tertiary: 'rgba(118,118,128,0.24)',
     seperator: 'rgba(94,84,88,0.65)',
   },
 };
