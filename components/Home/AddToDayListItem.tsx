@@ -1,8 +1,9 @@
-import { ColorSchemeName, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ColorSchemeName, StyleSheet, TouchableOpacity, View } from 'react-native';
 import React from 'react';
 import { LIST_ITEM_HEIGHT } from '../../constants/SIZES';
 import { ActiveTargetQuantity, Target } from '../../db/db';
 import Colors from '../../constants/Colors';
+import { Text } from '../Themed';
 
 interface Props {
   colorScheme: ColorSchemeName;
@@ -31,7 +32,7 @@ const AddToDayListItem = ({ item, availableTargets, onAddPress, colorScheme }: P
   );
 };
 
-export default AddToDayListItem;
+export default React.memo(AddToDayListItem);
 
 const styles = StyleSheet.create({
   listItemContainer: {

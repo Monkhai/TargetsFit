@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState } from 'react';
+import React, { useCallback, useContext, useRef, useState } from 'react';
 import {
   Alert,
   Dimensions,
@@ -48,8 +48,6 @@ const Home = () => {
     refetch: refetchActiveCount,
   } = useContext(ActiveQuantityContext);
 
-  const menuRef = useRef<Menu>(null);
-
   const handleHViewScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const screenWidth = Dimensions.get('screen').width;
     const offsetX = event.nativeEvent.contentOffset.x;
@@ -60,17 +58,20 @@ const Home = () => {
     }
   };
 
-  const handleAddToDay = (target: Target) => {
-    WeeklyTargets.addTargetToDay(dayPage, target.id)
-      .then(() => {
-        refetchActiveCount();
-        refetchAllTargets();
-        refetchWeeklyTergets();
-      })
-      .catch((error: Error) => {
-        Alert.alert(error.message);
-      });
-  };
+  const handleAddToDay = useCallback(
+    (target: Target) => {
+      WeeklyTargets.addTargetToDay(dayPage, target.id)
+        .then(() => {
+          refetchActiveCount();
+          refetchAllTargets();
+          refetchWeeklyTergets();
+        })
+        .catch((error: Error) => {
+          Alert.alert(error.message);
+        });
+    },
+    [dayPage]
+  );
 
   const handleItemDelete = (target: TargetInWeeklyTargets) => {
     WeeklyTargets.deleteTargetFromWeeklyTargets(target.tb_id)
@@ -100,9 +101,9 @@ const Home = () => {
     return (
       <View style={styles.container}>
         <AddToDayList
+          colorScheme={colorScheme}
           onAddPress={handleAddToDay}
           allTargets={allTargets}
-          colorScheme={colorScheme}
           activeTargetQuantity={activeTargetQuantity}
         />
       </View>
@@ -110,12 +111,11 @@ const Home = () => {
   }
 };
 
-export default Home;
+export default React.memo(Home);
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    // padding: 20,
   },
 });

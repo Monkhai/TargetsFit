@@ -1,5 +1,5 @@
 import { Alert, ColorSchemeName, StyleSheet, TextInput, View } from 'react-native';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Modal from 'react-native-modal';
 import { BORDER_RADIUS } from '../../constants/SIZES';
 import Colors from '../../constants/Colors';
@@ -7,6 +7,7 @@ import Button from '../Button';
 import { NewTarget, Target, TargetType } from '../../db/db';
 import { Picker } from '@react-native-picker/picker';
 import { Text } from '../Themed';
+import { heavyHaptics } from '../../utilityFunctions/haptics';
 
 interface Props {
   colorScheme: ColorSchemeName;
@@ -29,6 +30,12 @@ const EditTargetModal = ({
 
   const quantityInputRef = useRef<TextInput>(null);
 
+  useEffect(() => {
+    setName(editedTarget.name);
+    setQuantity(editedTarget.quantity);
+    setSelectedType(editedTarget.type);
+  }, [editedTarget]);
+
   const handlePress = () => {
     if (!name) return Alert.alert('Must choose a name');
     if (!quantity) return Alert.alert('Must choose a quantity');
@@ -42,6 +49,8 @@ const EditTargetModal = ({
 
     setIsEditTargetModalVisible(false);
   };
+
+  if (!editedTarget.id) return null;
 
   return (
     <Modal
@@ -119,7 +128,12 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     width: '100%',
   },
-  headerText: { fontSize: 20, fontWeight: '600', flex: 1 },
+  headerText: {
+    fontSize: 20,
+    fontWeight: '600',
+    flex: 1,
+    textAlign: 'center',
+  },
   textInput: {
     borderRadius: BORDER_RADIUS,
     fontSize: 18,

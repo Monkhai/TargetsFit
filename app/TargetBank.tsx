@@ -1,34 +1,21 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
-import {
-  Alert,
-  FlatList,
-  Pressable,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
-  useColorScheme,
-} from 'react-native';
-import Modal from 'react-native-modal';
-import { Menu } from 'react-native-popup-menu';
+import { useNavigation } from 'expo-router';
+import React, { useContext, useEffect, useState } from 'react';
+import { Alert, FlatList, StyleSheet, useColorScheme } from 'react-native';
 import Button from '../components/Button';
 import LoadingErrorHome from '../components/LoadingErrorHome';
-import { Text, View } from '../components/Themed';
+import BankListItem from '../components/TargetBank/BankListItem';
+import EditTargetModal from '../components/TargetBank/EditTargetModal';
+import NewTargetModal from '../components/TargetBank/NewTargetModal';
+import { View } from '../components/Themed';
 import Colors from '../constants/Colors';
-import { BORDER_RADIUS, LIST_ITEM_HEIGHT } from '../constants/SIZES';
+import { LIST_ITEM_HEIGHT } from '../constants/SIZES';
 import ActiveQuantityContext from '../context/ActiveQuantityContext';
 import DBContext from '../context/DBLoadingContext';
 import TargetsContext from '../context/TargetsContext';
-import { NewTarget, Target, TargetDAO, TargetType } from '../db/db';
-import { Picker } from '@react-native-picker/picker';
-import { useNavigation } from 'expo-router';
-import NewTargetModal from '../components/TargetBank/NewTargetModal';
-import { FontAwesome } from '@expo/vector-icons';
-import Animated from 'react-native-reanimated';
-import BankListItem from '../components/TargetBank/BankListItem';
-import EditTargetModal from '../components/TargetBank/EditTargetModal';
+import { NewTarget, Target, TargetDAO } from '../db/db';
+import { heavyHaptics } from '../utilityFunctions/haptics';
 
 const Targets = new TargetDAO();
-const AnimatedFontAwesome = Animated.createAnimatedComponent(FontAwesome);
 const TargetBank = () => {
   const colorScheme = useColorScheme();
   const navigator = useNavigation();
@@ -43,20 +30,6 @@ const TargetBank = () => {
   const [isNewModalVisible, setIsNewModalVisible] = useState(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
 
-  const menuRef = useRef<Menu>(null);
-
-  const editNameRef = useRef<TextInput>(null);
-  const editTypeRef = useRef<TextInput>(null);
-  const editQuantityRef = useRef<TextInput>(null);
-
-  //add new target modal
-  //add new target modal
-  //add new target modal
-
-  //add new target modal
-  //add new target modal
-  //add new target modal
-
   const handleTargetDelete = (target: Target) => {
     Targets.deleteTarget(target.id)
       .then(() => {
@@ -66,12 +39,8 @@ const TargetBank = () => {
       .catch((error: Error) => Alert.alert(error.message));
   };
 
-  const handleModalCancel = () => {
-    if (isNewModalVisible) setIsNewModalVisible(false);
-    if (isEditModalVisible) setIsEditModalVisible(false);
-  };
-
   const handleTargetLongPress = (target: Target) => {
+    heavyHaptics();
     setEditedTarget(() => {
       setIsEditModalVisible(true);
       return target;
@@ -114,16 +83,14 @@ const TargetBank = () => {
     return (
       <View style={styles.container}>
         <View
-          style={{
-            width: '100%',
-            height: '100%',
-            backgroundColor: Colors[colorScheme ?? 'light'].backgroundSecondary,
-            borderRadius: 10,
-            padding: 10,
-          }}
+          style={[
+            styles.card,
+            { backgroundColor: Colors[colorScheme ?? 'light'].backgroundSecondary },
+          ]}
         >
           <FlatList
             data={targets}
+            keyExtractor={(item, index) => item.name + index}
             renderItem={({ item: target }) => (
               <BankListItem
                 colorScheme={colorScheme}
@@ -152,7 +119,7 @@ const TargetBank = () => {
   }
 };
 
-export default TargetBank;
+export default React.memo(TargetBank);
 
 const styles = StyleSheet.create({
   container: {
@@ -162,35 +129,11 @@ const styles = StyleSheet.create({
     padding: '3%',
   },
 
-  listItemContainer: {
-    flexDirection: 'row',
-    height: LIST_ITEM_HEIGHT,
-    alignItems: 'center',
-    backgroundColor: 'transparent',
-    gap: 30,
-  },
-  listItemText: {
-    fontSize: 15,
-  },
-  addButtonContainer: {
-    height: 32,
-    width: 48,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 8,
-  },
-  addButtonPlus: {
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
+  card: {
+    width: '100%',
+    height: '100%',
 
-  headerContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingRight: 10,
-    paddingBottom: 10,
+    borderRadius: 10,
+    padding: 10,
   },
-
-  headerTitle: { fontSize: 24, fontWeight: 'bold' },
 });

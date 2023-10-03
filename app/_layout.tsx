@@ -66,9 +66,7 @@ export default function RootLayout() {
             refetch: refetchActiveCount,
           }}
         >
-          <MenuProvider>
-            <RootLayoutNav />
-          </MenuProvider>
+          <RootLayoutNav />
         </ActiveQuantityContext.Provider>
       </TargetsContext.Provider>
     </DBContext.Provider>

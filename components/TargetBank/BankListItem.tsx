@@ -1,8 +1,9 @@
-import { ColorSchemeName, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import React from 'react';
-import { LIST_ITEM_HEIGHT } from '../../constants/SIZES';
-import { ActiveTargetQuantity, Target } from '../../db/db';
+import { ColorSchemeName, Pressable, StyleSheet, TouchableOpacity } from 'react-native';
 import Colors from '../../constants/Colors';
+import { LIST_ITEM_HEIGHT } from '../../constants/SIZES';
+import { Target } from '../../db/db';
+import { Text, View } from '../Themed';
 
 interface Props {
   colorScheme: ColorSchemeName;
@@ -33,7 +34,7 @@ const BankListItem = ({ target, onRemovePress, onLongPress, colorScheme }: Props
   );
 };
 
-export default BankListItem;
+export default React.memo(BankListItem);
 
 const styles = StyleSheet.create({
   listItemContainer: {
@@ -41,6 +42,7 @@ const styles = StyleSheet.create({
     height: LIST_ITEM_HEIGHT,
     alignItems: 'center',
     gap: 30,
+    backgroundColor: 'transparent',
   },
   listItemText: {
     fontSize: 15,

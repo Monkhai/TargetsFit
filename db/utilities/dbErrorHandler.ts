@@ -6,6 +6,7 @@ export const handleError = (
   error: Error | SQLite.SQLError,
   reject: (reason?: any) => void
 ) => {
+  console.log(`An error has occurred whilst ${errorMessage}: ${error}.`);
   Alert.alert(`An error has occurred whilst ${errorMessage}: ${error}.`);
   reject(error);
 };

@@ -270,7 +270,6 @@ export class TargetByDaysDAO {
     const TargetsDAO = new TargetDAO();
     const allTargets = await TargetsDAO.getAllTargets();
 
-    // Initialize the Map with target ids.
     allTargets.forEach((target) => {
       activeCountMap.set(target.id, 0);
     });
@@ -284,7 +283,6 @@ export class TargetByDaysDAO {
       });
     });
 
-    // Convert Map to the required array format.
     const activeCountArray = Array.from(activeCountMap.entries())
       .map(([id, activeCount]) => {
         const target = allTargets.find((target) => target.id === id);
@@ -292,7 +290,8 @@ export class TargetByDaysDAO {
           return { target, activeCount };
         }
       })
-      .filter((item): item is ActiveTargetQuantity => item !== undefined);
+      .filter((item): item is ActiveTargetQuantity => item !== undefined)
+      .filter((item) => item.activeCount !== item.target.quantity); // Adaptation here
 
     return activeCountArray;
   }
