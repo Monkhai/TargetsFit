@@ -1,30 +1,25 @@
-import React, { useCallback, useContext, useRef, useState } from 'react';
+import React, { useCallback, useContext, useState } from 'react';
 import {
   Alert,
-  Dimensions,
-  FlatList,
   NativeScrollEvent,
   NativeSyntheticEvent,
   ScrollView,
   StyleSheet,
   useColorScheme,
 } from 'react-native';
-import { Menu } from 'react-native-popup-menu';
 import AddToDayList from '../components/Home/AddToDayList';
+import DailyTargetList from '../components/Home/DailyTargetList';
 import LoadingErrorHome from '../components/LoadingErrorHome';
 import { Text, View } from '../components/Themed';
+import { SCREEN_WIDTH } from '../constants/SIZES';
 import ActiveQuantityContext from '../context/ActiveQuantityContext';
 import DBContext from '../context/DBLoadingContext';
 import TargetsContext from '../context/TargetsContext';
+import WeeklyTargetsContext from '../context/WeeklyTargetsContext';
 import { DayId, Target, TargetByDaysDAO, TargetInWeeklyTargets } from '../db/db';
-import useGetWeeklyTargets from '../hooks/useGetWeeklyTargets';
-import Colors from '../constants/Colors';
-import { SCREEN_WIDTH } from '../constants/SIZES';
-import DailyTargetList from '../components/Home/DailyTargetList';
-
-const WeeklyTargets = new TargetByDaysDAO();
 
 const Home = () => {
+  const WeeklyTargets = new TargetByDaysDAO();
   const colorScheme = useColorScheme();
   const [dayPage, setDayPage] = useState<1 | 2 | 3 | 4 | 5 | 6 | 7>(1);
 
@@ -35,8 +30,6 @@ const Home = () => {
     isLoading: allTargetsIsLoading,
     error: allTargetsError,
     refetch: refetchAllTargets,
-    filter,
-    setFilter,
   } = useContext(TargetsContext);
 
   const {
@@ -44,7 +37,7 @@ const Home = () => {
     isLoading: weeklyTaretsIsLoading,
     error: weeklyTaretsError,
     refetch: refetchWeeklyTergets,
-  } = useGetWeeklyTargets(isDBLoading, filter);
+  } = useContext(WeeklyTargetsContext);
 
   const {
     activeTargetQuantity,
@@ -53,15 +46,18 @@ const Home = () => {
     refetch: refetchActiveCount,
   } = useContext(ActiveQuantityContext);
 
-  const handleHViewScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-    const screenWidth = Dimensions.get('screen').width;
-    const offsetX = event.nativeEvent.contentOffset.x;
-    const page = Math.round(offsetX / screenWidth);
-    const dayId: DayId = (page + 1) as DayId;
-    if (dayPage !== dayId) {
-      setDayPage(dayId);
-    }
-  };
+  const handleHViewScroll = useCallback(
+    (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+      const screenWidth = SCREEN_WIDTH;
+      const offsetX = event.nativeEvent.contentOffset.x;
+      const page = Math.round(offsetX / screenWidth);
+      const dayId: DayId = (page + 1) as DayId;
+      if (dayPage !== dayId) {
+        setDayPage(dayId);
+      }
+    },
+    [dayPage]
+  );
 
   const handleAddToDay = useCallback(
     (target: Target) => {
@@ -78,7 +74,7 @@ const Home = () => {
     [dayPage]
   );
 
-  const handleItemDelete = (target: TargetInWeeklyTargets) => {
+  const handleItemDelete = useCallback((target: TargetInWeeklyTargets) => {
     WeeklyTargets.deleteTargetFromWeeklyTargets(target.tb_id)
       .then(() => {
         refetchActiveCount();
@@ -88,7 +84,7 @@ const Home = () => {
       .catch((error: Error) => {
         Alert.alert(error.message);
       });
-  };
+  }, []);
 
   if (allTargetsIsLoading || weeklyTaretsIsLoading || isDBLoading || isActiveCountLoading) {
     return <LoadingErrorHome message="Loading..." />;

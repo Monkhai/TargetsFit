@@ -1,8 +1,8 @@
+import React, { useEffect, useState } from 'react';
 import { ColorSchemeName, FlatList, StyleSheet, Text, View } from 'react-native';
-import React from 'react';
-import { SCREEN_WIDTH } from '../../constants/SIZES';
 import Colors from '../../constants/Colors';
-import { DailyTargets, Target, TargetInWeeklyTargets } from '../../db/db';
+import { SCREEN_WIDTH } from '../../constants/SIZES';
+import { DailyTargets, TargetInWeeklyTargets } from '../../db/db';
 import DailyTargetListItem from './DailyTargetListItem';
 
 interface Props {
@@ -12,6 +12,43 @@ interface Props {
 }
 
 const DailyTargetList = ({ colorScheme, dailyTargets, onRemovePress }: Props) => {
+  const [completionMap, setCompletionMap] = useState(new Map<number, boolean>());
+
+  useEffect(() => {
+    const newMap = new Map(completionMap);
+
+    // Compare the previous and current targets
+    const prevTargets = Array.from(completionMap.keys());
+    const currentTargets = dailyTargets.targets.map((t) => t.tb_id);
+
+    // Check for added and removed targets
+    const addedTargets = currentTargets.filter((id) => !prevTargets.includes(id));
+    const removedTargets = prevTargets.filter((id) => !currentTargets.includes(id));
+
+    // Initialize statuses for added targets
+    addedTargets.forEach((id) => {
+      newMap.set(id, false);
+    });
+
+    // Remove statuses for removed targets
+    removedTargets.forEach((id) => {
+      newMap.delete(id);
+    });
+
+    setCompletionMap(newMap);
+  }, [dailyTargets.targets]);
+
+  const handleStatusToggle = (id: number, status: boolean | undefined) => {
+    const newMap = new Map(completionMap);
+
+    if (status === true) {
+      newMap.set(id, false);
+    } else if (status === false || status === undefined) {
+      newMap.set(id, true);
+    }
+    setCompletionMap(newMap);
+  };
+
   return (
     <View style={styles.container}>
       <View
@@ -23,8 +60,11 @@ const DailyTargetList = ({ colorScheme, dailyTargets, onRemovePress }: Props) =>
         <Text style={styles.header}>{dailyTargets.day.name}</Text>
         <FlatList
           data={dailyTargets.targets}
+          keyExtractor={(item) => item.tb_id.toString()}
           renderItem={({ item: target }) => (
             <DailyTargetListItem
+              status={completionMap.get(target.tb_id)}
+              onStatusToggle={handleStatusToggle}
               colorScheme={colorScheme}
               target={target}
               onRemovePress={onRemovePress}
@@ -36,7 +76,7 @@ const DailyTargetList = ({ colorScheme, dailyTargets, onRemovePress }: Props) =>
   );
 };
 
-export default DailyTargetList;
+export default React.memo(DailyTargetList);
 
 const styles = StyleSheet.create({
   container: {

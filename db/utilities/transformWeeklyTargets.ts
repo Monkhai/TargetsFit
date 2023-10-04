@@ -29,5 +29,24 @@ export const transformWeeklyTargets = (rawTargets: RawWeeklyTargets) => {
     }
   });
 
+  // Sort the targets within each day first by type, and then by name
+  week.forEach((day) => {
+    day.targets.sort((a, b) => {
+      if (a.type === b.type) {
+        return a.name.localeCompare(b.name); // Sort by name if types are the same
+      }
+      // Define the order for types here (specific, strength, mobility, flexibility, VO2)
+      const typeOrder = {
+        specific: 0,
+        strength: 1,
+        mobility: 2,
+        flexibility: 3,
+        cardio: 4,
+        VO2: 5,
+      };
+      return typeOrder[a.type] - typeOrder[b.type];
+    });
+  });
+
   return week;
 };

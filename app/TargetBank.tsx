@@ -1,5 +1,5 @@
 import { useNavigation } from 'expo-router';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { Alert, FlatList, StyleSheet, useColorScheme } from 'react-native';
 import Button from '../components/Button';
 import LoadingErrorHome from '../components/LoadingErrorHome';
@@ -8,20 +8,23 @@ import EditTargetModal from '../components/TargetBank/EditTargetModal';
 import NewTargetModal from '../components/TargetBank/NewTargetModal';
 import { View } from '../components/Themed';
 import Colors from '../constants/Colors';
-import { LIST_ITEM_HEIGHT } from '../constants/SIZES';
 import ActiveQuantityContext from '../context/ActiveQuantityContext';
 import DBContext from '../context/DBLoadingContext';
-import TargetsContext from '../context/TargetsContext';
 import { NewTarget, Target, TargetDAO } from '../db/db';
 import { heavyHaptics } from '../utilityFunctions/haptics';
+import TargetsContext from '../context/TargetsContext';
+import WeeklyTargetsContext from '../context/WeeklyTargetsContext';
 
 const Targets = new TargetDAO();
+
 const TargetBank = () => {
   const colorScheme = useColorScheme();
   const navigator = useNavigation();
 
   const { isLoading: isDBLoading } = useContext(DBContext);
-  const { targets, isLoading, error, refetch, filter, setFilter } = useContext(TargetsContext);
+  const { targets, isLoading, error, refetch: refetchAllTargets } = useContext(TargetsContext);
+
+  const { refetch: refetchWeeklyTergets } = useContext(WeeklyTargetsContext);
 
   const { refetch: refetchActiveCount } = useContext(ActiveQuantityContext);
 
@@ -33,7 +36,8 @@ const TargetBank = () => {
   const handleTargetDelete = (target: Target) => {
     Targets.deleteTarget(target.id)
       .then(() => {
-        refetch();
+        refetchWeeklyTergets();
+        refetchAllTargets();
         refetchActiveCount();
       })
       .catch((error: Error) => Alert.alert(error.message));
@@ -50,7 +54,7 @@ const TargetBank = () => {
   const handleModalSave = (newTarget: NewTarget) => {
     Targets.createNewTarget(newTarget)
       .then(() => {
-        refetch();
+        refetchAllTargets();
         refetchActiveCount();
       })
       .then(() => setIsNewModalVisible(false))
@@ -59,7 +63,7 @@ const TargetBank = () => {
 
   const handleModalEdit = (updatedTarget: Target) => {
     Targets.updateTarget(updatedTarget)
-      .then(() => refetch())
+      .then(() => refetchAllTargets())
       .then(() => setIsEditModalVisible(false))
       .catch((error: Error) => Alert.alert(error.message));
   };

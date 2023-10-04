@@ -10,8 +10,8 @@ const useGetAllTargets = (isDBLoading: boolean, filter?: string) => {
 
   const fetchTargets = useCallback(() => {
     TargetDB.getAllTargets(filter)
-      .then((result) => {
-        setTargets(result);
+      .then((targets) => {
+        setTargets(targets);
         setIsLoading(false);
       })
       .catch((error) => {

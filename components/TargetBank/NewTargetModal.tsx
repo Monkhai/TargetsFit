@@ -92,7 +92,7 @@ const NewTargetModal = ({
   );
 };
 
-export default NewTargetModal;
+export default React.memo(NewTargetModal);
 
 const styles = StyleSheet.create({
   modal: { width: '100%', margin: 0, top: -50 },

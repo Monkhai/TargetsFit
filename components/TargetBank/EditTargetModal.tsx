@@ -106,7 +106,7 @@ const EditTargetModal = ({
   );
 };
 
-export default EditTargetModal;
+export default React.memo(EditTargetModal);
 
 const styles = StyleSheet.create({
   modal: { width: '100%', margin: 0, top: -50 },

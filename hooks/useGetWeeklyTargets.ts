@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useState } from 'react';
 import { TargetByDaysDAO, WeeklyTargets } from '../db/db';
 
-const TargetsByDays = new TargetByDaysDAO();
-
-const useGetWeeklyTargets = (isDBLoading: boolean, filter?: string) => {
+const useGetWeeklyTargets = (isDBLoading: boolean) => {
   const [isLoading, setIsloading] = useState(true);
-  const [error, setError] = useState<Error | null>();
+  const [error, setError] = useState<Error | undefined>();
   const [weeklyTargets, setWeeklyTargets] = useState<WeeklyTargets>([]);
+
+  const TargetsByDays = new TargetByDaysDAO();
 
   const fetchTargets = useCallback(() => {
     TargetsByDays.getWeeklyTargets()
@@ -18,11 +18,11 @@ const useGetWeeklyTargets = (isDBLoading: boolean, filter?: string) => {
         setError(error);
         setIsloading(false);
       });
-  }, [TargetsByDays, filter]);
+  }, [TargetsByDays]);
 
   useEffect(() => {
     if (!isDBLoading) fetchTargets();
-  }, [isDBLoading, filter]);
+  }, [isDBLoading]);
   return { isLoading, error, weeklyTargets, refetch: fetchTargets };
 };
 

@@ -1,5 +1,5 @@
 import { FontAwesome } from '@expo/vector-icons';
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { ColorSchemeName, Pressable, StyleSheet, View } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import Colors from '../../constants/Colors';
@@ -19,6 +19,7 @@ interface Props {
 const AddToDayList = ({ colorScheme, activeTargetQuantity, allTargets, onAddPress }: Props) => {
   const height = useSharedValue<number>(0);
   const rotateChevron = useSharedValue<number>(0);
+  const prevLength = useRef(activeTargetQuantity.length);
 
   const chevronStyles = useAnimatedStyle(() => {
     return { transform: [{ rotateZ: `${rotateChevron.value}deg` }] };
@@ -28,6 +29,17 @@ const AddToDayList = ({ colorScheme, activeTargetQuantity, allTargets, onAddPres
     if (activeTargetQuantity.length === 0) {
       height.value = 0;
       rotateChevron.value = 0;
+    }
+
+    if (
+      activeTargetQuantity.length !== 0 &&
+      activeTargetQuantity.length !== prevLength.current &&
+      height.value !== 0
+    ) {
+      height.value = LIST_ITEM_HEIGHT * activeTargetQuantity.length;
+      rotateChevron.value = 90;
+
+      prevLength.current = activeTargetQuantity.length;
     }
   }, [activeTargetQuantity]);
 

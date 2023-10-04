@@ -10,6 +10,8 @@ import useInitializeTables from '../hooks/useCreateDB';
 import useGetAllTargets from '../hooks/useGetAllTargets';
 import useGetActiveQuantity from '../hooks/useGetActiveQuantity';
 import ActiveQuantityContext from '../context/ActiveQuantityContext';
+import useGetWeeklyTargets from '../hooks/useGetWeeklyTargets';
+import WeeklyTargetsContext from '../context/WeeklyTargetsContext';
 
 export { ErrorBoundary } from 'expo-router';
 
@@ -18,12 +20,20 @@ SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
   const { isLoading: isDBLoading, error: dbError } = useInitializeTables();
   const [filter, setFilter] = useState<string>();
+
   const {
     targets,
     isLoading: isAllTargetsLoading,
     error: allTargetsError,
     refetch,
   } = useGetAllTargets(isDBLoading, filter);
+
+  const {
+    weeklyTargets,
+    isLoading: weeklyTaretsIsLoading,
+    error: weeklyTargetsError,
+    refetch: refetchWeeklyTergets,
+  } = useGetWeeklyTargets(isDBLoading);
 
   const {
     activeTargetQuantity,
@@ -58,16 +68,25 @@ export default function RootLayout() {
           setFilter,
         }}
       >
-        <ActiveQuantityContext.Provider
+        <WeeklyTargetsContext.Provider
           value={{
-            activeTargetQuantity: activeTargetQuantity,
-            isLoading: isActiveCountLoading,
-            error: activeCountError,
-            refetch: refetchActiveCount,
+            weeklyTargets,
+            isLoading: weeklyTaretsIsLoading,
+            error: weeklyTargetsError,
+            refetch: refetchWeeklyTergets,
           }}
         >
-          <RootLayoutNav />
-        </ActiveQuantityContext.Provider>
+          <ActiveQuantityContext.Provider
+            value={{
+              activeTargetQuantity: activeTargetQuantity,
+              isLoading: isActiveCountLoading,
+              error: activeCountError,
+              refetch: refetchActiveCount,
+            }}
+          >
+            <RootLayoutNav />
+          </ActiveQuantityContext.Provider>
+        </WeeklyTargetsContext.Provider>
       </TargetsContext.Provider>
     </DBContext.Provider>
   );
