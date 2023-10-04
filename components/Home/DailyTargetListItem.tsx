@@ -23,13 +23,12 @@ const DailyTargetListItem = ({
 }: Props) => {
   return (
     <View style={styles.listItemContainer}>
-      <Pressable
-        onPress={() => onStatusToggle(target.tb_id, status)}
-        style={{ flex: 1, flexDirection: 'row', gap: 20, paddingLeft: 10 }}
-      >
-        <FontAwesome name={status ? 'circle' : 'circle-o'} color={'red'} size={20} />
+      <View style={{ flex: 1, flexDirection: 'row', gap: 20, paddingLeft: 10 }}>
+        <Pressable onPress={() => onStatusToggle(target.tb_id, status)}>
+          <FontAwesome name={status ? 'circle' : 'circle-o'} color={'red'} size={20} />
+        </Pressable>
         <Text style={[styles.listItemText]}>{target.name}</Text>
-      </Pressable>
+      </View>
       <Text style={styles.listItemText}>{target.type}</Text>
       <TouchableOpacity onPress={() => onRemovePress(target)}>
         <View
