@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { ColorSchemeName, FlatList, StyleSheet, Text, View } from 'react-native';
+import { ColorSchemeName, FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import Colors from '../../constants/Colors';
 import { SCREEN_WIDTH } from '../../constants/SIZES';
 import { DailyTargets, TargetInWeeklyTargets } from '../../db/db';
 import DailyTargetListItem from './DailyTargetListItem';
+import DraggableFlatList, { ScaleDecorator } from 'react-native-draggable-flatlist';
 
 interface Props {
   colorScheme: ColorSchemeName;
@@ -13,6 +14,8 @@ interface Props {
 
 const DailyTargetList = ({ colorScheme, dailyTargets, onRemovePress }: Props) => {
   const [completionMap, setCompletionMap] = useState(new Map<number, boolean>());
+
+  const [draggableData, setDraggableData] = useState(dailyTargets.targets);
 
   useEffect(() => {
     const newMap = new Map(completionMap);
@@ -38,6 +41,25 @@ const DailyTargetList = ({ colorScheme, dailyTargets, onRemovePress }: Props) =>
     setCompletionMap(newMap);
   }, [dailyTargets.targets]);
 
+  useEffect(() => {
+    // Extract IDs for easy comparison
+    const draggableIds = new Set(draggableData.map((t) => t.tb_id));
+    const dailyTargetIds = new Set(dailyTargets.targets.map((t) => t.tb_id));
+
+    // Find new targets
+    const newTargets = dailyTargets.targets.filter((t) => !draggableIds.has(t.tb_id));
+
+    // Find removed targets
+    const removedTargets = draggableData.filter((t) => !dailyTargetIds.has(t.tb_id));
+
+    // Remove the removed targets and append the new targets
+    const updatedDraggableData = draggableData
+      .filter((t) => !removedTargets.includes(t))
+      .concat(newTargets);
+
+    setDraggableData(updatedDraggableData);
+  }, [dailyTargets]);
+
   const handleStatusToggle = (id: number, status: boolean | undefined) => {
     const newMap = new Map(completionMap);
 
@@ -58,17 +80,27 @@ const DailyTargetList = ({ colorScheme, dailyTargets, onRemovePress }: Props) =>
         ]}
       >
         <Text style={styles.header}>{dailyTargets.day.name}</Text>
-        <FlatList
-          data={dailyTargets.targets}
+        <DraggableFlatList
+          data={draggableData}
+          onDragEnd={({ data }) => setDraggableData(data)}
           keyExtractor={(item) => item.tb_id.toString()}
-          renderItem={({ item: target }) => (
-            <DailyTargetListItem
-              status={completionMap.get(target.tb_id)}
-              onStatusToggle={handleStatusToggle}
-              colorScheme={colorScheme}
-              target={target}
-              onRemovePress={onRemovePress}
-            />
+          renderItem={({ item: target, drag }) => (
+            <ScaleDecorator>
+              <Pressable
+                onLongPress={() => {
+                  // Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+                  drag();
+                }}
+              >
+                <DailyTargetListItem
+                  status={completionMap.get(target.tb_id)}
+                  onStatusToggle={handleStatusToggle}
+                  colorScheme={colorScheme}
+                  target={target}
+                  onRemovePress={onRemovePress}
+                />
+              </Pressable>
+            </ScaleDecorator>
           )}
         />
       </View>
