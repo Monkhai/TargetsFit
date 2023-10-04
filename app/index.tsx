@@ -106,6 +106,7 @@ const Home = () => {
     return (
       <View style={styles.container}>
         <ScrollView
+          scrollEventThrottle={16}
           onScroll={handleHViewScroll}
           pagingEnabled
           showsHorizontalScrollIndicator={false}
