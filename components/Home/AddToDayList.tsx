@@ -1,5 +1,5 @@
 import { FontAwesome } from '@expo/vector-icons';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { ColorSchemeName, Pressable, StyleSheet, View } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import Colors from '../../constants/Colors';
@@ -20,11 +20,9 @@ const AddToDayList = ({ colorScheme, activeTargetQuantity, allTargets, onAddPres
   const height = useSharedValue<number>(0);
   const rotateChevron = useSharedValue<number>(0);
 
-  const chevronStyles = useAnimatedStyle(() => ({
-    transform: [{ rotateZ: `${rotateChevron.value}deg` }],
-  }));
-
-  console.log('rendred');
+  const chevronStyles = useAnimatedStyle(() => {
+    return { transform: [{ rotateZ: `${rotateChevron.value}deg` }] };
+  });
 
   const toggleFlatListHeight = () => {
     if (height.value === 0) {
@@ -59,12 +57,13 @@ const AddToDayList = ({ colorScheme, activeTargetQuantity, allTargets, onAddPres
           >
             Add to Day
           </Text>
-          <AnimatedFontAwesome
-            style={chevronStyles}
-            name="chevron-right"
-            size={14}
-            color={activeTargetQuantity.length > 0 ? 'red' : 'gray'}
-          />
+          <Animated.View style={chevronStyles}>
+            <FontAwesome
+              name="chevron-right"
+              size={14}
+              color={activeTargetQuantity.length > 0 ? 'red' : 'gray'}
+            />
+          </Animated.View>
         </Pressable>
         <Animated.FlatList
           contentContainerStyle={{ flex: 1 }}
