@@ -126,7 +126,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'flex-start',
     alignItems: 'center',
-    padding: '3%',
+    padding: 13,
   },
 
   card: {

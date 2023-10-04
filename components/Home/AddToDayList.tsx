@@ -1,5 +1,5 @@
 import { FontAwesome } from '@expo/vector-icons';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { ColorSchemeName, Pressable, StyleSheet, View } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import Colors from '../../constants/Colors';
@@ -23,6 +23,13 @@ const AddToDayList = ({ colorScheme, activeTargetQuantity, allTargets, onAddPres
   const chevronStyles = useAnimatedStyle(() => {
     return { transform: [{ rotateZ: `${rotateChevron.value}deg` }] };
   });
+
+  useEffect(() => {
+    if (activeTargetQuantity.length === 0) {
+      height.value = 0;
+      rotateChevron.value = 0;
+    }
+  }, [activeTargetQuantity]);
 
   const toggleFlatListHeight = () => {
     if (height.value === 0) {
@@ -55,7 +62,7 @@ const AddToDayList = ({ colorScheme, activeTargetQuantity, allTargets, onAddPres
               { color: activeTargetQuantity.length > 0 ? 'red' : 'gray' },
             ]}
           >
-            Add to Day
+            Add Targets
           </Text>
           <Animated.View style={chevronStyles}>
             <FontAwesome
@@ -94,7 +101,7 @@ export default React.memo(AddToDayList);
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    padding: '3%',
+    padding: 13,
   },
   flatListContainer: {
     height: 'auto',
@@ -106,6 +113,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   headerContainer: {
+    // height: 48,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
