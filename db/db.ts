@@ -186,11 +186,20 @@ export class TargetDAO {
     return new Promise((resolve, reject) => {
       db.transaction(
         (tx: SQLite.SQLTransaction) => {
-          tx.executeSql(
-            `INSERT INTO targets (name, quantity, type) VALUES (?, ?, ?)`,
-            [target.name, target.quantity, target.type],
-            () => resolve('created new targets')
-          );
+          // First check if a target with the same name already exists
+          tx.executeSql(`SELECT * FROM targets WHERE name = ?`, [target.name], (_, resultSet) => {
+            if (resultSet.rows.length > 0) {
+              // A target with the same name already exists
+              reject(new Error('Target already exists'));
+            } else {
+              // If not, create the new target
+              tx.executeSql(
+                `INSERT INTO targets (name, quantity, type) VALUES (?, ?, ?)`,
+                [target.name, target.quantity, target.type],
+                () => resolve('created new targets')
+              );
+            }
+          });
         },
         (error: Error) => handleError('creating new target', error, reject)
       );

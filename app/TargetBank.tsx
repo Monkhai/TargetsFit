@@ -58,7 +58,10 @@ const TargetBank = () => {
         refetchActiveCount();
       })
       .then(() => setIsNewModalVisible(false))
-      .catch((error: Error) => Alert.alert(error.message));
+      .catch((error: Error) => {
+        console.log(error);
+        Alert.alert(error.message);
+      });
   };
 
   const handleModalEdit = (updatedTarget: Target) => {
