@@ -16,16 +16,11 @@ const BankListItem = ({ target, onRemovePress, onLongPress, colorScheme }: Props
   return (
     <Pressable onLongPress={() => onLongPress(target)}>
       <View style={styles.listItemContainer}>
-        <Text style={[styles.listItemText, { flex: 1 }]}>{target.name}</Text>
+        <Text style={[styles.listItemText, { flex: 1, fontWeight: '700', color: 'red' }]}>{target.name}</Text>
         <Text style={styles.listItemText}>{target.type}</Text>
         <Text style={styles.listItemText}>{target.quantity}</Text>
         <TouchableOpacity onPress={() => onRemovePress(target)}>
-          <View
-            style={[
-              styles.addButtonContainer,
-              { backgroundColor: Colors[colorScheme ?? 'light'].tertiary },
-            ]}
-          >
+          <View style={[styles.addButtonContainer, { backgroundColor: Colors[colorScheme ?? 'light'].tertiary }]}>
             <Text style={styles.removeButton}>-</Text>
           </View>
         </TouchableOpacity>

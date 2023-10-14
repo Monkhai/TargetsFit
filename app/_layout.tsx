@@ -12,6 +12,8 @@ import useGetActiveQuantity from '../hooks/useGetActiveQuantity';
 import ActiveQuantityContext from '../context/ActiveQuantityContext';
 import useGetWeeklyTargets from '../hooks/useGetWeeklyTargets';
 import WeeklyTargetsContext from '../context/WeeklyTargetsContext';
+import { Text } from '../components/Themed';
+import { FontAwesome } from '@expo/vector-icons';
 
 export { ErrorBoundary } from 'expo-router';
 
@@ -21,12 +23,7 @@ export default function RootLayout() {
   const { isLoading: isDBLoading, error: dbError } = useInitializeTables();
   const [filter, setFilter] = useState<string>();
 
-  const {
-    targets,
-    isLoading: isAllTargetsLoading,
-    error: allTargetsError,
-    refetch,
-  } = useGetAllTargets(isDBLoading, filter);
+  const { targets, isLoading: isAllTargetsLoading, error: allTargetsError, refetch } = useGetAllTargets(isDBLoading, filter);
 
   const {
     weeklyTargets,
@@ -96,12 +93,17 @@ function RootLayoutNav() {
   const colorScheme = useColorScheme();
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Tabs>
+      <Tabs
+        screenOptions={{
+          tabBarActiveTintColor: Colors[colorScheme ?? 'light'].accent,
+        }}
+      >
         <Tabs.Screen
           name="index"
           options={{
             title: 'Home',
             tabBarShowLabel: false,
+            tabBarIcon: (props) => <FontAwesome name="home" size={props.size} color={props.color} />,
           }}
         />
 
@@ -110,6 +112,7 @@ function RootLayoutNav() {
           options={{
             title: 'Target Bank',
             tabBarShowLabel: false,
+            tabBarIcon: (props) => <FontAwesome name="bullseye" size={props.size} color={props.color} />,
           }}
         />
       </Tabs>

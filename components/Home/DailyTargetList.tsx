@@ -53,9 +53,7 @@ const DailyTargetList = ({ colorScheme, dailyTargets, onRemovePress }: Props) =>
     const removedTargets = draggableData.filter((t) => !dailyTargetIds.has(t.tb_id));
 
     // Remove the removed targets and append the new targets
-    const updatedDraggableData = draggableData
-      .filter((t) => !removedTargets.includes(t))
-      .concat(newTargets);
+    const updatedDraggableData = draggableData.filter((t) => !removedTargets.includes(t)).concat(newTargets);
 
     setDraggableData(updatedDraggableData);
   }, [dailyTargets]);
@@ -73,15 +71,11 @@ const DailyTargetList = ({ colorScheme, dailyTargets, onRemovePress }: Props) =>
 
   return (
     <View style={styles.container}>
-      <View
-        style={[
-          styles.secondaryContainer,
-          { backgroundColor: Colors[colorScheme ?? 'light'].backgroundSecondary },
-        ]}
-      >
+      <View style={[styles.secondaryContainer, { backgroundColor: Colors[colorScheme ?? 'light'].backgroundSecondary }]}>
         <Text style={styles.header}>{dailyTargets.day.name}</Text>
         <DraggableFlatList
           data={draggableData}
+          showsVerticalScrollIndicator={false}
           onDragEnd={({ data }) => setDraggableData(data)}
           keyExtractor={(item) => item.tb_id.toString()}
           renderItem={({ item: target, drag }) => (
@@ -120,6 +114,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     padding: 10,
+    overflow: 'hidden',
   },
   header: {
     alignSelf: 'center',

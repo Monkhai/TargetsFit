@@ -89,13 +89,9 @@ const TargetBank = () => {
   } else {
     return (
       <View style={styles.container}>
-        <View
-          style={[
-            styles.card,
-            { backgroundColor: Colors[colorScheme ?? 'light'].backgroundSecondary },
-          ]}
-        >
+        <View style={[styles.card, { backgroundColor: Colors[colorScheme ?? 'light'].backgroundSecondary }]}>
           <FlatList
+            showsVerticalScrollIndicator={false}
             data={targets}
             keyExtractor={(item, index) => item.name + index}
             renderItem={({ item: target }) => (
@@ -141,6 +137,6 @@ const styles = StyleSheet.create({
     height: '100%',
 
     borderRadius: 10,
-    padding: 10,
+    paddingHorizontal: 10,
   },
 });

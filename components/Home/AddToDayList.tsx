@@ -1,14 +1,13 @@
 import { FontAwesome } from '@expo/vector-icons';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { ColorSchemeName, Pressable, StyleSheet, View } from 'react-native';
-import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
+import Animated, { useAnimatedProps, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import Colors from '../../constants/Colors';
 import { LIST_ITEM_HEIGHT } from '../../constants/SIZES';
 import { ActiveTargetQuantity, Target } from '../../db/db';
 import { Text } from '../Themed';
 import AddToDayListItem from './AddToDayListItem';
 
-const AnimatedFontAwesome = Animated.createAnimatedComponent(FontAwesome);
 interface Props {
   colorScheme: ColorSchemeName;
   activeTargetQuantity: ActiveTargetQuantity[];
@@ -19,10 +18,15 @@ interface Props {
 const AddToDayList = ({ colorScheme, activeTargetQuantity, allTargets, onAddPress }: Props) => {
   const height = useSharedValue<number>(0);
   const rotateChevron = useSharedValue<number>(0);
+
   const prevLength = useRef(activeTargetQuantity.length);
 
   const chevronStyles = useAnimatedStyle(() => {
     return { transform: [{ rotateZ: `${rotateChevron.value}deg` }] };
+  });
+
+  const listStyles = useAnimatedStyle(() => {
+    return { height: height.value, maxHeight: height.value };
   });
 
   useEffect(() => {
@@ -31,11 +35,7 @@ const AddToDayList = ({ colorScheme, activeTargetQuantity, allTargets, onAddPres
       rotateChevron.value = 0;
     }
 
-    if (
-      activeTargetQuantity.length !== 0 &&
-      activeTargetQuantity.length !== prevLength.current &&
-      height.value !== 0
-    ) {
+    if (activeTargetQuantity.length !== 0 && activeTargetQuantity.length !== prevLength.current && height.value !== 0) {
       height.value = LIST_ITEM_HEIGHT * activeTargetQuantity.length;
       rotateChevron.value = 90;
 
@@ -46,7 +46,8 @@ const AddToDayList = ({ colorScheme, activeTargetQuantity, allTargets, onAddPres
   const toggleFlatListHeight = () => {
     if (height.value === 0) {
       rotateChevron.value = withTiming(90);
-      height.value = withTiming(LIST_ITEM_HEIGHT * activeTargetQuantity.length);
+      const newHeight = Math.min(LIST_ITEM_HEIGHT * activeTargetQuantity.length, LIST_ITEM_HEIGHT * 5);
+      height.value = withTiming(newHeight);
     } else if (height.value > 0) {
       rotateChevron.value = withTiming(0);
       height.value = withTiming(0);
@@ -57,50 +58,24 @@ const AddToDayList = ({ colorScheme, activeTargetQuantity, allTargets, onAddPres
 
   return (
     <View style={styles.container}>
-      <View
-        style={[
-          { backgroundColor: Colors[colorScheme ?? 'light'].backgroundSecondary },
-          styles.flatListContainer,
-        ]}
-      >
-        <Pressable
-          style={styles.headerContainer}
-          disabled={activeTargetQuantity.length === 0}
-          onPress={toggleFlatListHeight}
-        >
-          <Text
-            style={[
-              styles.headerTitle,
-              { color: activeTargetQuantity.length > 0 ? 'red' : 'gray' },
-            ]}
-          >
-            Add Targets
-          </Text>
+      <View style={[{ backgroundColor: Colors[colorScheme ?? 'light'].backgroundSecondary }, styles.flatListContainer]}>
+        <Pressable style={styles.headerContainer} disabled={activeTargetQuantity.length === 0} onPress={toggleFlatListHeight}>
+          <Text style={[styles.headerTitle, { color: activeTargetQuantity.length > 0 ? 'red' : 'gray' }]}>Add Targets</Text>
           <Animated.View style={chevronStyles}>
-            <FontAwesome
-              name="chevron-right"
-              size={14}
-              color={activeTargetQuantity.length > 0 ? 'red' : 'gray'}
-            />
+            <FontAwesome name="chevron-right" size={14} color={activeTargetQuantity.length > 0 ? 'red' : 'gray'} />
           </Animated.View>
         </Pressable>
         <Animated.FlatList
-          contentContainerStyle={{ flex: 1 }}
-          style={[styles.flatListStyle, { height: height, maxHeight: height }]}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ maxHeight: 'auto' }}
+          style={[styles.flatListStyle, listStyles]}
           data={activeTargetQuantity}
           renderItem={({ item }) => {
             const target = targetMap[item.target.id];
             const availableTargets = target ? target.quantity - item.activeCount : 0;
             if (availableTargets === 0) return null;
 
-            return (
-              <AddToDayListItem
-                availableTargets={availableTargets}
-                colorScheme={colorScheme}
-                item={item}
-                onAddPress={onAddPress}
-              />
-            );
+            return <AddToDayListItem availableTargets={availableTargets} colorScheme={colorScheme} item={item} onAddPress={onAddPress} />;
           }}
         />
       </View>
