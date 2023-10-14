@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { ColorSchemeName, FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import Colors from '../../constants/Colors';
-import { SCREEN_WIDTH } from '../../constants/SIZES';
+import { LIST_ITEM_HEIGHT, SCREEN_WIDTH } from '../../constants/SIZES';
 import { DailyTargets, TargetInWeeklyTargets } from '../../db/db';
 import DailyTargetListItem from './DailyTargetListItem';
 import DraggableFlatList, { ScaleDecorator } from 'react-native-draggable-flatlist';
+import * as Haptics from 'expo-haptics';
 
 interface Props {
   colorScheme: ColorSchemeName;
@@ -61,6 +62,8 @@ const DailyTargetList = ({ colorScheme, dailyTargets, onRemovePress }: Props) =>
   const handleStatusToggle = (id: number, status: boolean | undefined) => {
     const newMap = new Map(completionMap);
 
+    Haptics.selectionAsync();
+
     if (status === true) {
       newMap.set(id, false);
     } else if (status === false || status === undefined) {
@@ -73,30 +76,32 @@ const DailyTargetList = ({ colorScheme, dailyTargets, onRemovePress }: Props) =>
     <View style={styles.container}>
       <View style={[styles.secondaryContainer, { backgroundColor: Colors[colorScheme ?? 'light'].backgroundSecondary }]}>
         <Text style={styles.header}>{dailyTargets.day.name}</Text>
-        <DraggableFlatList
-          data={draggableData}
-          showsVerticalScrollIndicator={false}
-          onDragEnd={({ data }) => setDraggableData(data)}
-          keyExtractor={(item) => item.tb_id.toString()}
-          renderItem={({ item: target, drag }) => (
-            <ScaleDecorator>
-              <Pressable
-                onLongPress={() => {
-                  // Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-                  drag();
-                }}
-              >
-                <DailyTargetListItem
-                  status={completionMap.get(target.tb_id)}
-                  onStatusToggle={handleStatusToggle}
-                  colorScheme={colorScheme}
-                  target={target}
-                  onRemovePress={onRemovePress}
-                />
-              </Pressable>
-            </ScaleDecorator>
-          )}
-        />
+        <View style={{ flex: 1 }}>
+          <DraggableFlatList
+            data={draggableData}
+            showsVerticalScrollIndicator={false}
+            onDragEnd={({ data }) => setDraggableData(data)}
+            keyExtractor={(item) => item.tb_id.toString()}
+            renderItem={({ item: target, drag }) => (
+              <ScaleDecorator>
+                <Pressable
+                  onLongPress={() => {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+                    drag();
+                  }}
+                >
+                  <DailyTargetListItem
+                    status={completionMap.get(target.tb_id)}
+                    onStatusToggle={handleStatusToggle}
+                    colorScheme={colorScheme}
+                    target={target}
+                    onRemovePress={onRemovePress}
+                  />
+                </Pressable>
+              </ScaleDecorator>
+            )}
+          />
+        </View>
       </View>
     </View>
   );
@@ -107,14 +112,15 @@ export default React.memo(DailyTargetList);
 const styles = StyleSheet.create({
   container: {
     width: SCREEN_WIDTH,
-    padding: 13,
+    paddingTop: 13,
+    paddingHorizontal: 13,
   },
   secondaryContainer: {
+    justifyContent: 'flex-start',
     borderRadius: 10,
     width: '100%',
     height: '100%',
-    padding: 10,
-    overflow: 'hidden',
+    paddingHorizontal: 10,
   },
   header: {
     alignSelf: 'center',

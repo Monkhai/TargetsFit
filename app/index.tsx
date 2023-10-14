@@ -1,12 +1,5 @@
 import React, { useCallback, useContext, useState } from 'react';
-import {
-  Alert,
-  NativeScrollEvent,
-  NativeSyntheticEvent,
-  ScrollView,
-  StyleSheet,
-  useColorScheme,
-} from 'react-native';
+import { Alert, Dimensions, NativeScrollEvent, NativeSyntheticEvent, ScrollView, StyleSheet, useColorScheme } from 'react-native';
 import AddToDayList from '../components/Home/AddToDayList';
 import DailyTargetList from '../components/Home/DailyTargetList';
 import LoadingErrorHome from '../components/LoadingErrorHome';
@@ -101,61 +94,27 @@ const Home = () => {
   } else {
     return (
       <View style={styles.container}>
-        <ScrollView
-          scrollEventThrottle={16}
-          onScroll={handleHViewScroll}
-          pagingEnabled
-          showsHorizontalScrollIndicator={false}
-          horizontal
-        >
+        <ScrollView scrollEventThrottle={16} onScroll={handleHViewScroll} pagingEnabled showsHorizontalScrollIndicator={false} horizontal>
           {/* SUNDAY TARGET LIST */}
-          <DailyTargetList
-            onRemovePress={handleItemDelete}
-            colorScheme={colorScheme}
-            dailyTargets={weeklyTargets[0]}
-          />
+          <DailyTargetList onRemovePress={handleItemDelete} colorScheme={colorScheme} dailyTargets={weeklyTargets[0]} />
 
           {/* MONDAY TARGET LIST */}
-          <DailyTargetList
-            onRemovePress={handleItemDelete}
-            colorScheme={colorScheme}
-            dailyTargets={weeklyTargets[1]}
-          />
+          <DailyTargetList onRemovePress={handleItemDelete} colorScheme={colorScheme} dailyTargets={weeklyTargets[1]} />
 
           {/* TUESDAY TARGET LIST */}
-          <DailyTargetList
-            onRemovePress={handleItemDelete}
-            colorScheme={colorScheme}
-            dailyTargets={weeklyTargets[2]}
-          />
+          <DailyTargetList onRemovePress={handleItemDelete} colorScheme={colorScheme} dailyTargets={weeklyTargets[2]} />
 
           {/* WEDNESDAY TARGET LIST */}
-          <DailyTargetList
-            onRemovePress={handleItemDelete}
-            colorScheme={colorScheme}
-            dailyTargets={weeklyTargets[3]}
-          />
+          <DailyTargetList onRemovePress={handleItemDelete} colorScheme={colorScheme} dailyTargets={weeklyTargets[3]} />
 
           {/* THURSDAY TARGET LIST */}
-          <DailyTargetList
-            onRemovePress={handleItemDelete}
-            colorScheme={colorScheme}
-            dailyTargets={weeklyTargets[4]}
-          />
+          <DailyTargetList onRemovePress={handleItemDelete} colorScheme={colorScheme} dailyTargets={weeklyTargets[4]} />
 
           {/* FRIDAY TARGET LIST */}
-          <DailyTargetList
-            onRemovePress={handleItemDelete}
-            colorScheme={colorScheme}
-            dailyTargets={weeklyTargets[5]}
-          />
+          <DailyTargetList onRemovePress={handleItemDelete} colorScheme={colorScheme} dailyTargets={weeklyTargets[5]} />
 
           {/* SATURDAY TARGET LIST */}
-          <DailyTargetList
-            onRemovePress={handleItemDelete}
-            colorScheme={colorScheme}
-            dailyTargets={weeklyTargets[6]}
-          />
+          <DailyTargetList onRemovePress={handleItemDelete} colorScheme={colorScheme} dailyTargets={weeklyTargets[6]} />
         </ScrollView>
         <AddToDayList
           colorScheme={colorScheme}

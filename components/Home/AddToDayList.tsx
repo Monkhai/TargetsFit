@@ -68,7 +68,6 @@ const AddToDayList = ({ colorScheme, activeTargetQuantity, allTargets, onAddPres
         <Animated.View style={listStyles}>
           <Animated.FlatList
             showsVerticalScrollIndicator={false}
-            contentContainerStyle={{ maxHeight: 'auto' }}
             style={[styles.flatListStyle, listStyles]}
             data={activeTargetQuantity}
             renderItem={({ item }) => {
@@ -92,7 +91,6 @@ const styles = StyleSheet.create({
     padding: 13,
   },
   flatListContainer: {
-    height: 'auto',
     width: '100%',
     padding: 10,
     borderRadius: 10,
@@ -101,7 +99,6 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   headerContainer: {
-    // height: 48,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
