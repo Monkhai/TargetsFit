@@ -15,16 +15,11 @@ interface Props {
 const AddToDayListItem = ({ item, availableTargets, onAddPress, colorScheme }: Props) => {
   return (
     <View style={styles.listItemContainer}>
-      <Text style={[styles.listItemText, { flex: 1 }]}>{item.target.name}</Text>
+      <Text style={[styles.listItemText, { flex: 1, fontWeight: '700', color: 'red' }]}>{item.target.name}</Text>
       <Text style={styles.listItemText}>{item.target.type}</Text>
       <Text style={styles.listItemText}>{availableTargets}</Text>
       <TouchableOpacity onPress={() => onAddPress(item.target)}>
-        <View
-          style={[
-            styles.addButtonContainer,
-            { backgroundColor: Colors[colorScheme ?? 'light'].tertiary },
-          ]}
-        >
+        <View style={[styles.addButtonContainer, { backgroundColor: Colors[colorScheme ?? 'light'].tertiary }]}>
           <Text style={styles.addButton}>+</Text>
         </View>
       </TouchableOpacity>
@@ -54,5 +49,6 @@ const styles = StyleSheet.create({
   addButton: {
     fontSize: 16,
     fontWeight: 'bold',
+    color: 'red',
   },
 });

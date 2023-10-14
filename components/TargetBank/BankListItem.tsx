@@ -52,5 +52,6 @@ const styles = StyleSheet.create({
   removeButton: {
     fontSize: 16,
     fontWeight: 'bold',
+    color: 'red',
   },
 });

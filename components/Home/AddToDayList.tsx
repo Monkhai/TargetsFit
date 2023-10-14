@@ -36,7 +36,7 @@ const AddToDayList = ({ colorScheme, activeTargetQuantity, allTargets, onAddPres
     }
 
     if (activeTargetQuantity.length !== 0 && activeTargetQuantity.length !== prevLength.current && height.value !== 0) {
-      height.value = LIST_ITEM_HEIGHT * activeTargetQuantity.length;
+      height.value = Math.min(LIST_ITEM_HEIGHT * activeTargetQuantity.length, LIST_ITEM_HEIGHT * 5);
       rotateChevron.value = 90;
 
       prevLength.current = activeTargetQuantity.length;
@@ -65,19 +65,20 @@ const AddToDayList = ({ colorScheme, activeTargetQuantity, allTargets, onAddPres
             <FontAwesome name="chevron-right" size={14} color={activeTargetQuantity.length > 0 ? 'red' : 'gray'} />
           </Animated.View>
         </Pressable>
-        <Animated.FlatList
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ maxHeight: 'auto' }}
-          style={[styles.flatListStyle, listStyles]}
-          data={activeTargetQuantity}
-          renderItem={({ item }) => {
-            const target = targetMap[item.target.id];
-            const availableTargets = target ? target.quantity - item.activeCount : 0;
-            if (availableTargets === 0) return null;
-
-            return <AddToDayListItem availableTargets={availableTargets} colorScheme={colorScheme} item={item} onAddPress={onAddPress} />;
-          }}
-        />
+        <Animated.View style={listStyles}>
+          <Animated.FlatList
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ maxHeight: 'auto' }}
+            style={[styles.flatListStyle, listStyles]}
+            data={activeTargetQuantity}
+            renderItem={({ item }) => {
+              const target = targetMap[item.target.id];
+              const availableTargets = target ? target.quantity - item.activeCount : 0;
+              if (availableTargets === 0) return null;
+              return <AddToDayListItem availableTargets={availableTargets} colorScheme={colorScheme} item={item} onAddPress={onAddPress} />;
+            }}
+          />
+        </Animated.View>
       </View>
     </View>
   );

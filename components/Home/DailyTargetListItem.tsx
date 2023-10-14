@@ -14,29 +14,18 @@ interface Props {
   onStatusToggle: (id: number, status: boolean | undefined) => void;
 }
 
-const DailyTargetListItem = ({
-  target,
-  onRemovePress,
-  colorScheme,
-  onStatusToggle,
-  status,
-}: Props) => {
+const DailyTargetListItem = ({ target, onRemovePress, colorScheme, onStatusToggle, status }: Props) => {
   return (
     <View style={styles.listItemContainer}>
-      <View style={{ flex: 1, flexDirection: 'row', gap: 20, paddingLeft: 10 }}>
+      <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', gap: 10, paddingLeft: 10 }}>
         <Pressable onPress={() => onStatusToggle(target.tb_id, status)}>
           <FontAwesome name={status ? 'circle' : 'circle-o'} color={'red'} size={20} />
         </Pressable>
-        <Text style={[styles.listItemText]}>{target.name}</Text>
+        <Text style={[styles.listItemText, { fontWeight: '700', color: 'red' }]}>{target.name}</Text>
       </View>
       <Text style={styles.listItemText}>{target.type}</Text>
       <TouchableOpacity onPress={() => onRemovePress(target)}>
-        <View
-          style={[
-            styles.addButtonContainer,
-            { backgroundColor: Colors[colorScheme ?? 'light'].tertiary },
-          ]}
-        >
+        <View style={[styles.addButtonContainer, { backgroundColor: Colors[colorScheme ?? 'light'].tertiary }]}>
           <Text style={styles.addButton}>-</Text>
         </View>
       </TouchableOpacity>
@@ -66,5 +55,6 @@ const styles = StyleSheet.create({
   addButton: {
     fontSize: 16,
     fontWeight: 'bold',
+    color: 'red',
   },
 });
