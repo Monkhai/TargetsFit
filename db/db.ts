@@ -102,12 +102,14 @@ const createDaysTable = () => {
 const createTargetsByDays = async () => {
   await handleQuery(
     `CREATE TABLE IF NOT EXISTS targets_by_days (
-      id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-      day_id INTEGER,
-      target_id INTEGER,
-      FOREIGN KEY(day_id) REFERENCES days(id),
-      FOREIGN KEY(target_id) REFERENCES targets(id)
-      )`,
+  id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+  day_id INTEGER,
+  target_id INTEGER,
+  position INTEGER NOT NULL,
+  FOREIGN KEY(day_id) REFERENCES days(id),
+  FOREIGN KEY(target_id) REFERENCES targets(id)
+  );
+`,
     'creating targets_by_days table'
   );
 };

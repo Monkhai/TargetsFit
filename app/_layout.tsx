@@ -14,6 +14,7 @@ import useGetWeeklyTargets from '../hooks/useGetWeeklyTargets';
 import WeeklyTargetsContext from '../context/WeeklyTargetsContext';
 import { Text } from '../components/Themed';
 import { FontAwesome } from '@expo/vector-icons';
+import { deleteAllTables } from '../db/db';
 
 export { ErrorBoundary } from 'expo-router';
 
