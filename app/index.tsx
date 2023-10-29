@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { Alert, NativeScrollEvent, NativeSyntheticEvent, StyleSheet, useColorScheme } from 'react-native';
 import AddToDayList from '../components/Home/AddToDayList';
 import DailyTargetList from '../components/Home/DailyTargetList';
@@ -16,6 +16,17 @@ const Home = () => {
   const WeeklyTargets = new TargetByDaysDAO();
   const colorScheme = useColorScheme();
   const [dayPage, setDayPage] = useState<1 | 2 | 3 | 4 | 5 | 6 | 7>(1);
+  const [isScrollViewMounted, setIsScrollViewMounted] = useState(false);
+
+  const scrollViewRef = useRef<ScrollView>(null);
+
+  useEffect(() => {
+    const today = new Date().getDay();
+
+    const scrollPosition = SCREEN_WIDTH * today;
+
+    scrollViewRef.current?.scrollTo({ y: 0, x: scrollPosition, animated: false });
+  }, [isScrollViewMounted]);
 
   const { isLoading: isDBLoading } = useContext(DBContext);
 
@@ -95,7 +106,15 @@ const Home = () => {
   } else {
     return (
       <View style={styles.container}>
-        <ScrollView scrollEventThrottle={16} onScroll={handleHViewScroll} pagingEnabled showsHorizontalScrollIndicator={false} horizontal>
+        <ScrollView
+          onLayout={() => setIsScrollViewMounted(true)}
+          ref={scrollViewRef}
+          scrollEventThrottle={16}
+          onScroll={handleHViewScroll}
+          pagingEnabled
+          showsHorizontalScrollIndicator={false}
+          horizontal
+        >
           {/* SUNDAY TARGET LIST */}
           <DailyTargetList onRemovePress={handleItemDelete} colorScheme={colorScheme} dailyTargets={weeklyTargets[0]} />
 
