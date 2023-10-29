@@ -1,4 +1,4 @@
-import { Alert, ColorSchemeName, StyleSheet, TextInput, View } from 'react-native';
+import { Alert, ColorSchemeName, Keyboard, StyleSheet, TextInput, View } from 'react-native';
 import React, { useEffect, useRef, useState } from 'react';
 import Modal from 'react-native-modal';
 import { BORDER_RADIUS } from '../../constants/SIZES';
@@ -17,13 +17,7 @@ interface Props {
   editedTarget: Target;
 }
 
-const EditTargetModal = ({
-  colorScheme,
-  isEditTargetModalVisible,
-  setIsEditTargetModalVisible,
-  handleModalEdit,
-  editedTarget,
-}: Props) => {
+const EditTargetModal = ({ colorScheme, isEditTargetModalVisible, setIsEditTargetModalVisible, handleModalEdit, editedTarget }: Props) => {
   const [selectedType, setSelectedType] = useState<TargetType>(editedTarget.type);
   const [name, setName] = useState<string>(editedTarget.name);
   const [quantity, setQuantity] = useState<number>(editedTarget.quantity);
@@ -47,6 +41,7 @@ const EditTargetModal = ({
       id: editedTarget.id,
     });
 
+    Keyboard.dismiss();
     setIsEditTargetModalVisible(false);
   };
 
@@ -55,18 +50,22 @@ const EditTargetModal = ({
   return (
     <Modal
       style={styles.modal}
-      onBackdropPress={() => setIsEditTargetModalVisible(false)}
+      onBackdropPress={() => {
+        Keyboard.dismiss();
+        setIsEditTargetModalVisible(false);
+      }}
       useNativeDriverForBackdrop
       isVisible={isEditTargetModalVisible}
     >
-      <View
-        style={[
-          { backgroundColor: Colors[colorScheme ?? 'light'].backgroundSecondary },
-          styles.container,
-        ]}
-      >
+      <View style={[{ backgroundColor: Colors[colorScheme ?? 'light'].backgroundSecondary }, styles.container]}>
         <View style={styles.headerContainer}>
-          <Button title="Cancel" onPress={() => setIsEditTargetModalVisible(false)} />
+          <Button
+            title="Cancel"
+            onPress={() => {
+              Keyboard.dismiss();
+              setIsEditTargetModalVisible(false);
+            }}
+          />
           <Text ellipsizeMode="tail" numberOfLines={1} style={styles.headerText}>
             Edit {editedTarget.name}
           </Text>

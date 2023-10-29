@@ -1,4 +1,4 @@
-import { Alert, ColorSchemeName, StyleSheet, TextInput, View } from 'react-native';
+import { Alert, ColorSchemeName, Keyboard, StyleSheet, TextInput, View } from 'react-native';
 import React, { useRef, useState } from 'react';
 import Modal from 'react-native-modal';
 import { BORDER_RADIUS } from '../../constants/SIZES';
@@ -15,12 +15,7 @@ interface Props {
   handleModalSave: (newTarget: NewTarget) => void;
 }
 
-const NewTargetModal = ({
-  colorScheme,
-  isNewTargetModalVisible,
-  setIsNewTargetModalVisible,
-  handleModalSave,
-}: Props) => {
+const NewTargetModal = ({ colorScheme, isNewTargetModalVisible, setIsNewTargetModalVisible, handleModalSave }: Props) => {
   const [selectedType, setSelectedType] = useState<TargetType>('strength');
   const [newName, setNewName] = useState<string>();
   const [newQuantity, setNewQuantity] = useState<number>();
@@ -37,24 +32,29 @@ const NewTargetModal = ({
       type: selectedType,
     });
 
+    Keyboard.dismiss();
     setIsNewTargetModalVisible(false);
   };
 
   return (
     <Modal
       style={styles.modal}
-      onBackdropPress={() => setIsNewTargetModalVisible(false)}
+      onBackdropPress={() => {
+        Keyboard.dismiss();
+        setIsNewTargetModalVisible(false);
+      }}
       useNativeDriverForBackdrop
       isVisible={isNewTargetModalVisible}
     >
-      <View
-        style={[
-          { backgroundColor: Colors[colorScheme ?? 'light'].backgroundSecondary },
-          styles.container,
-        ]}
-      >
+      <View style={[{ backgroundColor: Colors[colorScheme ?? 'light'].backgroundSecondary }, styles.container]}>
         <View style={styles.headerContainer}>
-          <Button title="Cancel" onPress={() => setIsNewTargetModalVisible(false)} />
+          <Button
+            title="Cancel"
+            onPress={() => {
+              Keyboard.dismiss();
+              setIsNewTargetModalVisible(false);
+            }}
+          />
           <Text style={styles.headerText}>New target</Text>
           <Button title="Create" onPress={handlePress} />
         </View>
