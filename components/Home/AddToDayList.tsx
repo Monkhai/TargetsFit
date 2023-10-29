@@ -97,6 +97,7 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
     padding: 13,
+    paddingTop: 0,
   },
   flatListContainer: {
     width: '100%',

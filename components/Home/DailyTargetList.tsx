@@ -112,8 +112,9 @@ export default React.memo(DailyTargetList);
 const styles = StyleSheet.create({
   container: {
     width: SCREEN_WIDTH,
-    paddingTop: 13,
-    paddingHorizontal: 13,
+    // paddingTop: 13,
+    // paddingHorizontal: 13,
+    padding: 13,
   },
   secondaryContainer: {
     justifyContent: 'flex-start',
