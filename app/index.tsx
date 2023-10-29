@@ -136,7 +136,7 @@ const Home = () => {
           {/* SATURDAY TARGET LIST */}
           <DailyTargetList onRemovePress={handleItemDelete} colorScheme={colorScheme} dailyTargets={weeklyTargets[6]} />
         </ScrollView>
-        {activeTargetQuantity.length > 0 && (
+        {activeTargetQuantity.length >= 0 && (
           <AddToDayList
             colorScheme={colorScheme}
             onAddPress={handleAddToDay}

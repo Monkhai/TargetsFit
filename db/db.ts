@@ -4,6 +4,9 @@ import { DATABASE_NAME } from '../constants/DATABASE_NAME';
 import { handleQuery } from './utilities/queryHandler';
 import { transformWeeklyTargets } from './utilities/transformWeeklyTargets';
 
+//----------------------------------------------------------------------------------------------
+//TYPES--TYPES--TYPES--TYPES--TYPES--TYPES--TYPES--TYPES--TYPES--TYPES--TYPES--TYPES--TYPES
+//----------------------------------------------------------------------------------------------
 export type TargetType = 'mobility' | 'strength' | 'specific' | 'cardio' | 'VO2' | 'flexibility';
 
 export type Target = {
@@ -49,6 +52,9 @@ export type RawWeeklyTargets = RawDailyTargets[];
 
 const db: any = SQLite.openDatabase(DATABASE_NAME);
 
+//----------------------------------------------------------------------------------------------
+//DB_CREATION--DB_CREATION--DB_CREATION--DB_CREATION--DB_CREATION--DB_CREATION--DB_CREATION
+//----------------------------------------------------------------------------------------------
 const createTargetsTable = async () => {
   await handleQuery(
     `CREATE TABLE IF NOT EXISTS targets (
@@ -142,6 +148,9 @@ export const deleteAllTables = async () => {
   });
 };
 
+//----------------------------------------------------------------------------------------------
+//TARGETS--TARGETS--TARGETS--TARGETS--TARGETS--TARGETS--TARGETS--TARGETS--TARGETS--TARGETS
+//----------------------------------------------------------------------------------------------
 export class TargetDAO {
   public async getAllTargets(typeFilter?: string): Promise<Target[]> {
     let sql = `SELECT * FROM targets `;
@@ -168,20 +177,10 @@ export class TargetDAO {
   }
 
   public async getOneTarget(targetId: number): Promise<Target> {
-    const targets = await handleQuery<Target[]>(
-      `SELECT * FROM targets WHERE id = ?`,
-      'getting target',
-      [targetId]
-    );
+    const targets = await handleQuery<Target[]>(`SELECT * FROM targets WHERE id = ?`, 'getting target', [targetId]);
     return targets[0];
   }
 
-  //CHANGE TO TRANSACTIONS
-  //CHANGE TO TRANSACTIONS
-  //CHANGE TO TRANSACTIONS
-  //CHANGE TO TRANSACTIONS
-  //CHANGE TO TRANSACTIONS
-  //CHANGE TO TRANSACTIONS
   public async createNewTarget(target: NewTarget): Promise<string> {
     return new Promise((resolve, reject) => {
       db.transaction(
@@ -206,14 +205,15 @@ export class TargetDAO {
     });
   }
 
-  public async updateTarget(target: Target): Promise<string> {
+  public async updateTarget(target: Target): Promise<void> {
+    const targetQunaity = target.quantity < 0 ? 0 : target.quantity;
     return new Promise((resolve, reject) => {
       db.transaction(
         (tx: SQLite.SQLTransaction) => {
           tx.executeSql(
             `UPDATE targets SET name = ?, type = ?, quantity = ? WHERE id = ?`,
-            [target.name, target.type, target.quantity, target.id],
-            () => resolve('Target successfully updated')
+            [target.name, target.type, targetQunaity, target.id],
+            () => resolve()
           );
         },
         (error: Error) => handleError('updating target', error, reject)
@@ -237,9 +237,9 @@ export class TargetDAO {
   }
 }
 
-//WEEKLY-TARGETS//WEEKLY-TARGETS//WEEKLY-TARGETS//WEEKLY-TARGETS//WEEKLY-TARGETS//WEEKLY-TARGETS
-//WEEKLY-TARGETS//WEEKLY-TARGETS//WEEKLY-TARGETS//WEEKLY-TARGETS//WEEKLY-TARGETS//WEEKLY-TARGETS
-//WEEKLY-TARGETS//WEEKLY-TARGETS//WEEKLY-TARGETS//WEEKLY-TARGETS//WEEKLY-TARGETS//WEEKLY-TARGETS
+//----------------------------------------------------------------------------------------------
+//WEEKLY_TARGETS--WEEKLY_TARGETS--WEEKLY_TARGETS--WEEKLY_TARGETS--WEEKLY_TARGETS--WEEKLY_TARGETS
+//----------------------------------------------------------------------------------------------
 export class TargetByDaysDAO {
   public async getDailyTargets(dayId: number): Promise<Target[]> {
     return handleQuery(
@@ -264,11 +264,7 @@ export class TargetByDaysDAO {
   }
 
   public async addTargetToDay(dayId: number, targetId: number): Promise<Target[]> {
-    await handleQuery(
-      `INSERT INTO targets_by_days (day_id, target_id) VALUES (?, ?)`,
-      'adding a target',
-      [dayId, targetId]
-    );
+    await handleQuery(`INSERT INTO targets_by_days (day_id, target_id) VALUES (?, ?)`, 'adding a target', [dayId, targetId]);
     const Targets = new TargetDAO();
     return Targets.getAllTargets();
   }

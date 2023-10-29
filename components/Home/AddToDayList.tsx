@@ -10,12 +10,12 @@ import AddToDayListItem from './AddToDayListItem';
 
 interface Props {
   colorScheme: ColorSchemeName;
-  activeTargetQuantity: ActiveTargetQuantity[];
   allTargets: Target[];
+  activeTargetQuantity: ActiveTargetQuantity[];
   onAddPress: (target: Target) => void;
 }
 
-const AddToDayList = ({ colorScheme, activeTargetQuantity, allTargets, onAddPress }: Props) => {
+const AddToDayList = ({ colorScheme, allTargets, activeTargetQuantity, onAddPress }: Props) => {
   const height = useSharedValue<number>(0);
   const rotateChevron = useSharedValue<number>(0);
 
@@ -28,14 +28,6 @@ const AddToDayList = ({ colorScheme, activeTargetQuantity, allTargets, onAddPres
   const listStyles = useAnimatedStyle(() => {
     return { height: height.value, maxHeight: height.value };
   });
-
-  useEffect(() => {
-    console.log('targets changed');
-  }, [allTargets]);
-
-  useEffect(() => {
-    console.log('active target quantity changed');
-  }, [activeTargetQuantity]);
 
   useEffect(() => {
     if (activeTargetQuantity.length === 0 || activeTargetQuantity.length < 0) {
