@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useState } from 'react';
-import { Alert, Dimensions, NativeScrollEvent, NativeSyntheticEvent, ScrollView, StyleSheet, useColorScheme } from 'react-native';
+import { Alert, NativeScrollEvent, NativeSyntheticEvent, StyleSheet, useColorScheme } from 'react-native';
 import AddToDayList from '../components/Home/AddToDayList';
 import DailyTargetList from '../components/Home/DailyTargetList';
 import LoadingErrorHome from '../components/LoadingErrorHome';
@@ -10,6 +10,7 @@ import DBContext from '../context/DBLoadingContext';
 import TargetsContext from '../context/TargetsContext';
 import WeeklyTargetsContext from '../context/WeeklyTargetsContext';
 import { DayId, Target, TargetByDaysDAO, TargetInWeeklyTargets } from '../db/db';
+import { ScrollView } from 'react-native-gesture-handler';
 
 const Home = () => {
   const WeeklyTargets = new TargetByDaysDAO();

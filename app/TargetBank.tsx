@@ -66,7 +66,10 @@ const TargetBank = () => {
 
   const handleModalEdit = (updatedTarget: Target) => {
     Targets.updateTarget(updatedTarget)
-      .then(() => refetchAllTargets())
+      .then(() => {
+        refetchAllTargets();
+        refetchActiveCount();
+      })
       .then(() => setIsEditModalVisible(false))
       .catch((error: Error) => Alert.alert(error.message));
   };

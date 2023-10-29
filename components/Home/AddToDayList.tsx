@@ -30,6 +30,14 @@ const AddToDayList = ({ colorScheme, activeTargetQuantity, allTargets, onAddPres
   });
 
   useEffect(() => {
+    console.log('targets changed');
+  }, [allTargets]);
+
+  useEffect(() => {
+    console.log('active target quantity changed');
+  }, [activeTargetQuantity]);
+
+  useEffect(() => {
     if (activeTargetQuantity.length === 0) {
       height.value = 0;
       rotateChevron.value = 0;
@@ -83,7 +91,7 @@ const AddToDayList = ({ colorScheme, activeTargetQuantity, allTargets, onAddPres
   );
 };
 
-export default React.memo(AddToDayList);
+export default AddToDayList;
 
 const styles = StyleSheet.create({
   container: {
