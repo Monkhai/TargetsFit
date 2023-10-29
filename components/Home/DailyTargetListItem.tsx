@@ -17,8 +17,8 @@ interface Props {
 const DailyTargetListItem = ({ target, onRemovePress, colorScheme, onStatusToggle, status }: Props) => {
   return (
     <View style={styles.listItemContainer}>
-      <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', gap: 10, paddingLeft: 10 }}>
-        <Pressable onPress={() => onStatusToggle(target.tb_id, status)}>
+      <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
+        <Pressable onPress={() => onStatusToggle(target.tb_id, status)} style={styles.pressableStyle}>
           <FontAwesome name={status ? 'circle' : 'circle-o'} color={'red'} size={20} />
         </Pressable>
         <Text style={[styles.listItemText, { fontWeight: '700', color: 'red' }]}>{target.name}</Text>
@@ -41,6 +41,12 @@ const styles = StyleSheet.create({
     height: LIST_ITEM_HEIGHT,
     alignItems: 'center',
     gap: 30,
+  },
+  pressableStyle: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 48,
+    height: LIST_ITEM_HEIGHT,
   },
   listItemText: {
     fontSize: 15,
