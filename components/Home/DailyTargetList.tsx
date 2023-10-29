@@ -135,5 +135,6 @@ const styles = StyleSheet.create({
     textTransform: 'capitalize',
     fontWeight: '600',
     color: 'red',
+    marginVertical: 8,
   },
 });
