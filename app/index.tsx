@@ -116,25 +116,60 @@ const Home = () => {
           horizontal
         >
           {/* SUNDAY TARGET LIST */}
-          <DailyTargetList onRemovePress={handleItemDelete} colorScheme={colorScheme} dailyTargets={weeklyTargets[0]} />
+          <DailyTargetList
+            refetchWeeklyTergets={refetchWeeklyTergets}
+            onRemovePress={handleItemDelete}
+            colorScheme={colorScheme}
+            dailyTargets={weeklyTargets[0]}
+          />
 
           {/* MONDAY TARGET LIST */}
-          <DailyTargetList onRemovePress={handleItemDelete} colorScheme={colorScheme} dailyTargets={weeklyTargets[1]} />
+          <DailyTargetList
+            refetchWeeklyTergets={refetchWeeklyTergets}
+            onRemovePress={handleItemDelete}
+            colorScheme={colorScheme}
+            dailyTargets={weeklyTargets[1]}
+          />
 
           {/* TUESDAY TARGET LIST */}
-          <DailyTargetList onRemovePress={handleItemDelete} colorScheme={colorScheme} dailyTargets={weeklyTargets[2]} />
+          <DailyTargetList
+            refetchWeeklyTergets={refetchWeeklyTergets}
+            onRemovePress={handleItemDelete}
+            colorScheme={colorScheme}
+            dailyTargets={weeklyTargets[2]}
+          />
 
           {/* WEDNESDAY TARGET LIST */}
-          <DailyTargetList onRemovePress={handleItemDelete} colorScheme={colorScheme} dailyTargets={weeklyTargets[3]} />
+          <DailyTargetList
+            refetchWeeklyTergets={refetchWeeklyTergets}
+            onRemovePress={handleItemDelete}
+            colorScheme={colorScheme}
+            dailyTargets={weeklyTargets[3]}
+          />
 
           {/* THURSDAY TARGET LIST */}
-          <DailyTargetList onRemovePress={handleItemDelete} colorScheme={colorScheme} dailyTargets={weeklyTargets[4]} />
+          <DailyTargetList
+            refetchWeeklyTergets={refetchWeeklyTergets}
+            onRemovePress={handleItemDelete}
+            colorScheme={colorScheme}
+            dailyTargets={weeklyTargets[4]}
+          />
 
           {/* FRIDAY TARGET LIST */}
-          <DailyTargetList onRemovePress={handleItemDelete} colorScheme={colorScheme} dailyTargets={weeklyTargets[5]} />
+          <DailyTargetList
+            refetchWeeklyTergets={refetchWeeklyTergets}
+            onRemovePress={handleItemDelete}
+            colorScheme={colorScheme}
+            dailyTargets={weeklyTargets[5]}
+          />
 
           {/* SATURDAY TARGET LIST */}
-          <DailyTargetList onRemovePress={handleItemDelete} colorScheme={colorScheme} dailyTargets={weeklyTargets[6]} />
+          <DailyTargetList
+            refetchWeeklyTergets={refetchWeeklyTergets}
+            onRemovePress={handleItemDelete}
+            colorScheme={colorScheme}
+            dailyTargets={weeklyTargets[6]}
+          />
         </ScrollView>
         {activeTargetQuantity.length >= 0 && (
           <AddToDayList

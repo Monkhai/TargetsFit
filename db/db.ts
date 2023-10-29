@@ -31,7 +31,7 @@ export type Day = {
 
 export type DailyTargets = {
   day: Day;
-  targets: Array<Target & { tb_id: number }>;
+  targets: Array<Target & { tb_id: number; position: number }>;
 };
 
 export type TargetInWeeklyTargets = Target & { tb_id: number };
@@ -46,6 +46,7 @@ type RawDailyTargets = {
   name: string;
   quantity: number;
   type: TargetType;
+  position: number;
 };
 
 export type RawWeeklyTargets = RawDailyTargets[];
@@ -272,10 +273,28 @@ export class TargetByDaysDAO {
     return transformWeeklyTargets(rawWeeklyTargets);
   }
 
-  public async addTargetToDay(dayId: number, targetId: number): Promise<Target[]> {
-    await handleQuery(`INSERT INTO targets_by_days (day_id, target_id) VALUES (?, ?)`, 'adding a target', [dayId, targetId]);
-    const Targets = new TargetDAO();
-    return Targets.getAllTargets();
+  public async addTargetToDay(dayId: number, targetId: number): Promise<void> {
+    return new Promise((resolve, reject) => {
+      db.transaction(
+        (tx: SQLite.SQLTransaction) => {
+          tx.executeSql(`SELECT MAX(position) as maxPosition FROM targets_by_days WHERE day_id = ?`, [dayId], (_, resultSet) => {
+            const maxPosition = resultSet.rows.item(0).maxPosition || 0;
+            const newPosition = maxPosition + 1;
+
+            tx.executeSql(
+              `INSERT INTO targets_by_days (day_id, target_id, position) VALUES (?, ?, ?)`,
+              [dayId, targetId, newPosition],
+              () => resolve(),
+              (_, error) => {
+                handleError('inserting target by day', error, reject);
+                return false;
+              }
+            );
+          });
+        },
+        (error: Error) => handleError('adding target to day', error, reject)
+      );
+    });
   }
 
   public async getActiveTargetCount(): Promise<ActiveTargetQuantity[]> {
@@ -313,5 +332,19 @@ export class TargetByDaysDAO {
   public async deleteTargetFromWeeklyTargets(id: number): Promise<void> {
     const sql = `DELETE FROM targets_by_days WHERE id = (?)`;
     handleQuery(sql, 'deleting target', [id]);
+  }
+
+  async updatePositions(dayId: number, positions: { tb_id: number; position: number }[]): Promise<void> {
+    return new Promise((resolve, reject) => {
+      db.transaction(
+        (tx: SQLite.SQLTransaction) => {
+          positions.forEach(({ tb_id, position }) => {
+            tx.executeSql(`UPDATE targets_by_days SET position = ? WHERE id = ? AND day_id = ?`, [position, tb_id, dayId]);
+          });
+        },
+        (error: Error) => handleError('updating positions', error, reject),
+        () => resolve()
+      );
+    });
   }
 }

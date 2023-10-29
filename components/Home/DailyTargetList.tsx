@@ -2,18 +2,20 @@ import React, { useEffect, useState } from 'react';
 import { ColorSchemeName, FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import Colors from '../../constants/Colors';
 import { LIST_ITEM_HEIGHT, SCREEN_WIDTH } from '../../constants/SIZES';
-import { DailyTargets, TargetInWeeklyTargets } from '../../db/db';
+import { DailyTargets, TargetByDaysDAO, TargetInWeeklyTargets } from '../../db/db';
 import DailyTargetListItem from './DailyTargetListItem';
 import DraggableFlatList, { ScaleDecorator } from 'react-native-draggable-flatlist';
 import * as Haptics from 'expo-haptics';
 
+const targetByDaysDAO = new TargetByDaysDAO();
 interface Props {
   colorScheme: ColorSchemeName;
   dailyTargets: DailyTargets;
   onRemovePress: (target: TargetInWeeklyTargets) => void;
+  refetchWeeklyTergets: () => void;
 }
 
-const DailyTargetList = ({ colorScheme, dailyTargets, onRemovePress }: Props) => {
+const DailyTargetList = ({ colorScheme, dailyTargets, onRemovePress, refetchWeeklyTergets }: Props) => {
   const [completionMap, setCompletionMap] = useState(new Map<number, boolean>());
 
   const [draggableData, setDraggableData] = useState(dailyTargets.targets);
@@ -80,7 +82,11 @@ const DailyTargetList = ({ colorScheme, dailyTargets, onRemovePress }: Props) =>
           <DraggableFlatList
             data={draggableData}
             showsVerticalScrollIndicator={false}
-            onDragEnd={({ data }) => setDraggableData(data)}
+            onDragEnd={({ data }) => {
+              const positions = data.map((item, index) => ({ tb_id: item.tb_id, position: index }));
+              setDraggableData(data);
+              targetByDaysDAO.updatePositions(dailyTargets.day.id, positions).then(() => refetchWeeklyTergets());
+            }}
             keyExtractor={(item) => item.tb_id.toString()}
             renderItem={({ item: target, drag }) => (
               <ScaleDecorator>
