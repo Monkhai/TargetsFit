@@ -1,7 +1,7 @@
 import { FontAwesome } from '@expo/vector-icons';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { ColorSchemeName, Pressable, StyleSheet, View } from 'react-native';
-import Animated, { useAnimatedProps, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import Colors from '../../constants/Colors';
 import { LIST_ITEM_HEIGHT } from '../../constants/SIZES';
 import { ActiveTargetQuantity, Target } from '../../db/db';
@@ -38,7 +38,7 @@ const AddToDayList = ({ colorScheme, activeTargetQuantity, allTargets, onAddPres
   }, [activeTargetQuantity]);
 
   useEffect(() => {
-    if (activeTargetQuantity.length === 0) {
+    if (activeTargetQuantity.length === 0 || activeTargetQuantity.length < 0) {
       height.value = 0;
       rotateChevron.value = 0;
     }
@@ -81,7 +81,7 @@ const AddToDayList = ({ colorScheme, activeTargetQuantity, allTargets, onAddPres
             renderItem={({ item }) => {
               const target = targetMap[item.target.id];
               const availableTargets = target ? target.quantity - item.activeCount : 0;
-              if (availableTargets === 0) return null;
+              if (availableTargets === 0 || availableTargets < 0) return null;
               return <AddToDayListItem availableTargets={availableTargets} colorScheme={colorScheme} item={item} onAddPress={onAddPress} />;
             }}
           />
