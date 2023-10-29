@@ -254,11 +254,18 @@ export class TargetByDaysDAO {
   }
 
   public async getWeeklyTargets(): Promise<WeeklyTargets> {
-    const sql = `SELECT days.id as day_id, days.name as day_name, targets_by_days.id as tb_id, targets.* 
-                 FROM days 
-                 LEFT JOIN targets_by_days ON days.id = targets_by_days.day_id
-                 LEFT JOIN targets ON targets.id = targets_by_days.target_id 
-                 ORDER BY days.id, targets.type, targets.name;`;
+    const sql = `
+    SELECT 
+      days.id as day_id,
+      days.name as day_name,
+      targets_by_days.id as tb_id,
+      targets.*, 
+      targets_by_days.position
+    FROM days 
+    LEFT JOIN targets_by_days ON days.id = targets_by_days.day_id
+    LEFT JOIN targets ON targets.id = targets_by_days.target_id 
+    ORDER BY days.id, targets_by_days.position, targets.type, targets.name;
+  `;
 
     const rawWeeklyTargets = await handleQuery<RawWeeklyTargets>(sql, 'getting weekly targets');
 
