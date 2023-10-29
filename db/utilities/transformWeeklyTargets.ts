@@ -37,5 +37,7 @@ export const transformWeeklyTargets = (rawTargets: RawWeeklyTargets) => {
     });
   });
 
+  console.log(week[0]);
+
   return week;
 };

@@ -155,6 +155,7 @@ export const deleteAllTables = async () => {
 //TARGETS--TARGETS--TARGETS--TARGETS--TARGETS--TARGETS--TARGETS--TARGETS--TARGETS--TARGETS
 //----------------------------------------------------------------------------------------------
 export class TargetDAO {
+  //----------------------------------------------------------------------------------------------
   public async getAllTargets(typeFilter?: string): Promise<Target[]> {
     let sql = `SELECT * FROM targets `;
     let params: any[] = [];
@@ -179,11 +180,13 @@ export class TargetDAO {
     return targets;
   }
 
+  //----------------------------------------------------------------------------------------------
   public async getOneTarget(targetId: number): Promise<Target> {
     const targets = await handleQuery<Target[]>(`SELECT * FROM targets WHERE id = ?`, 'getting target', [targetId]);
     return targets[0];
   }
 
+  //----------------------------------------------------------------------------------------------
   public async createNewTarget(target: NewTarget): Promise<string> {
     return new Promise((resolve, reject) => {
       db.transaction(
@@ -208,6 +211,7 @@ export class TargetDAO {
     });
   }
 
+  //----------------------------------------------------------------------------------------------
   public async updateTarget(target: Target): Promise<void> {
     const targetQunaity = target.quantity < 0 ? 0 : target.quantity;
     return new Promise((resolve, reject) => {
@@ -224,16 +228,33 @@ export class TargetDAO {
     });
   }
 
+  //----------------------------------------------------------------------------------------------
   public async deleteTarget(targetId: number): Promise<string> {
     return new Promise((resolve, reject) => {
       db.transaction(
         (tx: SQLite.SQLTransaction) => {
           tx.executeSql(`DELETE FROM targets WHERE id = ?`, [targetId], () => {
-            tx.executeSql(`DELETE FROM targets_by_days WHERE target_id = ?`, [targetId]),
-              (error: Error) => handleError('deleteing target', error, reject);
+            tx.executeSql(`SELECT DISTINCT day_id FROM targets_by_days WHERE target_id = ?`, [targetId], (_, resultSet) => {
+              const days: { day_id: number }[] = resultSet.rows._array;
+
+              days.forEach((day) => {
+                tx.executeSql(`DELETE FROM targets_by_days WHERE target_id = ? AND day_id = ?`, [targetId, day.day_id], () => {
+                  tx.executeSql(
+                    `SELECT id, position FROM targets_by_days WHERE day_id = ? ORDER BY position`,
+                    [day.day_id],
+                    (_, resultSet) => {
+                      const remainingTargets = resultSet.rows._array;
+                      remainingTargets.forEach((target, index) => {
+                        tx.executeSql(`UPDATE targets_by_days SET position = ? WHERE id = ?`, [index + 1, target.id]);
+                      });
+                    }
+                  );
+                });
+              });
+            });
           });
         },
-        (error: Error) => handleError('deleteing target', error, reject),
+        (error: Error) => handleError('deleting target', error, reject),
         () => resolve('Target successfully deleted')
       );
     });
@@ -244,6 +265,7 @@ export class TargetDAO {
 //WEEKLY_TARGETS--WEEKLY_TARGETS--WEEKLY_TARGETS--WEEKLY_TARGETS--WEEKLY_TARGETS--WEEKLY_TARGETS
 //----------------------------------------------------------------------------------------------
 export class TargetByDaysDAO {
+  //----------------------------------------------------------------------------------------------
   public async getDailyTargets(dayId: number): Promise<Target[]> {
     return handleQuery(
       `SELECT targets.* FROM days
@@ -254,6 +276,7 @@ export class TargetByDaysDAO {
     );
   }
 
+  //----------------------------------------------------------------------------------------------
   public async getWeeklyTargets(): Promise<WeeklyTargets> {
     const sql = `
     SELECT 
@@ -273,6 +296,7 @@ export class TargetByDaysDAO {
     return transformWeeklyTargets(rawWeeklyTargets);
   }
 
+  //----------------------------------------------------------------------------------------------
   public async addTargetToDay(dayId: number, targetId: number): Promise<void> {
     return new Promise((resolve, reject) => {
       db.transaction(
@@ -297,6 +321,7 @@ export class TargetByDaysDAO {
     });
   }
 
+  //----------------------------------------------------------------------------------------------
   public async getActiveTargetCount(): Promise<ActiveTargetQuantity[]> {
     const activeCountMap: Map<number, number> = new Map();
 
@@ -329,11 +354,31 @@ export class TargetByDaysDAO {
     return activeCountArray;
   }
 
+  //----------------------------------------------------------------------------------------------
   public async deleteTargetFromWeeklyTargets(id: number): Promise<void> {
-    const sql = `DELETE FROM targets_by_days WHERE id = (?)`;
-    handleQuery(sql, 'deleting target', [id]);
+    return new Promise((resolve, reject) => {
+      db.transaction(
+        (tx: SQLite.SQLTransaction) => {
+          tx.executeSql(`SELECT day_id FROM targets_by_days WHERE id = (?)`, [id], (_, resultSet) => {
+            const day = resultSet.rows._array[0];
+
+            tx.executeSql(`DELETE FROM targets_by_days WHERE id = (?)`, [id], () => {
+              tx.executeSql(`SELECT id, position FROM targets_by_days WHERE day_id = ? ORDER BY position`, [day.day_id], (_, resultSet) => {
+                const remainingTargets = resultSet.rows._array;
+                remainingTargets.forEach((target, index) => {
+                  tx.executeSql(`UPDATE targets_by_days SET position = ? WHERE id = ?`, [index + 1, target.id]);
+                });
+              });
+            });
+          });
+        },
+        (error: Error) => handleError('removing target from day', error, reject),
+        () => resolve()
+      );
+    });
   }
 
+  //----------------------------------------------------------------------------------------------
   async updatePositions(dayId: number, positions: { tb_id: number; position: number }[]): Promise<void> {
     return new Promise((resolve, reject) => {
       db.transaction(
