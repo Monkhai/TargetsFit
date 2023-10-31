@@ -34,9 +34,9 @@ export type DailyTargets = {
   targets: Array<Target & { tb_id: number; position: number }>;
 };
 
-export type TargetInWeeklyTargets = Target & { tb_id: number };
-
 export type WeeklyTargets = DailyTargets[];
+
+export type TargetInWeeklyTargets = Target & { tb_id: number };
 
 type RawDailyTargets = {
   day_id: DayId;

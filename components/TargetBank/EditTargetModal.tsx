@@ -8,6 +8,7 @@ import { Day, Target, TargetType } from '../../db/db';
 import Button from '../Button';
 import { Text } from '../Themed';
 import DismissTargetModal from './DismissTargetModal';
+import ModalHeader from './ModalHeader';
 
 type SortedTargets = {
   day: Day; // Assume Day is a known type
@@ -23,7 +24,6 @@ interface Props {
 
   isDismissTargetModalVisible: boolean;
   setIsDismissTargetModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
-  sortedWeeklyTargetsForEdit: SortedTargets[] | undefined;
 }
 
 const EditTargetModal = ({
@@ -34,7 +34,6 @@ const EditTargetModal = ({
   editedTarget,
   isDismissTargetModalVisible,
   setIsDismissTargetModalVisible,
-  sortedWeeklyTargetsForEdit,
 }: Props) => {
   const [selectedType, setSelectedType] = useState<TargetType>(editedTarget.type);
   const [name, setName] = useState<string>(editedTarget.name);
@@ -68,28 +67,24 @@ const EditTargetModal = ({
 
   return (
     <Modal
+      isVisible={isEditTargetModalVisible}
       style={styles.modal}
       onBackdropPress={() => {
         Keyboard.dismiss();
         setIsEditTargetModalVisible(false);
       }}
       useNativeDriverForBackdrop
-      isVisible={isEditTargetModalVisible}
+      animationIn={'zoomIn'}
+      animationOut={'zoomOut'}
     >
       <View style={[{ backgroundColor: Colors[colorScheme ?? 'light'].backgroundSecondary }, styles.container]}>
-        <View style={styles.headerContainer}>
-          <Button
-            title="Cancel"
-            onPress={() => {
-              Keyboard.dismiss();
-              setIsEditTargetModalVisible(false);
-            }}
-          />
-          <Text ellipsizeMode="tail" numberOfLines={1} style={styles.headerText}>
-            Edit {editedTarget.name}
-          </Text>
-          <Button title="Save" disabled={!name || !quantity} onPress={handlePress} />
-        </View>
+        <ModalHeader
+          handleSave={handlePress}
+          name={name}
+          quantity={quantity}
+          setIsEditTargetModalVisible={setIsEditTargetModalVisible}
+          title={`Edit ${editedTarget.name}`}
+        />
         <TextInput
           style={[styles.textInput, { backgroundColor: Colors[colorScheme ?? 'light'].background }]}
           placeholder={editedTarget.name}
@@ -122,10 +117,10 @@ const EditTargetModal = ({
       </View>
       {/* //------------------------------------------------------------------------ */}
       <DismissTargetModal
+        editingTarget={editedTarget}
         colorScheme={colorScheme}
         isVisible={isDismissTargetModalVisible}
         setIsVisible={setIsDismissTargetModalVisible}
-        sortedWeeklyTargets={sortedWeeklyTargetsForEdit}
       />
     </Modal>
   );
@@ -144,20 +139,6 @@ const styles = StyleSheet.create({
     borderRadius: BORDER_RADIUS,
     gap: 20,
     padding: 10,
-  },
-  headerContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: 'transerant',
-    paddingBottom: 10,
-    width: '100%',
-  },
-  headerText: {
-    fontSize: 20,
-    fontWeight: '600',
-    flex: 1,
-    textAlign: 'center',
   },
   textInput: {
     borderRadius: BORDER_RADIUS,

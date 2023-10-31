@@ -3,8 +3,12 @@ import { ColorSchemeName, FlatList, StyleSheet, View } from 'react-native';
 import Modal from 'react-native-modal';
 import Colors from '../../constants/Colors';
 import { BORDER_RADIUS } from '../../constants/SIZES';
-import { Day, DayId, DayName, Target, TargetInWeeklyTargets, WeeklyTargets } from '../../db/db';
+import { Day, Target } from '../../db/db';
+import useGetDismissTargetData from '../../hooks/useGetDismissTargetData';
 import DismissTargetListItem from './DismissTargetListItem';
+import ModalHeader from './ModalHeader';
+import Button from '../Button';
+import { Text } from '../Themed';
 
 type SortedTargets = {
   day: Day; // Assume Day is a known type
@@ -14,23 +18,36 @@ type SortedTargets = {
 
 interface Props {
   colorScheme: ColorSchemeName;
-  sortedWeeklyTargets: SortedTargets[] | undefined;
   isVisible: boolean;
   setIsVisible: React.Dispatch<React.SetStateAction<boolean>>;
+  editingTarget: Target;
 }
 
-const DismissTargetModal = ({ colorScheme, sortedWeeklyTargets, isVisible, setIsVisible }: Props) => {
+const DismissTargetModal = ({ colorScheme, editingTarget, isVisible, setIsVisible }: Props) => {
+  const { sortedWeeklyTargets, targetsLeftToDismiss } = useGetDismissTargetData(editingTarget);
+
   return (
     <Modal
       animationIn={'zoomIn'}
       animationOut={'zoomOut'}
       style={styles.modal}
-      useNativeDriver
       useNativeDriverForBackdrop
       onBackButtonPress={() => setIsVisible(false)}
       isVisible={isVisible}
     >
       <View style={[{ backgroundColor: Colors[colorScheme ?? 'light'].backgroundSecondary }, styles.container]}>
+        <View style={styles.headerContainer}>
+          <Button
+            title="Cancel"
+            onPress={() => {
+              setIsVisible(false);
+            }}
+          />
+          <Text ellipsizeMode="tail" numberOfLines={1} style={styles.headerText}>
+            {`${targetsLeftToDismiss} Left`}
+          </Text>
+          <Button title="Save" disabled={targetsLeftToDismiss !== 0} onPress={() => ''} />
+        </View>
         <FlatList
           style={{ width: '100%' }}
           data={sortedWeeklyTargets}

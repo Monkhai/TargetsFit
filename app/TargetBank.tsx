@@ -10,20 +10,11 @@ import { View } from '../components/Themed';
 import Colors from '../constants/Colors';
 import ActiveQuantityContext from '../context/ActiveQuantityContext';
 import DBContext from '../context/DBLoadingContext';
-import { Day, NewTarget, Target, TargetDAO, WeeklyTargets } from '../db/db';
-import { heavyHaptics } from '../utilityFunctions/haptics';
 import TargetsContext from '../context/TargetsContext';
 import WeeklyTargetsContext from '../context/WeeklyTargetsContext';
-import DismissTargetModal from '../components/TargetBank/DismissTargetModal';
-import useTargetOperations from '../hooks/useTargetOperations';
-
-const Targets = new TargetDAO();
-
-type SortedTargets = {
-  day: Day;
-  target: { targetId: number; targetTbId: number; targetPosition: number };
-  quantity: number;
-};
+import { NewTarget, Target, TargetDAO } from '../db/db';
+import { SortedTargets } from '../hooks/useGetDismissTargetData';
+import { heavyHaptics } from '../utilityFunctions/haptics';
 
 const TargetBank = () => {
   //------------------------------------------------------------------------
@@ -35,25 +26,90 @@ const TargetBank = () => {
   //------------------------------------------------------------------------
   const { isLoading: isDBLoading } = useContext(DBContext);
 
-  const {
-    targets,
-    isLoading,
-    error,
-    weeklyTargets,
-    deleteTarget,
-    createNewTarget,
-    editTarget,
-    editedTarget,
-    setEditedTarget,
-    handleLongPress,
-    isNewModalVisible,
-    setIsNewModalVisible,
-    isEditModalVisible,
-    setIsEditModalVisible,
-    isDismissTargetModalVisible,
-    setIsDismissTargetModalVisible,
-    sortedWeeklyTargetsForEdit,
-  } = useTargetOperations();
+  //------------------------------------------------------------------------
+  const { targets, isLoading, error, refetch: refetchAllTargets } = useContext(TargetsContext);
+  const { weeklyTargets, refetch: refetchWeeklyTargets } = useContext(WeeklyTargetsContext);
+  const { refetch: refetchActiveCount } = useContext(ActiveQuantityContext);
+
+  //------------------------------------------------------------------------
+  const [editedTarget, setEditedTarget] = useState<Target>({} as Target);
+  const [isNewModalVisible, setIsNewModalVisible] = useState(false);
+  const [isEditModalVisible, setIsEditModalVisible] = useState(false);
+  const [isDismissTargetModalVisible, setIsDismissTargetModalVisible] = useState(false);
+
+  const Targets = new TargetDAO();
+
+  //------------------------------------------------------------------------
+  const deleteTarget = useCallback((target: Target) => {
+    Targets.deleteTarget(target.id)
+      .then(() => {
+        refetchWeeklyTargets();
+        refetchAllTargets();
+        refetchActiveCount();
+      })
+      .catch((error: Error) => Alert.alert(error.message));
+  }, []);
+
+  //------------------------------------------------------------------------
+  const createNewTarget = useCallback((newTarget: NewTarget) => {
+    Targets.createNewTarget(newTarget)
+      .then(() => {
+        refetchAllTargets();
+        refetchActiveCount();
+        setIsNewModalVisible(false);
+      })
+      .catch((error: Error) => {
+        Alert.alert(error.message);
+      });
+  }, []);
+
+  //------------------------------------------------------------------------
+  const editTarget = useCallback((updatedTarget: Target, oldTarget: Target) => {
+    const changedQuantity = updatedTarget.quantity - oldTarget.quantity;
+
+    if (changedQuantity > 0) {
+      updateTarget(updatedTarget);
+    } else {
+      Alert.alert(`Missing ${-changedQuantity} Targets`, `Would you like to dismiss ${-changedQuantity} targets?`, [
+        {
+          text: 'No',
+        },
+        {
+          text: 'Yes',
+          isPreferred: true,
+          onPress: () => {
+            setIsDismissTargetModalVisible(true);
+          },
+        },
+      ]);
+    }
+  }, []);
+
+  //------------------------------------------------------------------------
+  const updateTarget = (updatedTarget: Target) => {
+    Targets.updateTarget(updatedTarget)
+      .then(() => {
+        refetchAllTargets();
+        refetchActiveCount();
+        setIsEditModalVisible(false);
+      })
+      .catch((err: Error) => {
+        Alert.alert(err.message);
+        setIsEditModalVisible(false);
+      });
+  };
+
+  //------------------------------------------------------------------------
+  const handleLongPress = useCallback(
+    (target: Target) => {
+      heavyHaptics();
+      setEditedTarget(() => {
+        setIsEditModalVisible(true);
+        return target;
+      });
+    },
+    [isEditModalVisible]
+  );
 
   //------------------------------------------------------------------------
   //------------------------------------------------------------------------
@@ -99,7 +155,6 @@ const TargetBank = () => {
           setIsEditTargetModalVisible={setIsEditModalVisible}
           isDismissTargetModalVisible={isDismissTargetModalVisible}
           setIsDismissTargetModalVisible={setIsDismissTargetModalVisible}
-          sortedWeeklyTargetsForEdit={sortedWeeklyTargetsForEdit}
         />
       </View>
     );
