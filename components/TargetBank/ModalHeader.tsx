@@ -5,26 +5,25 @@ import { Text } from '../Themed';
 
 interface Props {
   title: string;
-  name: string | undefined;
-  quantity: number | undefined;
+  disabledCondition: boolean;
   handleSave: () => void;
-  setIsEditTargetModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsVisible: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const ModalHeader = ({ title, name, quantity, handleSave, setIsEditTargetModalVisible }: Props) => {
+const ModalHeader = ({ title, handleSave, setIsVisible, disabledCondition }: Props) => {
   return (
     <View style={styles.headerContainer}>
       <Button
         title="Cancel"
         onPress={() => {
           Keyboard.dismiss();
-          setIsEditTargetModalVisible(false);
+          setIsVisible(false);
         }}
       />
       <Text ellipsizeMode="tail" numberOfLines={1} style={styles.headerText}>
         {title}
       </Text>
-      <Button title="Save" disabled={!name || !quantity} onPress={handleSave} />
+      <Button title="Save" disabled={disabledCondition} onPress={handleSave} />
     </View>
   );
 };

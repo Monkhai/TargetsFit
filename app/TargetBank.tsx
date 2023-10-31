@@ -13,7 +13,7 @@ import DBContext from '../context/DBLoadingContext';
 import TargetsContext from '../context/TargetsContext';
 import WeeklyTargetsContext from '../context/WeeklyTargetsContext';
 import { NewTarget, Target, TargetDAO } from '../db/db';
-import { SortedTargets } from '../hooks/useGetDismissTargetData';
+import useGetDismissTargetData, { SortedTargets } from '../hooks/useGetDismissTargetData';
 import { heavyHaptics } from '../utilityFunctions/haptics';
 
 const TargetBank = () => {
@@ -37,6 +37,9 @@ const TargetBank = () => {
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [isDismissTargetModalVisible, setIsDismissTargetModalVisible] = useState(false);
 
+  const { targetsLeftToDismiss } = useGetDismissTargetData(editedTarget);
+
+  //------------------------------------------------------------------------
   const Targets = new TargetDAO();
 
   //------------------------------------------------------------------------
@@ -70,7 +73,7 @@ const TargetBank = () => {
     if (changedQuantity > 0) {
       updateTarget(updatedTarget);
     } else {
-      Alert.alert(`Missing ${-changedQuantity} Targets`, `Would you like to dismiss ${-changedQuantity} targets?`, [
+      Alert.alert(`Missing ${targetsLeftToDismiss} Targets`, `Would you like to dismiss ${targetsLeftToDismiss} targets?`, [
         {
           text: 'No',
         },

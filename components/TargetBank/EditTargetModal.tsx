@@ -9,6 +9,8 @@ import Button from '../Button';
 import { Text } from '../Themed';
 import DismissTargetModal from './DismissTargetModal';
 import ModalHeader from './ModalHeader';
+import CustomTextInput from './CustomTextInput';
+import ModalPicker from './ModalPicker';
 
 type SortedTargets = {
   day: Day; // Assume Day is a known type
@@ -21,7 +23,6 @@ interface Props {
   setIsEditTargetModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
   handleModalEdit: (target: Target, oldTarget: Target) => void;
   editedTarget: Target;
-
   isDismissTargetModalVisible: boolean;
   setIsDismissTargetModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -39,18 +40,16 @@ const EditTargetModal = ({
   const [name, setName] = useState<string>(editedTarget.name);
   const [quantity, setQuantity] = useState<number>(editedTarget.quantity);
 
-  const quantityInputRef = useRef<TextInput>(null);
-
   useEffect(() => {
     setName(editedTarget.name);
     setQuantity(editedTarget.quantity);
     setSelectedType(editedTarget.type);
   }, [editedTarget]);
 
-  const handlePress = () => {
+  const handleSave = () => {
     Keyboard.dismiss();
-    if (!name) return Alert.alert('Must choose a name');
-    if (!quantity) return Alert.alert('Must choose a quantity');
+
+    console.log(quantity);
 
     handleModalEdit(
       {
@@ -79,41 +78,20 @@ const EditTargetModal = ({
     >
       <View style={[{ backgroundColor: Colors[colorScheme ?? 'light'].backgroundSecondary }, styles.container]}>
         <ModalHeader
-          handleSave={handlePress}
-          name={name}
-          quantity={quantity}
-          setIsEditTargetModalVisible={setIsEditTargetModalVisible}
+          disabledCondition={!name || !quantity}
+          handleSave={handleSave}
+          setIsVisible={setIsEditTargetModalVisible}
           title={`Edit ${editedTarget.name}`}
         />
-        <TextInput
-          style={[styles.textInput, { backgroundColor: Colors[colorScheme ?? 'light'].background }]}
-          placeholder={editedTarget.name}
-          selectionColor={'red'}
-          onChangeText={(text) => setName(text)}
-          returnKeyType="next"
-          onSubmitEditing={() => quantityInputRef.current?.focus()}
-        />
-        <TextInput
-          style={[styles.textInput, { backgroundColor: Colors[colorScheme ?? 'light'].background }]}
-          keyboardType="number-pad"
-          placeholder={editedTarget.quantity.toString()}
-          cursorColor={'red'}
+
+        <CustomTextInput onChangeText={(text) => setName(text)} placeholder={editedTarget.name} returnKeyType="next" />
+        <CustomTextInput
           onChangeText={(text) => setQuantity(parseInt(text))}
-          ref={quantityInputRef}
+          placeholder={editedTarget.quantity.toString()}
+          keyboardType="numeric"
           returnKeyType="done"
         />
-        <Picker
-          selectedValue={selectedType}
-          onValueChange={(itemValue) => setSelectedType(itemValue)}
-          style={styles.pickerContainer}
-          itemStyle={[styles.pickerItem, { color: Colors[colorScheme ?? 'light'].text }]}
-        >
-          <Picker.Item label="strength" value={'strength'} />
-          <Picker.Item label="mobility" value={'mobility'} />
-          <Picker.Item label="VO2" value={'VO2'} />
-          <Picker.Item label="Flexibility" value={'flexibilty'} />
-          <Picker.Item label="specific" value={'specific'} />
-        </Picker>
+        <ModalPicker onValueChange={(value) => setSelectedType(value)} selectedType={selectedType} />
       </View>
       {/* //------------------------------------------------------------------------ */}
       <DismissTargetModal
@@ -140,18 +118,4 @@ const styles = StyleSheet.create({
     gap: 20,
     padding: 10,
   },
-  textInput: {
-    borderRadius: BORDER_RADIUS,
-    fontSize: 18,
-    width: '95%',
-    padding: 10,
-    color: 'red',
-  },
-  pickerContainer: {
-    justifyContent: 'center',
-    width: '100%',
-    height: 50,
-    overflow: 'hidden',
-  },
-  pickerItem: { fontSize: 20 },
 });

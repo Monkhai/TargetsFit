@@ -6,8 +6,8 @@ interface Props extends ButtonProps {
   onPress?: () => void;
 }
 //------------------------------------------------------------------------
-const Button = ({ title, onPress }: Props) => {
-  return <NativeButton title={title} color="red" onPress={onPress} />;
+const Button = ({ title, onPress, ...props }: Props) => {
+  return <NativeButton title={title} color="red" onPress={onPress} {...props} />;
 };
 
 export default Button;

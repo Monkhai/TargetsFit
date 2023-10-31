@@ -7,6 +7,9 @@ import Button from '../Button';
 import { NewTarget, TargetType } from '../../db/db';
 import { Picker } from '@react-native-picker/picker';
 import { Text } from '../Themed';
+import ModalHeader from './ModalHeader';
+import CustomTextInput from './CustomTextInput';
+import ModalPicker from './ModalPicker';
 
 interface Props {
   colorScheme: ColorSchemeName;
@@ -19,8 +22,6 @@ const NewTargetModal = ({ colorScheme, isNewTargetModalVisible, setIsNewTargetMo
   const [selectedType, setSelectedType] = useState<TargetType>('strength');
   const [newName, setNewName] = useState<string>();
   const [newQuantity, setNewQuantity] = useState<number>();
-
-  const quantityInputRef = useRef<TextInput>(null);
 
   const handlePress = () => {
     if (!newName) return Alert.alert('Must choose a name');
@@ -43,50 +44,26 @@ const NewTargetModal = ({ colorScheme, isNewTargetModalVisible, setIsNewTargetMo
         Keyboard.dismiss();
         setIsNewTargetModalVisible(false);
       }}
+      animationIn={'zoomIn'}
+      animationOut={'zoomOut'}
       useNativeDriverForBackdrop
       isVisible={isNewTargetModalVisible}
     >
       <View style={[{ backgroundColor: Colors[colorScheme ?? 'light'].backgroundSecondary }, styles.container]}>
-        <View style={styles.headerContainer}>
-          <Button
-            title="Cancel"
-            onPress={() => {
-              Keyboard.dismiss();
-              setIsNewTargetModalVisible(false);
-            }}
-          />
-          <Text style={styles.headerText}>New target</Text>
-          <Button title="Create" onPress={handlePress} />
-        </View>
-        <TextInput
-          style={[styles.textInput, { backgroundColor: Colors[colorScheme ?? 'light'].background }]}
-          placeholder="Target name"
-          selectionColor={'red'}
-          onChangeText={(text) => setNewName(text)}
-          returnKeyType="next"
-          onSubmitEditing={() => quantityInputRef.current?.focus()}
+        <ModalHeader
+          disabledCondition={!newName || !newQuantity}
+          handleSave={handlePress}
+          setIsVisible={setIsNewTargetModalVisible}
+          title="Create Target"
         />
-        <TextInput
-          style={[styles.textInput, { backgroundColor: Colors[colorScheme ?? 'light'].background }]}
-          keyboardType="number-pad"
-          placeholder="Target quantity"
-          cursorColor={'red'}
+        <CustomTextInput placeholder="Target" onChangeText={(text) => setNewName(text)} returnKeyType="next" />
+        <CustomTextInput
+          placeholder="Quantity"
           onChangeText={(text) => setNewQuantity(parseInt(text))}
-          ref={quantityInputRef}
           returnKeyType="done"
+          keyboardType="number-pad"
         />
-        <Picker
-          selectedValue={selectedType}
-          onValueChange={(itemValue) => setSelectedType(itemValue)}
-          style={styles.pickerContainer}
-          itemStyle={[styles.pickerItem, { color: Colors[colorScheme ?? 'light'].text }]}
-        >
-          <Picker.Item label="strength" value={'strength'} />
-          <Picker.Item label="mobility" value={'mobility'} />
-          <Picker.Item label="VO2" value={'VO2'} />
-          <Picker.Item label="Flexibility" value={'flexibilty'} />
-          <Picker.Item label="specific" value={'specific'} />
-        </Picker>
+        <ModalPicker onValueChange={(value) => setSelectedType(value)} selectedType={selectedType} />
       </View>
     </Modal>
   );
@@ -106,27 +83,4 @@ const styles = StyleSheet.create({
     gap: 20,
     padding: 10,
   },
-  headerContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: 'transerant',
-    paddingBottom: 10,
-    width: '100%',
-  },
-  headerText: { fontSize: 20, fontWeight: '600' },
-  textInput: {
-    borderRadius: BORDER_RADIUS,
-    fontSize: 18,
-    width: '95%',
-    padding: 10,
-    color: 'red',
-  },
-  pickerContainer: {
-    justifyContent: 'center',
-    width: '100%',
-    height: 50,
-    overflow: 'hidden',
-  },
-  pickerItem: { fontSize: 20 },
 });

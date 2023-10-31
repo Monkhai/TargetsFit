@@ -45,7 +45,9 @@ const useGetDismissTargetData = (target: Target) => {
     //-----------------------------------------------------------------------------------------------------------------------------
     //-----------------------------------------------------------------------------------------------------------------------------
 
-    const newTargetsLeftToDismiss = target.quantity - newSortedWeeklyTargets.length;
+    const totalActiveQuantity = newSortedWeeklyTargets.reduce((acc, curr) => acc + curr.quantity, 0);
+    const newTargetsLeftToDismiss = target.quantity - totalActiveQuantity;
+    console.log(target.quantity, newSortedWeeklyTargets.length);
     setTargetsLeftToDismiss(newTargetsLeftToDismiss);
     //-----------------------------------------------------------------------------------------------------------------------------
     //-----------------------------------------------------------------------------------------------------------------------------

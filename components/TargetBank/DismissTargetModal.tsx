@@ -1,5 +1,5 @@
 import React from 'react';
-import { ColorSchemeName, FlatList, StyleSheet, View } from 'react-native';
+import { Alert, ColorSchemeName, FlatList, StyleSheet, View } from 'react-native';
 import Modal from 'react-native-modal';
 import Colors from '../../constants/Colors';
 import { BORDER_RADIUS } from '../../constants/SIZES';
@@ -26,6 +26,8 @@ interface Props {
 const DismissTargetModal = ({ colorScheme, editingTarget, isVisible, setIsVisible }: Props) => {
   const { sortedWeeklyTargets, targetsLeftToDismiss } = useGetDismissTargetData(editingTarget);
 
+  const disabled = targetsLeftToDismiss !== 0;
+
   return (
     <Modal
       animationIn={'zoomIn'}
@@ -36,18 +38,12 @@ const DismissTargetModal = ({ colorScheme, editingTarget, isVisible, setIsVisibl
       isVisible={isVisible}
     >
       <View style={[{ backgroundColor: Colors[colorScheme ?? 'light'].backgroundSecondary }, styles.container]}>
-        <View style={styles.headerContainer}>
-          <Button
-            title="Cancel"
-            onPress={() => {
-              setIsVisible(false);
-            }}
-          />
-          <Text ellipsizeMode="tail" numberOfLines={1} style={styles.headerText}>
-            {`${targetsLeftToDismiss} Left`}
-          </Text>
-          <Button title="Save" disabled={targetsLeftToDismiss !== 0} onPress={() => ''} />
-        </View>
+        <ModalHeader
+          disabledCondition={disabled}
+          handleSave={() => Alert.alert('Save here')}
+          setIsVisible={setIsVisible}
+          title={`${targetsLeftToDismiss} Left`}
+        />
         <FlatList
           style={{ width: '100%' }}
           data={sortedWeeklyTargets}
