@@ -15,11 +15,12 @@ import { heavyHaptics } from '../utilityFunctions/haptics';
 import TargetsContext from '../context/TargetsContext';
 import WeeklyTargetsContext from '../context/WeeklyTargetsContext';
 import DismissTargetModal from '../components/TargetBank/DismissTargetModal';
+import useTargetOperations from '../hooks/useTargetOperations';
 
 const Targets = new TargetDAO();
 
 type SortedTargets = {
-  day: Day; // Assume Day is a known type
+  day: Day;
   target: { targetId: number; targetTbId: number; targetPosition: number };
   quantity: number;
 };
@@ -33,123 +34,26 @@ const TargetBank = () => {
   //------------------------------------------------------------------------
   //------------------------------------------------------------------------
   const { isLoading: isDBLoading } = useContext(DBContext);
-  const { targets, isLoading, error, refetch: refetchAllTargets } = useContext(TargetsContext);
 
-  const { weeklyTargets, refetch: refetchWeeklyTergets } = useContext(WeeklyTargetsContext);
-
-  const { activeTargetQuantity, refetch: refetchActiveCount } = useContext(ActiveQuantityContext);
-
-  const [editedTarget, setEditedTarget] = useState<Target>({} as Target);
-
-  const [isNewModalVisible, setIsNewModalVisible] = useState(false);
-  const [isEditModalVisible, setIsEditModalVisible] = useState(false);
-  const [isDismissTargetModalVisible, setIsDismissTargetModalVisible] = useState(false);
-
-  const [sortedWeeklyTargetsForEdit, setSortedWeeklyTargetsForEdit] = useState<SortedTargets[]>();
-
-  //------------------------------------------------------------------------
-  //------------------------------------------------------------------------
-  const handleTargetDelete = (target: Target) => {
-    Targets.deleteTarget(target.id)
-      .then(() => {
-        refetchWeeklyTergets();
-        refetchAllTargets();
-        refetchActiveCount();
-      })
-      .catch((error: Error) => Alert.alert(error.message));
-  };
-
-  const handleTargetLongPress = (target: Target) => {
-    heavyHaptics();
-    setEditedTarget(() => {
-      setIsEditModalVisible(true);
-      return target;
-    });
-  };
-
-  const handleModalSave = (newTarget: NewTarget) => {
-    Targets.createNewTarget(newTarget)
-      .then(() => {
-        refetchAllTargets();
-        refetchActiveCount();
-      })
-      .then(() => setIsNewModalVisible(false))
-      .catch((error: Error) => {
-        Alert.alert(error.message);
-      });
-  };
-
-  const handleModalEdit = (updatedTarget: Target, oldTarget: Target) => {
-    //negative if targets are decreasing positive if targets are increasing
-    const quantityDifference = updatedTarget.quantity - oldTarget.quantity;
-
-    if (quantityDifference < 0) {
-      const activeQuantity = activeTargetQuantity.find((target) => target.target.id == updatedTarget.id);
-
-      if (activeQuantity) {
-        const unusedQuantity = oldTarget.quantity - activeQuantity.activeCount;
-
-        if (unusedQuantity < -quantityDifference) {
-          const missingUnusedTargets = unusedQuantity + quantityDifference;
-
-          Alert.alert(`${-missingUnusedTargets} Unused Targets Missing`, `Would you like to dismiss ${-missingUnusedTargets} targets?`, [
-            {
-              text: 'No',
-            },
-            {
-              text: 'Yes',
-              isPreferred: true,
-              onPress: () => {
-                const filteredWeeklyTargets = weeklyTargets.map((day) => {
-                  return {
-                    ...day,
-                    targets: day.targets.filter((target) => target.id === updatedTarget.id),
-                  };
-                });
-
-                const sortedWeeklyTargets: SortedTargets[] = filteredWeeklyTargets.reduce((acc: SortedTargets[], day) => {
-                  if (day.targets.length > 0) {
-                    const usedDay = day.day;
-
-                    const target = day.targets.find((target) => target.id === updatedTarget.id);
-
-                    if (target) {
-                      const sortedTargets = {
-                        day: usedDay,
-                        target: { targetId: target.id, targetTbId: target.tb_id, targetPosition: target.position },
-                        quantity: day.targets.length,
-                      };
-
-                      acc.push(sortedTargets);
-                    }
-                  }
-                  return acc;
-                }, []);
-                setIsDismissTargetModalVisible(true);
-                setSortedWeeklyTargetsForEdit(sortedWeeklyTargets);
-              },
-            },
-          ]);
-        } else {
-          Targets.updateTarget(updatedTarget)
-            .then(() => {
-              refetchAllTargets();
-              refetchActiveCount();
-            })
-            .then(() => setIsEditModalVisible(false))
-            .catch((error: Error) => Alert.alert(error.message));
-        }
-      }
-    } else {
-      Targets.updateTarget(updatedTarget)
-        .then(() => {
-          refetchAllTargets();
-          refetchActiveCount();
-        })
-        .then(() => setIsEditModalVisible(false))
-        .catch((error: Error) => Alert.alert(error.message));
-    }
-  };
+  const {
+    targets,
+    isLoading,
+    error,
+    weeklyTargets,
+    deleteTarget,
+    createNewTarget,
+    editTarget,
+    editedTarget,
+    setEditedTarget,
+    handleLongPress,
+    isNewModalVisible,
+    setIsNewModalVisible,
+    isEditModalVisible,
+    setIsEditModalVisible,
+    isDismissTargetModalVisible,
+    setIsDismissTargetModalVisible,
+    sortedWeeklyTargetsForEdit,
+  } = useTargetOperations();
 
   //------------------------------------------------------------------------
   //------------------------------------------------------------------------
@@ -176,25 +80,20 @@ const TargetBank = () => {
             data={targets}
             keyExtractor={(item, index) => item.name + index}
             renderItem={({ item: target }) => (
-              <BankListItem
-                colorScheme={colorScheme}
-                onRemovePress={handleTargetDelete}
-                onLongPress={handleTargetLongPress}
-                target={target}
-              />
+              <BankListItem colorScheme={colorScheme} onRemovePress={deleteTarget} onLongPress={handleLongPress} target={target} />
             )}
           />
         </View>
 
         <NewTargetModal
           colorScheme={colorScheme}
-          handleModalSave={handleModalSave}
+          handleModalSave={createNewTarget}
           isNewTargetModalVisible={isNewModalVisible}
           setIsNewTargetModalVisible={setIsNewModalVisible}
         />
         <EditTargetModal
           colorScheme={colorScheme}
-          handleModalEdit={handleModalEdit}
+          handleModalEdit={editTarget}
           editedTarget={editedTarget}
           isEditTargetModalVisible={isEditModalVisible}
           setIsEditTargetModalVisible={setIsEditModalVisible}

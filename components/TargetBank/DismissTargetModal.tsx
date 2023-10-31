@@ -22,6 +22,8 @@ interface Props {
 const DismissTargetModal = ({ colorScheme, sortedWeeklyTargets, isVisible, setIsVisible }: Props) => {
   return (
     <Modal
+      animationIn={'zoomIn'}
+      animationOut={'zoomOut'}
       style={styles.modal}
       useNativeDriver
       useNativeDriverForBackdrop
@@ -44,7 +46,12 @@ const DismissTargetModal = ({ colorScheme, sortedWeeklyTargets, isVisible, setIs
 export default React.memo(DismissTargetModal);
 
 const styles = StyleSheet.create({
-  modal: { width: '100%', margin: 0, top: -50 },
+  modal: {
+    width: '100%',
+    margin: 0,
+    top: -50,
+    zIndex: 100,
+  },
   container: {
     alignSelf: 'center',
     width: '80%',
