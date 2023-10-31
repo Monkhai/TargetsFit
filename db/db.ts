@@ -22,7 +22,7 @@ export type NewTarget = Omit<Target, 'id'>;
 
 export type DayId = 1 | 2 | 3 | 4 | 5 | 6 | 7;
 
-type DayName = 'sunday' | 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday';
+export type DayName = 'sunday' | 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday';
 
 export type Day = {
   id: DayId;
@@ -323,16 +323,15 @@ export class TargetByDaysDAO {
 
   //----------------------------------------------------------------------------------------------
   public async getActiveTargetCount(): Promise<ActiveTargetQuantity[]> {
-    const activeCountMap: Map<number, number> = new Map();
-
     const TargetsDAO = new TargetDAO();
     const allTargets = await TargetsDAO.getAllTargets();
+    const allWeeklyTargets = await this.getWeeklyTargets();
+
+    const activeCountMap: Map<number, number> = new Map();
 
     allTargets.forEach((target) => {
       activeCountMap.set(target.id, 0);
     });
-
-    const allWeeklyTargets = await this.getWeeklyTargets();
 
     allWeeklyTargets.forEach((day) => {
       day.targets.forEach((target) => {
@@ -349,8 +348,7 @@ export class TargetByDaysDAO {
         }
       })
       .filter((item): item is ActiveTargetQuantity => item !== undefined)
-      .filter((item) => item.activeCount !== item.target.quantity); // Adaptation here
-
+      .filter((item) => item.activeCount !== item.target.quantity);
     return activeCountArray;
   }
 

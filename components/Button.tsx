@@ -5,7 +5,7 @@ interface Props extends ButtonProps {
   title: string;
   onPress?: () => void;
 }
-
+//------------------------------------------------------------------------
 const Button = ({ title, onPress }: Props) => {
   return <NativeButton title={title} color="red" onPress={onPress} />;
 };

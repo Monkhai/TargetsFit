@@ -1,23 +1,41 @@
-import { Alert, ColorSchemeName, Keyboard, StyleSheet, TextInput, View } from 'react-native';
-import React, { useEffect, useRef, useState } from 'react';
-import Modal from 'react-native-modal';
-import { BORDER_RADIUS } from '../../constants/SIZES';
-import Colors from '../../constants/Colors';
-import Button from '../Button';
-import { NewTarget, Target, TargetType } from '../../db/db';
 import { Picker } from '@react-native-picker/picker';
+import React, { useEffect, useRef, useState } from 'react';
+import { Alert, ColorSchemeName, Keyboard, StyleSheet, TextInput, View } from 'react-native';
+import Modal from 'react-native-modal';
+import Colors from '../../constants/Colors';
+import { BORDER_RADIUS } from '../../constants/SIZES';
+import { Day, Target, TargetType } from '../../db/db';
+import Button from '../Button';
 import { Text } from '../Themed';
-import { heavyHaptics } from '../../utilityFunctions/haptics';
+import DismissTargetModal from './DismissTargetModal';
 
+type SortedTargets = {
+  day: Day; // Assume Day is a known type
+  target: { targetId: number; targetTbId: number; targetPosition: number };
+  quantity: number;
+};
 interface Props {
   colorScheme: ColorSchemeName;
   isEditTargetModalVisible: boolean;
   setIsEditTargetModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
-  handleModalEdit: (target: Target) => void;
+  handleModalEdit: (target: Target, oldTarget: Target) => void;
   editedTarget: Target;
+
+  isDismissTargetModalVisible: boolean;
+  setIsDismissTargetModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
+  sortedWeeklyTargetsForEdit: SortedTargets[] | undefined;
 }
 
-const EditTargetModal = ({ colorScheme, isEditTargetModalVisible, setIsEditTargetModalVisible, handleModalEdit, editedTarget }: Props) => {
+const EditTargetModal = ({
+  colorScheme,
+  isEditTargetModalVisible,
+  setIsEditTargetModalVisible,
+  handleModalEdit,
+  editedTarget,
+  isDismissTargetModalVisible,
+  setIsDismissTargetModalVisible,
+  sortedWeeklyTargetsForEdit,
+}: Props) => {
   const [selectedType, setSelectedType] = useState<TargetType>(editedTarget.type);
   const [name, setName] = useState<string>(editedTarget.name);
   const [quantity, setQuantity] = useState<number>(editedTarget.quantity);
@@ -31,18 +49,19 @@ const EditTargetModal = ({ colorScheme, isEditTargetModalVisible, setIsEditTarge
   }, [editedTarget]);
 
   const handlePress = () => {
+    Keyboard.dismiss();
     if (!name) return Alert.alert('Must choose a name');
     if (!quantity) return Alert.alert('Must choose a quantity');
 
-    handleModalEdit({
-      name: name,
-      quantity: quantity,
-      type: selectedType,
-      id: editedTarget.id,
-    });
-
-    Keyboard.dismiss();
-    setIsEditTargetModalVisible(false);
+    handleModalEdit(
+      {
+        name: name,
+        quantity: quantity,
+        type: selectedType,
+        id: editedTarget.id,
+      },
+      editedTarget
+    );
   };
 
   if (!editedTarget.id) return null;
@@ -101,6 +120,13 @@ const EditTargetModal = ({ colorScheme, isEditTargetModalVisible, setIsEditTarge
           <Picker.Item label="specific" value={'specific'} />
         </Picker>
       </View>
+      {/* //------------------------------------------------------------------------ */}
+      <DismissTargetModal
+        colorScheme={colorScheme}
+        isVisible={isDismissTargetModalVisible}
+        setIsVisible={setIsDismissTargetModalVisible}
+        sortedWeeklyTargets={sortedWeeklyTargetsForEdit}
+      />
     </Modal>
   );
 };

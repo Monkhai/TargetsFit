@@ -1,31 +1,31 @@
+import { FontAwesome } from '@expo/vector-icons';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { SplashScreen, Tabs } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { Button, useColorScheme } from 'react-native';
-import { MenuProvider } from 'react-native-popup-menu';
+import { useColorScheme } from 'react-native';
 import Colors from '../constants/Colors';
+import ActiveQuantityContext from '../context/ActiveQuantityContext';
 import DBContext from '../context/DBLoadingContext';
 import TargetsContext from '../context/TargetsContext';
-import useInitializeTables from '../hooks/useCreateDB';
-import useGetAllTargets from '../hooks/useGetAllTargets';
-import useGetActiveQuantity from '../hooks/useGetActiveQuantity';
-import ActiveQuantityContext from '../context/ActiveQuantityContext';
-import useGetWeeklyTargets from '../hooks/useGetWeeklyTargets';
 import WeeklyTargetsContext from '../context/WeeklyTargetsContext';
-import { Text } from '../components/Themed';
-import { FontAwesome } from '@expo/vector-icons';
-import { deleteAllTables } from '../db/db';
+import useInitializeTables from '../hooks/useCreateDB';
+import useGetActiveQuantity from '../hooks/useGetActiveQuantity';
+import useGetAllTargets from '../hooks/useGetAllTargets';
+import useGetWeeklyTargets from '../hooks/useGetWeeklyTargets';
 
 export { ErrorBoundary } from 'expo-router';
 
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
+  //------------------------------------------------------------------------
   const { isLoading: isDBLoading, error: dbError } = useInitializeTables();
   const [filter, setFilter] = useState<string>();
 
+  //------------------------------------------------------------------------
   const { targets, isLoading: isAllTargetsLoading, error: allTargetsError, refetch } = useGetAllTargets(isDBLoading, filter);
 
+  //------------------------------------------------------------------------
   const {
     weeklyTargets,
     isLoading: weeklyTaretsIsLoading,
@@ -33,6 +33,7 @@ export default function RootLayout() {
     refetch: refetchWeeklyTergets,
   } = useGetWeeklyTargets(isDBLoading);
 
+  //------------------------------------------------------------------------
   const {
     activeTargetQuantity,
     isLoading: isActiveCountLoading,
@@ -40,20 +41,24 @@ export default function RootLayout() {
     refetch: refetchActiveCount,
   } = useGetActiveQuantity(isDBLoading);
 
+  //------------------------------------------------------------------------
   useEffect(() => {
     if (dbError) throw dbError;
   }, [dbError]);
 
+  //------------------------------------------------------------------------
   useEffect(() => {
     if (!isDBLoading && isAllTargetsLoading) {
       SplashScreen.hideAsync();
     }
   }, [isDBLoading, isAllTargetsLoading]);
 
+  //------------------------------------------------------------------------
   if (isDBLoading && isAllTargetsLoading) {
     return null;
   }
 
+  //------------------------------------------------------------------------
   return (
     <DBContext.Provider value={{ isLoading: isDBLoading, error: dbError }}>
       <TargetsContext.Provider
@@ -90,6 +95,7 @@ export default function RootLayout() {
   );
 }
 
+//------------------------------------------------------------------------
 function RootLayoutNav() {
   const colorScheme = useColorScheme();
   return (

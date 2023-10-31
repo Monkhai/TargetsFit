@@ -10,29 +10,45 @@ import { View } from '../components/Themed';
 import Colors from '../constants/Colors';
 import ActiveQuantityContext from '../context/ActiveQuantityContext';
 import DBContext from '../context/DBLoadingContext';
-import { NewTarget, Target, TargetDAO } from '../db/db';
+import { Day, NewTarget, Target, TargetDAO, WeeklyTargets } from '../db/db';
 import { heavyHaptics } from '../utilityFunctions/haptics';
 import TargetsContext from '../context/TargetsContext';
 import WeeklyTargetsContext from '../context/WeeklyTargetsContext';
+import DismissTargetModal from '../components/TargetBank/DismissTargetModal';
 
 const Targets = new TargetDAO();
 
+type SortedTargets = {
+  day: Day; // Assume Day is a known type
+  target: { targetId: number; targetTbId: number; targetPosition: number };
+  quantity: number;
+};
+
 const TargetBank = () => {
+  //------------------------------------------------------------------------
+  //------------------------------------------------------------------------
   const colorScheme = useColorScheme();
   const navigator = useNavigation();
 
+  //------------------------------------------------------------------------
+  //------------------------------------------------------------------------
   const { isLoading: isDBLoading } = useContext(DBContext);
   const { targets, isLoading, error, refetch: refetchAllTargets } = useContext(TargetsContext);
 
-  const { refetch: refetchWeeklyTergets } = useContext(WeeklyTargetsContext);
+  const { weeklyTargets, refetch: refetchWeeklyTergets } = useContext(WeeklyTargetsContext);
 
-  const { refetch: refetchActiveCount } = useContext(ActiveQuantityContext);
+  const { activeTargetQuantity, refetch: refetchActiveCount } = useContext(ActiveQuantityContext);
 
   const [editedTarget, setEditedTarget] = useState<Target>({} as Target);
 
   const [isNewModalVisible, setIsNewModalVisible] = useState(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
+  const [isDismissTargetModalVisible, setIsDismissTargetModalVisible] = useState(false);
 
+  const [sortedWeeklyTargetsForEdit, setSortedWeeklyTargetsForEdit] = useState<SortedTargets[]>();
+
+  //------------------------------------------------------------------------
+  //------------------------------------------------------------------------
   const handleTargetDelete = (target: Target) => {
     Targets.deleteTarget(target.id)
       .then(() => {
@@ -59,21 +75,84 @@ const TargetBank = () => {
       })
       .then(() => setIsNewModalVisible(false))
       .catch((error: Error) => {
-        console.log(error);
         Alert.alert(error.message);
       });
   };
 
-  const handleModalEdit = (updatedTarget: Target) => {
-    Targets.updateTarget(updatedTarget)
-      .then(() => {
-        refetchAllTargets();
-        refetchActiveCount();
-      })
-      .then(() => setIsEditModalVisible(false))
-      .catch((error: Error) => Alert.alert(error.message));
+  const handleModalEdit = (updatedTarget: Target, oldTarget: Target) => {
+    //negative if targets are decreasing positive if targets are increasing
+    const quantityDifference = updatedTarget.quantity - oldTarget.quantity;
+
+    if (quantityDifference < 0) {
+      const activeQuantity = activeTargetQuantity.find((target) => target.target.id == updatedTarget.id);
+
+      if (activeQuantity) {
+        const unusedQuantity = oldTarget.quantity - activeQuantity.activeCount;
+
+        if (unusedQuantity < -quantityDifference) {
+          const missingUnusedTargets = unusedQuantity + quantityDifference;
+
+          Alert.alert(`${-missingUnusedTargets} Unused Targets Missing`, `Would you like to dismiss ${-missingUnusedTargets} targets?`, [
+            {
+              text: 'No',
+            },
+            {
+              text: 'Yes',
+              isPreferred: true,
+              onPress: () => {
+                const filteredWeeklyTargets = weeklyTargets.map((day) => {
+                  return {
+                    ...day,
+                    targets: day.targets.filter((target) => target.id === updatedTarget.id),
+                  };
+                });
+
+                const sortedWeeklyTargets: SortedTargets[] = filteredWeeklyTargets.reduce((acc: SortedTargets[], day) => {
+                  if (day.targets.length > 0) {
+                    const usedDay = day.day;
+
+                    const target = day.targets.find((target) => target.id === updatedTarget.id);
+
+                    if (target) {
+                      const sortedTargets = {
+                        day: usedDay,
+                        target: { targetId: target.id, targetTbId: target.tb_id, targetPosition: target.position },
+                        quantity: day.targets.length,
+                      };
+
+                      acc.push(sortedTargets);
+                    }
+                  }
+                  return acc;
+                }, []);
+                setIsDismissTargetModalVisible(true);
+                setSortedWeeklyTargetsForEdit(sortedWeeklyTargets);
+              },
+            },
+          ]);
+        } else {
+          Targets.updateTarget(updatedTarget)
+            .then(() => {
+              refetchAllTargets();
+              refetchActiveCount();
+            })
+            .then(() => setIsEditModalVisible(false))
+            .catch((error: Error) => Alert.alert(error.message));
+        }
+      }
+    } else {
+      Targets.updateTarget(updatedTarget)
+        .then(() => {
+          refetchAllTargets();
+          refetchActiveCount();
+        })
+        .then(() => setIsEditModalVisible(false))
+        .catch((error: Error) => Alert.alert(error.message));
+    }
   };
 
+  //------------------------------------------------------------------------
+  //------------------------------------------------------------------------
   useEffect(() => {
     navigator.setOptions({
       headerRight: () => <Button title="new" onPress={() => setIsNewModalVisible(true)} />,
@@ -82,9 +161,8 @@ const TargetBank = () => {
     });
   }, []);
 
-  //COMPONENT--COMPONENT--COMPONENT--COMPONENT--COMPONENT--COMPONENT
-  //COMPONENT--COMPONENT--COMPONENT--COMPONENT--COMPONENT--COMPONENT
-  //COMPONENT--COMPONENT--COMPONENT--COMPONENT--COMPONENT--COMPONENT
+  //------------------------------------------------------------------------
+  //------------------------------------------------------------------------
   if (isLoading || isDBLoading) {
     return <LoadingErrorHome message="Loading..." />;
   } else if (error) {
@@ -107,6 +185,7 @@ const TargetBank = () => {
             )}
           />
         </View>
+
         <NewTargetModal
           colorScheme={colorScheme}
           handleModalSave={handleModalSave}
@@ -119,6 +198,9 @@ const TargetBank = () => {
           editedTarget={editedTarget}
           isEditTargetModalVisible={isEditModalVisible}
           setIsEditTargetModalVisible={setIsEditModalVisible}
+          isDismissTargetModalVisible={isDismissTargetModalVisible}
+          setIsDismissTargetModalVisible={setIsDismissTargetModalVisible}
+          sortedWeeklyTargetsForEdit={sortedWeeklyTargetsForEdit}
         />
       </View>
     );
