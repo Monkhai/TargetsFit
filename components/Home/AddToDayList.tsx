@@ -56,13 +56,20 @@ const AddToDayList = ({ colorScheme, allTargets, activeTargetQuantity, onAddPres
 
   const targetMap = Object.fromEntries(allTargets.map((target) => [target.id, target]));
 
+  const totalActiveCount = Math.max(
+    activeTargetQuantity.reduce((acc, curr) => {
+      return acc + curr.target.quantity - curr.activeCount;
+    }, 0),
+    0
+  );
+
   return (
     <View style={styles.container}>
       <View style={[{ backgroundColor: Colors[colorScheme ?? 'light'].backgroundSecondary }, styles.flatListContainer]}>
-        <Pressable style={styles.headerContainer} disabled={activeTargetQuantity.length === 0} onPress={toggleFlatListHeight}>
-          <Text style={[styles.headerTitle, { color: activeTargetQuantity.length > 0 ? 'red' : 'gray' }]}>Add Targets</Text>
+        <Pressable style={styles.headerContainer} disabled={totalActiveCount === 0} onPress={toggleFlatListHeight}>
+          <Text style={[styles.headerTitle, { color: totalActiveCount > 0 ? 'red' : 'gray' }]}>Add Targets</Text>
           <Animated.View style={chevronStyles}>
-            <FontAwesome name="chevron-right" size={14} color={activeTargetQuantity.length > 0 ? 'red' : 'gray'} />
+            <FontAwesome name="chevron-right" size={14} color={totalActiveCount > 0 ? 'red' : 'gray'} />
           </Animated.View>
         </Pressable>
         <Animated.View style={listStyles}>

@@ -41,7 +41,7 @@ const Home = () => {
     weeklyTargets,
     isLoading: weeklyTaretsIsLoading,
     error: weeklyTaretsError,
-    refetch: refetchWeeklyTergets,
+    refetch: refetchWeeklyTargets,
   } = useContext(WeeklyTargetsContext);
 
   const {
@@ -50,6 +50,13 @@ const Home = () => {
     error: activeCountError,
     refetch: refetchActiveCount,
   } = useContext(ActiveQuantityContext);
+
+  const totalActiveCount = Math.max(
+    activeTargetQuantity.reduce((acc, curr) => {
+      return acc + curr.target.quantity - curr.activeCount;
+    }, 0),
+    0
+  );
 
   const handleHViewScroll = useCallback(
     (event: NativeSyntheticEvent<NativeScrollEvent>) => {
@@ -70,7 +77,7 @@ const Home = () => {
         .then(() => {
           refetchActiveCount();
           refetchAllTargets();
-          refetchWeeklyTergets();
+          refetchWeeklyTargets();
         })
         .catch((error: Error) => {
           Alert.alert(error.message);
@@ -84,7 +91,7 @@ const Home = () => {
       .then(() => {
         refetchActiveCount();
         refetchAllTargets();
-        refetchWeeklyTergets();
+        refetchWeeklyTargets();
       })
       .catch((error: Error) => {
         Alert.alert(error.message);
@@ -117,7 +124,7 @@ const Home = () => {
         >
           {/* SUNDAY TARGET LIST */}
           <DailyTargetList
-            refetchWeeklyTergets={refetchWeeklyTergets}
+            refetchWeeklyTergets={refetchWeeklyTargets}
             onRemovePress={handleItemDelete}
             colorScheme={colorScheme}
             dailyTargets={weeklyTargets[0]}
@@ -125,7 +132,7 @@ const Home = () => {
 
           {/* MONDAY TARGET LIST */}
           <DailyTargetList
-            refetchWeeklyTergets={refetchWeeklyTergets}
+            refetchWeeklyTergets={refetchWeeklyTargets}
             onRemovePress={handleItemDelete}
             colorScheme={colorScheme}
             dailyTargets={weeklyTargets[1]}
@@ -133,7 +140,7 @@ const Home = () => {
 
           {/* TUESDAY TARGET LIST */}
           <DailyTargetList
-            refetchWeeklyTergets={refetchWeeklyTergets}
+            refetchWeeklyTergets={refetchWeeklyTargets}
             onRemovePress={handleItemDelete}
             colorScheme={colorScheme}
             dailyTargets={weeklyTargets[2]}
@@ -141,7 +148,7 @@ const Home = () => {
 
           {/* WEDNESDAY TARGET LIST */}
           <DailyTargetList
-            refetchWeeklyTergets={refetchWeeklyTergets}
+            refetchWeeklyTergets={refetchWeeklyTargets}
             onRemovePress={handleItemDelete}
             colorScheme={colorScheme}
             dailyTargets={weeklyTargets[3]}
@@ -149,7 +156,7 @@ const Home = () => {
 
           {/* THURSDAY TARGET LIST */}
           <DailyTargetList
-            refetchWeeklyTergets={refetchWeeklyTergets}
+            refetchWeeklyTergets={refetchWeeklyTargets}
             onRemovePress={handleItemDelete}
             colorScheme={colorScheme}
             dailyTargets={weeklyTargets[4]}
@@ -157,7 +164,7 @@ const Home = () => {
 
           {/* FRIDAY TARGET LIST */}
           <DailyTargetList
-            refetchWeeklyTergets={refetchWeeklyTergets}
+            refetchWeeklyTergets={refetchWeeklyTargets}
             onRemovePress={handleItemDelete}
             colorScheme={colorScheme}
             dailyTargets={weeklyTargets[5]}
@@ -165,13 +172,13 @@ const Home = () => {
 
           {/* SATURDAY TARGET LIST */}
           <DailyTargetList
-            refetchWeeklyTergets={refetchWeeklyTergets}
+            refetchWeeklyTergets={refetchWeeklyTargets}
             onRemovePress={handleItemDelete}
             colorScheme={colorScheme}
             dailyTargets={weeklyTargets[6]}
           />
         </ScrollView>
-        {activeTargetQuantity.length >= 0 && (
+        {totalActiveCount > 0 && (
           <AddToDayList
             colorScheme={colorScheme}
             onAddPress={handleAddToDay}

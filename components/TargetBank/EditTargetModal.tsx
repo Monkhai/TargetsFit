@@ -21,10 +21,15 @@ interface Props {
   colorScheme: ColorSchemeName;
   isEditTargetModalVisible: boolean;
   setIsEditTargetModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
-  handleModalEdit: (target: Target, oldTarget: Target) => void;
+  handleModalEdit: (target: Target) => void;
   editedTarget: Target;
+  setNewEditedTarget: React.Dispatch<React.SetStateAction<Target>>;
   isDismissTargetModalVisible: boolean;
   setIsDismissTargetModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
+  handleDecrease: (tb_id: number) => void;
+
+  availableTargets: number;
+  sortedWeeklyTargets: SortedTargets[];
 }
 
 const EditTargetModal = ({
@@ -33,8 +38,13 @@ const EditTargetModal = ({
   setIsEditTargetModalVisible,
   handleModalEdit,
   editedTarget,
+  setNewEditedTarget,
   isDismissTargetModalVisible,
   setIsDismissTargetModalVisible,
+  handleDecrease,
+
+  availableTargets,
+  sortedWeeklyTargets,
 }: Props) => {
   const [selectedType, setSelectedType] = useState<TargetType>(editedTarget.type);
   const [name, setName] = useState<string>(editedTarget.name);
@@ -47,19 +57,18 @@ const EditTargetModal = ({
   }, [editedTarget]);
 
   const handleSave = () => {
-    Keyboard.dismiss();
-
-    console.log(quantity);
-
-    handleModalEdit(
-      {
-        name: name,
-        quantity: quantity,
-        type: selectedType,
-        id: editedTarget.id,
-      },
-      editedTarget
-    );
+    setNewEditedTarget({
+      name: name,
+      quantity: quantity,
+      type: selectedType,
+      id: editedTarget.id,
+    });
+    handleModalEdit({
+      name: name,
+      quantity: quantity,
+      type: selectedType,
+      id: editedTarget.id,
+    });
   };
 
   if (!editedTarget.id) return null;
@@ -94,12 +103,16 @@ const EditTargetModal = ({
         <ModalPicker onValueChange={(value) => setSelectedType(value)} selectedType={selectedType} />
       </View>
       {/* //------------------------------------------------------------------------ */}
-      <DismissTargetModal
-        editingTarget={editedTarget}
-        colorScheme={colorScheme}
-        isVisible={isDismissTargetModalVisible}
-        setIsVisible={setIsDismissTargetModalVisible}
-      />
+      {isDismissTargetModalVisible && (
+        <DismissTargetModal
+          colorScheme={colorScheme}
+          isVisible={isDismissTargetModalVisible}
+          setIsVisible={setIsDismissTargetModalVisible}
+          handleDecrease={handleDecrease}
+          availableTargets={availableTargets}
+          sortedWeeklyTargets={sortedWeeklyTargets}
+        />
+      )}
     </Modal>
   );
 };

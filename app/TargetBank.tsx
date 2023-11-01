@@ -12,8 +12,8 @@ import ActiveQuantityContext from '../context/ActiveQuantityContext';
 import DBContext from '../context/DBLoadingContext';
 import TargetsContext from '../context/TargetsContext';
 import WeeklyTargetsContext from '../context/WeeklyTargetsContext';
-import { NewTarget, Target, TargetDAO } from '../db/db';
-import useGetDismissTargetData, { SortedTargets } from '../hooks/useGetDismissTargetData';
+import { NewTarget, Target, TargetByDaysDAO, TargetDAO } from '../db/db';
+import useGetDismissTargetData from '../hooks/useGetDismissTargetData';
 import { heavyHaptics } from '../utilityFunctions/haptics';
 
 const TargetBank = () => {
@@ -23,22 +23,25 @@ const TargetBank = () => {
   const navigator = useNavigation();
 
   //------------------------------------------------------------------------
+  const WeeklyTargets = new TargetByDaysDAO();
+
+  //------------------------------------------------------------------------
   //------------------------------------------------------------------------
   const { isLoading: isDBLoading } = useContext(DBContext);
 
   //------------------------------------------------------------------------
   const { targets, isLoading, error, refetch: refetchAllTargets } = useContext(TargetsContext);
-  const { weeklyTargets, refetch: refetchWeeklyTargets } = useContext(WeeklyTargetsContext);
+  const { refetch: refetchWeeklyTargets } = useContext(WeeklyTargetsContext);
   const { refetch: refetchActiveCount } = useContext(ActiveQuantityContext);
 
   //------------------------------------------------------------------------
   const [editedTarget, setEditedTarget] = useState<Target>({} as Target);
+  const [newEditedTarget, setNewEditedTarget] = useState<Target>({} as Target);
   const [isNewModalVisible, setIsNewModalVisible] = useState(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [isDismissTargetModalVisible, setIsDismissTargetModalVisible] = useState(false);
 
-  const { targetsLeftToDismiss } = useGetDismissTargetData(editedTarget);
-
+  const { availableTargets, sortedWeeklyTargets, missingTargets } = useGetDismissTargetData(editedTarget, newEditedTarget);
   //------------------------------------------------------------------------
   const Targets = new TargetDAO();
 
@@ -67,25 +70,40 @@ const TargetBank = () => {
   }, []);
 
   //------------------------------------------------------------------------
-  const editTarget = useCallback((updatedTarget: Target, oldTarget: Target) => {
-    const changedQuantity = updatedTarget.quantity - oldTarget.quantity;
-
-    if (changedQuantity > 0) {
-      updateTarget(updatedTarget);
-    } else {
-      Alert.alert(`Missing ${targetsLeftToDismiss} Targets`, `Would you like to dismiss ${targetsLeftToDismiss} targets?`, [
-        {
-          text: 'No',
-        },
-        {
-          text: 'Yes',
-          isPreferred: true,
-          onPress: () => {
-            setIsDismissTargetModalVisible(true);
+  const editTarget = useCallback(
+    (updatedTarget: Target) => {
+      console.log(newEditedTarget);
+      if (missingTargets <= 0) {
+        updateTarget(updatedTarget);
+      } else {
+        Alert.alert(`Missing ${missingTargets} Targets`, `Would you like to dismiss ${missingTargets} targets?`, [
+          {
+            text: 'No',
           },
-        },
-      ]);
-    }
+          {
+            text: 'Yes',
+            isPreferred: true,
+            onPress: () => {
+              setIsDismissTargetModalVisible(true);
+            },
+          },
+        ]);
+      }
+    },
+    [newEditedTarget, missingTargets]
+  );
+
+  //------------------------------------------------------------------------
+  const deleteTargetFromWeeklyTargets = useCallback((tb_id: number) => {
+    WeeklyTargets.deleteTargetFromWeeklyTargets(tb_id)
+      .then(() => {
+        refetchActiveCount();
+        refetchAllTargets();
+        refetchWeeklyTargets();
+      })
+      .catch((error: Error) => {
+        Alert.alert(error.message);
+      });
   }, []);
 
   //------------------------------------------------------------------------
@@ -106,10 +124,8 @@ const TargetBank = () => {
   const handleLongPress = useCallback(
     (target: Target) => {
       heavyHaptics();
-      setEditedTarget(() => {
-        setIsEditModalVisible(true);
-        return target;
-      });
+      setIsEditModalVisible(true);
+      setEditedTarget(target);
     },
     [isEditModalVisible]
   );
@@ -151,13 +167,17 @@ const TargetBank = () => {
           setIsNewTargetModalVisible={setIsNewModalVisible}
         />
         <EditTargetModal
+          handleDecrease={deleteTargetFromWeeklyTargets}
           colorScheme={colorScheme}
           handleModalEdit={editTarget}
           editedTarget={editedTarget}
+          setNewEditedTarget={setNewEditedTarget}
           isEditTargetModalVisible={isEditModalVisible}
           setIsEditTargetModalVisible={setIsEditModalVisible}
           isDismissTargetModalVisible={isDismissTargetModalVisible}
           setIsDismissTargetModalVisible={setIsDismissTargetModalVisible}
+          availableTargets={availableTargets}
+          sortedWeeklyTargets={sortedWeeklyTargets}
         />
       </View>
     );

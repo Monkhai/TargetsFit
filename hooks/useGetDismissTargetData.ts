@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
-import { Day, Target, WeeklyTargets } from '../db/db';
 import WeeklyTargetsContext from '../context/WeeklyTargetsContext';
+import { Day, Target } from '../db/db';
 
 export type SortedTargets = {
   day: Day;
@@ -8,10 +8,11 @@ export type SortedTargets = {
   quantity: number;
 };
 
-const useGetDismissTargetData = (target: Target) => {
+const useGetDismissTargetData = (oldTarget: Target, newTarget: Target) => {
   const { weeklyTargets } = useContext(WeeklyTargetsContext);
   const [sortedWeeklyTargets, setSortedWeeklyTargets] = useState<SortedTargets[]>([]);
-  const [targetsLeftToDismiss, setTargetsLeftToDismiss] = useState(0);
+  const [availableTargets, setAvailableTargets] = useState(0);
+  const [missingTargets, setMissingTargets] = useState(0);
 
   useEffect(() => {
     //-----------------------------------------------------------------------------------------------------------------------------
@@ -45,15 +46,20 @@ const useGetDismissTargetData = (target: Target) => {
     //-----------------------------------------------------------------------------------------------------------------------------
     //-----------------------------------------------------------------------------------------------------------------------------
 
-    const totalActiveQuantity = newSortedWeeklyTargets.reduce((acc, curr) => acc + curr.quantity, 0);
-    const newTargetsLeftToDismiss = target.quantity - totalActiveQuantity;
-    console.log(target.quantity, newSortedWeeklyTargets.length);
-    setTargetsLeftToDismiss(newTargetsLeftToDismiss);
-    //-----------------------------------------------------------------------------------------------------------------------------
-    //-----------------------------------------------------------------------------------------------------------------------------
-  }, [weeklyTargets, target]);
+    const newTotalActiveQuantity = newSortedWeeklyTargets.reduce((acc, curr) => acc + curr.quantity, 0);
 
-  return { sortedWeeklyTargets, targetsLeftToDismiss };
+    const newAvailableTargets = oldTarget.quantity - newTotalActiveQuantity;
+    setAvailableTargets(newAvailableTargets);
+
+    const targetsToRemove = Math.max(oldTarget.quantity - newTarget.quantity, 0);
+
+    const newMissingTargets = Math.max(targetsToRemove - newAvailableTargets, 0);
+    setMissingTargets(newMissingTargets);
+    //-----------------------------------------------------------------------------------------------------------------------------
+    //-----------------------------------------------------------------------------------------------------------------------------
+  }, [weeklyTargets, oldTarget, oldTarget]);
+
+  return { sortedWeeklyTargets, availableTargets, missingTargets };
 };
 
 export default useGetDismissTargetData;

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Alert, ColorSchemeName, FlatList, StyleSheet, View } from 'react-native';
 import Modal from 'react-native-modal';
 import Colors from '../../constants/Colors';
@@ -7,8 +7,6 @@ import { Day, Target } from '../../db/db';
 import useGetDismissTargetData from '../../hooks/useGetDismissTargetData';
 import DismissTargetListItem from './DismissTargetListItem';
 import ModalHeader from './ModalHeader';
-import Button from '../Button';
-import { Text } from '../Themed';
 
 type SortedTargets = {
   day: Day; // Assume Day is a known type
@@ -20,13 +18,17 @@ interface Props {
   colorScheme: ColorSchemeName;
   isVisible: boolean;
   setIsVisible: React.Dispatch<React.SetStateAction<boolean>>;
-  editingTarget: Target;
+  handleDecrease: (tb_id: number) => void;
+  availableTargets: number;
+  sortedWeeklyTargets: SortedTargets[];
 }
 
-const DismissTargetModal = ({ colorScheme, editingTarget, isVisible, setIsVisible }: Props) => {
-  const { sortedWeeklyTargets, targetsLeftToDismiss } = useGetDismissTargetData(editingTarget);
+const DismissTargetModal = ({ colorScheme, isVisible, setIsVisible, handleDecrease, sortedWeeklyTargets, availableTargets }: Props) => {
+  const [initialQuantity, setInitialQuantity] = useState(sortedWeeklyTargets.map((day) => day.quantity));
 
-  const disabled = targetsLeftToDismiss !== 0;
+  useEffect(() => {
+    setInitialQuantity(sortedWeeklyTargets.map((day) => day.quantity));
+  }, [sortedWeeklyTargets]);
 
   return (
     <Modal
@@ -39,16 +41,23 @@ const DismissTargetModal = ({ colorScheme, editingTarget, isVisible, setIsVisibl
     >
       <View style={[{ backgroundColor: Colors[colorScheme ?? 'light'].backgroundSecondary }, styles.container]}>
         <ModalHeader
-          disabledCondition={disabled}
+          disabledCondition={availableTargets !== 0}
           handleSave={() => Alert.alert('Save here')}
           setIsVisible={setIsVisible}
-          title={`${targetsLeftToDismiss} Left`}
+          title={`${availableTargets} Left`}
         />
         <FlatList
           style={{ width: '100%' }}
           data={sortedWeeklyTargets}
-          renderItem={({ item }) => {
-            return <DismissTargetListItem colorScheme={colorScheme} item={item} />;
+          renderItem={({ item, index }) => {
+            return (
+              <DismissTargetListItem
+                handleDecrease={handleDecrease}
+                initialQuantity={initialQuantity[index]}
+                colorScheme={colorScheme}
+                item={item}
+              />
+            );
           }}
         />
       </View>
