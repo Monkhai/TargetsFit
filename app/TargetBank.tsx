@@ -35,13 +35,13 @@ const TargetBank = () => {
   const { refetch: refetchActiveCount } = useContext(ActiveQuantityContext);
 
   //------------------------------------------------------------------------
-  const [editedTarget, setEditedTarget] = useState<Target>({} as Target);
-  const [newEditedTarget, setNewEditedTarget] = useState<Target>({} as Target);
+  const [oldEditTarget, setOldEditTarget] = useState<Target>({} as Target);
+  const [newEditTarget, setNewEditTarget] = useState<Target>({} as Target);
   const [isNewModalVisible, setIsNewModalVisible] = useState(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [isDismissTargetModalVisible, setIsDismissTargetModalVisible] = useState(false);
 
-  const { availableTargets, sortedWeeklyTargets, missingTargets } = useGetDismissTargetData(editedTarget, newEditedTarget);
+  const { availableTargets, sortedWeeklyTargets, missingTargets } = useGetDismissTargetData(oldEditTarget, newEditTarget);
   //------------------------------------------------------------------------
   const Targets = new TargetDAO();
 
@@ -72,11 +72,18 @@ const TargetBank = () => {
   //------------------------------------------------------------------------
   const editTarget = useCallback(
     (updatedTarget: Target) => {
-      console.log(newEditedTarget);
+      const newTotalActiveQuantity = sortedWeeklyTargets.reduce((acc, curr) => acc + curr.quantity, 0);
+      const newAvailableTargets = oldEditTarget.quantity - newTotalActiveQuantity;
+      const targetsToRemove = Math.max(oldEditTarget.quantity - updatedTarget.quantity, 0);
+
+      const newMissingTargets = Math.max(targetsToRemove - newAvailableTargets, 0);
+
+      console.log(newEditTarget);
+
       if (missingTargets <= 0) {
         updateTarget(updatedTarget);
       } else {
-        Alert.alert(`Missing ${missingTargets} Targets`, `Would you like to dismiss ${missingTargets} targets?`, [
+        Alert.alert(`Missing ${newMissingTargets} Targets`, `Would you like to dismiss ${newMissingTargets} targets?`, [
           {
             text: 'No',
           },
@@ -90,7 +97,7 @@ const TargetBank = () => {
         ]);
       }
     },
-    [newEditedTarget, missingTargets]
+    [newEditTarget, oldEditTarget, missingTargets]
   );
 
   //------------------------------------------------------------------------
@@ -125,7 +132,7 @@ const TargetBank = () => {
     (target: Target) => {
       heavyHaptics();
       setIsEditModalVisible(true);
-      setEditedTarget(target);
+      setOldEditTarget(target);
     },
     [isEditModalVisible]
   );
@@ -170,13 +177,13 @@ const TargetBank = () => {
           handleDecrease={deleteTargetFromWeeklyTargets}
           colorScheme={colorScheme}
           handleModalEdit={editTarget}
-          editedTarget={editedTarget}
-          setNewEditedTarget={setNewEditedTarget}
+          editedTarget={oldEditTarget}
+          setNewEditedTarget={setNewEditTarget}
           isEditTargetModalVisible={isEditModalVisible}
           setIsEditTargetModalVisible={setIsEditModalVisible}
           isDismissTargetModalVisible={isDismissTargetModalVisible}
           setIsDismissTargetModalVisible={setIsDismissTargetModalVisible}
-          availableTargets={availableTargets}
+          missingTargets={missingTargets}
           sortedWeeklyTargets={sortedWeeklyTargets}
         />
       </View>

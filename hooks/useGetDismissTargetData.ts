@@ -57,7 +57,7 @@ const useGetDismissTargetData = (oldTarget: Target, newTarget: Target) => {
     setMissingTargets(newMissingTargets);
     //-----------------------------------------------------------------------------------------------------------------------------
     //-----------------------------------------------------------------------------------------------------------------------------
-  }, [weeklyTargets, oldTarget, oldTarget]);
+  }, [weeklyTargets, newTarget, oldTarget]);
 
   return { sortedWeeklyTargets, availableTargets, missingTargets };
 };

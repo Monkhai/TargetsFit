@@ -28,7 +28,7 @@ interface Props {
   setIsDismissTargetModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
   handleDecrease: (tb_id: number) => void;
 
-  availableTargets: number;
+  missingTargets: number;
   sortedWeeklyTargets: SortedTargets[];
 }
 
@@ -43,7 +43,7 @@ const EditTargetModal = ({
   setIsDismissTargetModalVisible,
   handleDecrease,
 
-  availableTargets,
+  missingTargets,
   sortedWeeklyTargets,
 }: Props) => {
   const [selectedType, setSelectedType] = useState<TargetType>(editedTarget.type);
@@ -109,7 +109,7 @@ const EditTargetModal = ({
           isVisible={isDismissTargetModalVisible}
           setIsVisible={setIsDismissTargetModalVisible}
           handleDecrease={handleDecrease}
-          availableTargets={availableTargets}
+          missingTargets={missingTargets}
           sortedWeeklyTargets={sortedWeeklyTargets}
         />
       )}

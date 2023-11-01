@@ -19,11 +19,11 @@ interface Props {
   isVisible: boolean;
   setIsVisible: React.Dispatch<React.SetStateAction<boolean>>;
   handleDecrease: (tb_id: number) => void;
-  availableTargets: number;
+  missingTargets: number;
   sortedWeeklyTargets: SortedTargets[];
 }
 
-const DismissTargetModal = ({ colorScheme, isVisible, setIsVisible, handleDecrease, sortedWeeklyTargets, availableTargets }: Props) => {
+const DismissTargetModal = ({ colorScheme, isVisible, setIsVisible, handleDecrease, sortedWeeklyTargets, missingTargets }: Props) => {
   const [initialQuantity, setInitialQuantity] = useState(sortedWeeklyTargets.map((day) => day.quantity));
 
   useEffect(() => {
@@ -41,10 +41,10 @@ const DismissTargetModal = ({ colorScheme, isVisible, setIsVisible, handleDecrea
     >
       <View style={[{ backgroundColor: Colors[colorScheme ?? 'light'].backgroundSecondary }, styles.container]}>
         <ModalHeader
-          disabledCondition={availableTargets !== 0}
-          handleSave={() => Alert.alert('Save here')}
+          disabledCondition={missingTargets !== 0}
+          handleSave={() => setIsVisible(false)}
           setIsVisible={setIsVisible}
-          title={`${availableTargets} Left`}
+          title={`${missingTargets} Left`}
         />
         <FlatList
           style={{ width: '100%' }}
