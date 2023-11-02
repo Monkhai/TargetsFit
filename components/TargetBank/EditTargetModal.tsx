@@ -8,7 +8,7 @@ import CustomTextInput from './CustomTextInput';
 import DismissTargetModal from './DismissTargetModal';
 import ModalHeader from './ModalHeader';
 import ModalPicker from './ModalPicker';
-import { SortedTargets } from '../../hooks/useGetDismissTargetData';
+import { SingleSortedTarget, SortedTargets } from '../../hooks/useGetDismissTargetData';
 
 interface Props {
   colorScheme: ColorSchemeName;
@@ -19,7 +19,7 @@ interface Props {
   setNewEditedTarget: React.Dispatch<React.SetStateAction<Target>>;
   isDismissTargetModalVisible: boolean;
   setIsDismissTargetModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
-
+  onSaveRemoveTargets: (targets: SingleSortedTarget[]) => void;
   missingTargets: number;
   sortedWeeklyTargets: SortedTargets[];
 }
@@ -33,7 +33,7 @@ const EditTargetModal = ({
   setNewEditedTarget,
   isDismissTargetModalVisible,
   setIsDismissTargetModalVisible,
-
+  onSaveRemoveTargets,
   missingTargets,
   sortedWeeklyTargets,
 }: Props) => {
@@ -99,7 +99,7 @@ const EditTargetModal = ({
           colorScheme={colorScheme}
           isVisible={isDismissTargetModalVisible}
           setIsVisible={setIsDismissTargetModalVisible}
-          onSave={() => Alert.alert('Handle me', 'I am from EditTargetModal')}
+          onSave={onSaveRemoveTargets}
           missingTargets={missingTargets}
           sortedWeeklyTargets={sortedWeeklyTargets}
         />

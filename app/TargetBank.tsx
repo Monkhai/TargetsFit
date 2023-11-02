@@ -13,7 +13,7 @@ import DBContext from '../context/DBLoadingContext';
 import TargetsContext from '../context/TargetsContext';
 import WeeklyTargetsContext from '../context/WeeklyTargetsContext';
 import { NewTarget, Target, TargetByDaysDAO, TargetDAO } from '../db/db';
-import useGetDismissTargetData from '../hooks/useGetDismissTargetData';
+import useGetDismissTargetData, { SingleSortedTarget } from '../hooks/useGetDismissTargetData';
 import { heavyHaptics } from '../utilityFunctions/haptics';
 
 const TargetBank = () => {
@@ -99,17 +99,23 @@ const TargetBank = () => {
   );
 
   //------------------------------------------------------------------------
-  const deleteTargetFromWeeklyTargets = useCallback((tb_id: number) => {
-    WeeklyTargets.deleteTargetFromWeeklyTargets(tb_id)
-      .then(() => {
-        refetchActiveCount();
-        refetchAllTargets();
-        refetchWeeklyTargets();
-      })
-      .catch((error: Error) => {
-        Alert.alert(error.message);
+  const deleteTargetsFromWeeklyTargets = useCallback(
+    (targets: SingleSortedTarget[]) => {
+      targets.forEach((target) => {
+        WeeklyTargets.deleteTargetFromWeeklyTargets(target.targetTbId)
+          .then(() => {
+            refetchActiveCount();
+            refetchAllTargets();
+            refetchWeeklyTargets();
+          })
+          .catch((error: Error) => {
+            Alert.alert(error.message);
+          });
       });
-  }, []);
+      setIsDismissTargetModalVisible(false);
+    },
+    [refetchActiveCount, refetchAllTargets, refetchWeeklyTargets]
+  );
 
   //------------------------------------------------------------------------
   const updateTarget = (updatedTarget: Target) => {
@@ -172,6 +178,7 @@ const TargetBank = () => {
           setIsNewTargetModalVisible={setIsNewModalVisible}
         />
         <EditTargetModal
+          onSaveRemoveTargets={deleteTargetsFromWeeklyTargets}
           colorScheme={colorScheme}
           handleModalEdit={editTarget}
           editedTarget={oldEditTarget}

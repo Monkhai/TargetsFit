@@ -11,7 +11,7 @@ interface Props {
   colorScheme: ColorSchemeName;
   isVisible: boolean;
   setIsVisible: React.Dispatch<React.SetStateAction<boolean>>;
-  onSave: (tb_id: number) => void;
+  onSave: (targets: SingleSortedTarget[]) => void;
   missingTargets: number;
   sortedWeeklyTargets: SortedTargets[];
 }
@@ -66,10 +66,11 @@ const DismissTargetModal = ({ colorScheme, isVisible, setIsVisible, onSave, sort
     const weekWoDay = mutableSortedWeeklyTargets.filter((day) => day.day.id !== dayOfTarget.day.id);
 
     const newMutableSortedWeeklyTargets = [...weekWoDay, dayOfTarget].sort((a, b) => a.day.id - b.day.id);
-    console.log(newMutableSortedWeeklyTargets);
     setMutableWeeklyTargets(newMutableSortedWeeklyTargets);
     setMutableMissingTargets((p) => p + 1);
   };
+
+  //------------------------------------------------------------------------------------------------------------------------------------------------
 
   //------------------------------------------------------------------------------------------------------------------------------------------------
   return (
@@ -84,7 +85,7 @@ const DismissTargetModal = ({ colorScheme, isVisible, setIsVisible, onSave, sort
       <View style={[{ backgroundColor: Colors[colorScheme ?? 'light'].backgroundSecondary }, styles.container]}>
         <ModalHeader
           disabledCondition={mutableMissingTargets !== 0}
-          handleSave={() => Alert.alert('Use Save Function here')}
+          handleSave={() => onSave(removedWeeklyTargets)}
           setIsVisible={setIsVisible}
           title={`${mutableMissingTargets} Left`}
         />
