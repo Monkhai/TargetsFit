@@ -2,9 +2,11 @@ import { useContext, useEffect, useState } from 'react';
 import WeeklyTargetsContext from '../context/WeeklyTargetsContext';
 import { Day, Target } from '../db/db';
 
+export type SingleSortedTarget = { targetId: number; targetTbId: number; targetPosition: number; dayId: number };
+
 export type SortedTargets = {
   day: Day;
-  target: { targetId: number; targetTbId: number; targetPosition: number };
+  targets: SingleSortedTarget[];
   quantity: number;
 };
 
@@ -28,12 +30,24 @@ const useGetDismissTargetData = (oldTarget: Target, newTarget: Target) => {
       if (day.targets.length > 0) {
         const usedDay = day.day;
 
-        const target = day.targets.find((target) => target.id === target.id);
+        const targets = day.targets.filter((target) => target.id === target.id);
 
-        if (target) {
+        const arrangedTargets: SingleSortedTarget[] = targets.reduce((acc: SingleSortedTarget[], curr) => {
+          const target = {
+            targetId: curr.id,
+            targetTbId: curr.tb_id,
+            targetPosition: curr.position,
+            dayId: day.day.id,
+          };
+
+          acc.push(target);
+          return acc;
+        }, []);
+
+        if (targets) {
           const sortedTargets = {
             day: usedDay,
-            target: { targetId: target.id, targetTbId: target.tb_id, targetPosition: target.position },
+            targets: arrangedTargets,
             quantity: day.targets.length,
           };
 

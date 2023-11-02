@@ -1,40 +1,38 @@
-import { ColorSchemeName, Pressable, StyleSheet, TouchableOpacity, View } from 'react-native';
-import React, { useRef } from 'react';
-import { LIST_ITEM_HEIGHT, LIST_ITEM_WIDTH } from '../../constants/SIZES';
-import { ActiveTargetQuantity, Day, Target, TargetInWeeklyTargets } from '../../db/db';
+import React from 'react';
+import { ColorSchemeName, StyleSheet, TouchableOpacity, View } from 'react-native';
 import Colors from '../../constants/Colors';
+import { LIST_ITEM_HEIGHT } from '../../constants/SIZES';
 import { Text } from '../Themed';
-import { FontAwesome } from '@expo/vector-icons';
-
-type SortedTargets = {
-  day: Day;
-  target: { targetId: number; targetTbId: number; targetPosition: number };
-  quantity: number;
-};
+import { SortedTargets } from '../../hooks/useGetDismissTargetData';
 
 interface Props {
+  colorScheme: ColorSchemeName;
   item: SortedTargets;
   initialQuantity: number;
-  colorScheme: ColorSchemeName;
-  handleDecrease: (tb_id: number) => void;
+  mutableMissingTargets: number;
+  onRemove: (tb_id: number) => void;
+  onAdd: (tb_id: number, dayId: number) => void;
 }
 
-const DismissTargetListItem = ({ item, initialQuantity, colorScheme, handleDecrease }: Props) => {
+const DismissTargetListItem = ({ item, initialQuantity, mutableMissingTargets, colorScheme, onRemove, onAdd }: Props) => {
   const addControlButtonColor = item.quantity === initialQuantity ? 'gray' : 'red';
-  const removeControlButtonColor = item.quantity === 0 ? 'gray' : 'red';
+  const removeControlButtonColor = item.quantity === 0 || mutableMissingTargets === 0 ? 'gray' : 'red';
 
   return (
     <View style={styles.listItemContainer}>
       <Text style={[styles.listItemText, { fontWeight: '700', color: 'red' }]}>{item.day.name}</Text>
       <Text style={[styles.listItemText, { textAlign: 'right', flex: 1, paddingHorizontal: 20 }]}>{item.quantity}</Text>
       <View style={[styles.buttonContainer, { backgroundColor: Colors[colorScheme ?? 'light'].tertiary }]}>
-        <TouchableOpacity disabled={item.quantity === initialQuantity} onPress={() => ''}>
+        <TouchableOpacity disabled={item.quantity === initialQuantity} onPress={() => onAdd(item.targets[0].targetId, item.day.id)}>
           <View style={[styles.controlButtonContainer]}>
             <Text style={[styles.controlButton, { color: addControlButtonColor }]}>+</Text>
           </View>
         </TouchableOpacity>
         <View style={[styles.separator, { borderColor: Colors[colorScheme ?? 'light'].seperator }]} />
-        <TouchableOpacity onPress={() => handleDecrease(item.target.targetTbId)}>
+        <TouchableOpacity
+          disabled={item.quantity === 0 || mutableMissingTargets === 0}
+          onPress={() => onRemove(item.targets[0].targetTbId)}
+        >
           <View style={[styles.controlButtonContainer]}>
             <Text style={[styles.controlButton, { color: removeControlButtonColor }]}>-</Text>
           </View>

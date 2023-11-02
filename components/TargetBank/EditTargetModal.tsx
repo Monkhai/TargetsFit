@@ -1,22 +1,15 @@
-import { Picker } from '@react-native-picker/picker';
-import React, { useEffect, useRef, useState } from 'react';
-import { Alert, ColorSchemeName, Keyboard, StyleSheet, TextInput, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Alert, ColorSchemeName, Keyboard, StyleSheet, View } from 'react-native';
 import Modal from 'react-native-modal';
 import Colors from '../../constants/Colors';
 import { BORDER_RADIUS } from '../../constants/SIZES';
-import { Day, Target, TargetType } from '../../db/db';
-import Button from '../Button';
-import { Text } from '../Themed';
+import { Target, TargetType } from '../../db/db';
+import CustomTextInput from './CustomTextInput';
 import DismissTargetModal from './DismissTargetModal';
 import ModalHeader from './ModalHeader';
-import CustomTextInput from './CustomTextInput';
 import ModalPicker from './ModalPicker';
+import { SortedTargets } from '../../hooks/useGetDismissTargetData';
 
-type SortedTargets = {
-  day: Day; // Assume Day is a known type
-  target: { targetId: number; targetTbId: number; targetPosition: number };
-  quantity: number;
-};
 interface Props {
   colorScheme: ColorSchemeName;
   isEditTargetModalVisible: boolean;
@@ -26,7 +19,6 @@ interface Props {
   setNewEditedTarget: React.Dispatch<React.SetStateAction<Target>>;
   isDismissTargetModalVisible: boolean;
   setIsDismissTargetModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
-  handleDecrease: (tb_id: number) => void;
 
   missingTargets: number;
   sortedWeeklyTargets: SortedTargets[];
@@ -41,7 +33,6 @@ const EditTargetModal = ({
   setNewEditedTarget,
   isDismissTargetModalVisible,
   setIsDismissTargetModalVisible,
-  handleDecrease,
 
   missingTargets,
   sortedWeeklyTargets,
@@ -108,7 +99,7 @@ const EditTargetModal = ({
           colorScheme={colorScheme}
           isVisible={isDismissTargetModalVisible}
           setIsVisible={setIsDismissTargetModalVisible}
-          handleDecrease={handleDecrease}
+          onSave={() => Alert.alert('Handle me', 'I am from EditTargetModal')}
           missingTargets={missingTargets}
           sortedWeeklyTargets={sortedWeeklyTargets}
         />

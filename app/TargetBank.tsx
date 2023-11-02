@@ -41,7 +41,7 @@ const TargetBank = () => {
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [isDismissTargetModalVisible, setIsDismissTargetModalVisible] = useState(false);
 
-  const { availableTargets, sortedWeeklyTargets, missingTargets } = useGetDismissTargetData(oldEditTarget, newEditTarget);
+  const { sortedWeeklyTargets, missingTargets } = useGetDismissTargetData(oldEditTarget, newEditTarget);
   //------------------------------------------------------------------------
   const Targets = new TargetDAO();
 
@@ -72,15 +72,13 @@ const TargetBank = () => {
   //------------------------------------------------------------------------
   const editTarget = useCallback(
     (updatedTarget: Target) => {
-      const newTotalActiveQuantity = sortedWeeklyTargets.reduce((acc, curr) => acc + curr.quantity, 0);
-      const newAvailableTargets = oldEditTarget.quantity - newTotalActiveQuantity;
+      const totalActiveQuantity = sortedWeeklyTargets.reduce((acc, curr) => acc + curr.quantity, 0);
+      const availableTargets = oldEditTarget.quantity - totalActiveQuantity;
       const targetsToRemove = Math.max(oldEditTarget.quantity - updatedTarget.quantity, 0);
 
-      const newMissingTargets = Math.max(targetsToRemove - newAvailableTargets, 0);
+      const newMissingTargets = targetsToRemove - availableTargets;
 
-      console.log(newEditTarget);
-
-      if (missingTargets <= 0) {
+      if (newMissingTargets <= 0) {
         updateTarget(updatedTarget);
       } else {
         Alert.alert(`Missing ${newMissingTargets} Targets`, `Would you like to dismiss ${newMissingTargets} targets?`, [
@@ -97,7 +95,7 @@ const TargetBank = () => {
         ]);
       }
     },
-    [newEditTarget, oldEditTarget, missingTargets]
+    [newEditTarget, oldEditTarget, sortedWeeklyTargets]
   );
 
   //------------------------------------------------------------------------
@@ -119,8 +117,8 @@ const TargetBank = () => {
       .then(() => {
         refetchAllTargets();
         refetchActiveCount();
-        setIsEditModalVisible(false);
       })
+      .then(() => setIsEditModalVisible(false))
       .catch((err: Error) => {
         Alert.alert(err.message);
         setIsEditModalVisible(false);
@@ -174,7 +172,6 @@ const TargetBank = () => {
           setIsNewTargetModalVisible={setIsNewModalVisible}
         />
         <EditTargetModal
-          handleDecrease={deleteTargetFromWeeklyTargets}
           colorScheme={colorScheme}
           handleModalEdit={editTarget}
           editedTarget={oldEditTarget}
