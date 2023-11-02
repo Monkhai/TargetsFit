@@ -74,14 +74,7 @@ const DismissTargetModal = ({ colorScheme, isVisible, setIsVisible, onSave, sort
 
   //------------------------------------------------------------------------------------------------------------------------------------------------
   return (
-    <Modal
-      animationIn={'zoomIn'}
-      animationOut={'zoomOut'}
-      style={styles.modal}
-      useNativeDriverForBackdrop
-      onBackButtonPress={() => setIsVisible(false)}
-      isVisible={isVisible}
-    >
+    <Modal isVisible={isVisible} animationIn={'zoomIn'} animationOut={'zoomOut'} style={styles.modal}>
       <View style={[{ backgroundColor: Colors[colorScheme ?? 'light'].backgroundSecondary }, styles.container]}>
         <ModalHeader
           disabledCondition={mutableMissingTargets !== 0}

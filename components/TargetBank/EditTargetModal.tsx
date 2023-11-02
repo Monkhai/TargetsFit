@@ -48,6 +48,8 @@ const EditTargetModal = ({
   }, [editedTarget]);
 
   const handleSave = () => {
+    Keyboard.dismiss();
+
     setNewEditedTarget({
       name: name,
       quantity: quantity,
@@ -94,16 +96,15 @@ const EditTargetModal = ({
         <ModalPicker onValueChange={(value) => setSelectedType(value)} selectedType={selectedType} />
       </View>
       {/* //------------------------------------------------------------------------ */}
-      {isDismissTargetModalVisible && (
-        <DismissTargetModal
-          colorScheme={colorScheme}
-          isVisible={isDismissTargetModalVisible}
-          setIsVisible={setIsDismissTargetModalVisible}
-          onSave={onSaveRemoveTargets}
-          missingTargets={missingTargets}
-          sortedWeeklyTargets={sortedWeeklyTargets}
-        />
-      )}
+
+      <DismissTargetModal
+        colorScheme={colorScheme}
+        isVisible={isDismissTargetModalVisible}
+        setIsVisible={setIsDismissTargetModalVisible}
+        onSave={onSaveRemoveTargets}
+        missingTargets={missingTargets}
+        sortedWeeklyTargets={sortedWeeklyTargets}
+      />
     </Modal>
   );
 };
