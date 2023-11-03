@@ -79,34 +79,36 @@ const DailyTargetList = ({ colorScheme, dailyTargets, onRemovePress, refetchWeek
       <View style={[styles.secondaryContainer, { backgroundColor: Colors[colorScheme ?? 'light'].backgroundSecondary }]}>
         <Text style={styles.header}>{dailyTargets.day.name}</Text>
         <View style={{ flex: 1 }}>
-          <DraggableFlatList
-            data={draggableData}
-            showsVerticalScrollIndicator={false}
-            onDragEnd={({ data }) => {
-              const positions = data.map((item, index) => ({ tb_id: item.tb_id, position: index }));
-              setDraggableData(data);
-              targetByDaysDAO.updatePositions(dailyTargets.day.id, positions).then(() => refetchWeeklyTergets());
-            }}
-            keyExtractor={(item) => item.tb_id.toString()}
-            renderItem={({ item: target, drag }) => (
-              <ScaleDecorator>
-                <Pressable
-                  onLongPress={() => {
-                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-                    drag();
-                  }}
-                >
-                  <DailyTargetListItem
-                    status={completionMap.get(target.tb_id)}
-                    onStatusToggle={handleStatusToggle}
-                    colorScheme={colorScheme}
-                    target={target}
-                    onRemovePress={onRemovePress}
-                  />
-                </Pressable>
-              </ScaleDecorator>
-            )}
-          />
+          {dailyTargets.targets.length > 0 && (
+            <DraggableFlatList
+              data={draggableData}
+              showsVerticalScrollIndicator={false}
+              onDragEnd={({ data }) => {
+                const positions = data.map((item, index) => ({ tb_id: item.tb_id, position: index }));
+                setDraggableData(data);
+                targetByDaysDAO.updatePositions(dailyTargets.day.id, positions).then(() => refetchWeeklyTergets());
+              }}
+              keyExtractor={(item) => item.tb_id.toString()}
+              renderItem={({ item: target, drag }) => (
+                <ScaleDecorator>
+                  <Pressable
+                    onLongPress={() => {
+                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+                      drag();
+                    }}
+                  >
+                    <DailyTargetListItem
+                      status={completionMap.get(target.tb_id)}
+                      onStatusToggle={handleStatusToggle}
+                      colorScheme={colorScheme}
+                      target={target}
+                      onRemovePress={onRemovePress}
+                    />
+                  </Pressable>
+                </ScaleDecorator>
+              )}
+            />
+          )}
         </View>
       </View>
     </View>

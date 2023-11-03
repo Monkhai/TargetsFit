@@ -1,14 +1,11 @@
-import { Alert, ColorSchemeName, Keyboard, StyleSheet, TextInput, View } from 'react-native';
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
+import { Alert, ColorSchemeName, Keyboard, StyleSheet, View } from 'react-native';
 import Modal from 'react-native-modal';
-import { BORDER_RADIUS } from '../../constants/SIZES';
 import Colors from '../../constants/Colors';
-import Button from '../Button';
+import { BORDER_RADIUS } from '../../constants/SIZES';
 import { NewTarget, TargetType } from '../../db/db';
-import { Picker } from '@react-native-picker/picker';
-import { Text } from '../Themed';
-import ModalHeader from './ModalHeader';
 import CustomTextInput from './CustomTextInput';
+import ModalHeader from './ModalHeader';
 import ModalPicker from './ModalPicker';
 
 interface Props {

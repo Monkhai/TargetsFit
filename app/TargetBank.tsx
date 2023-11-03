@@ -15,6 +15,7 @@ import WeeklyTargetsContext from '../context/WeeklyTargetsContext';
 import { NewTarget, Target, TargetByDaysDAO, TargetDAO } from '../db/db';
 import useGetDismissTargetData, { SingleSortedTarget } from '../hooks/useGetDismissTargetData';
 import { heavyHaptics } from '../utilityFunctions/haptics';
+import TargetBankList from '../components/TargetBank/TargetBankList';
 
 const TargetBank = () => {
   //------------------------------------------------------------------------
@@ -46,15 +47,18 @@ const TargetBank = () => {
   const Targets = new TargetDAO();
 
   //------------------------------------------------------------------------
-  const deleteTarget = useCallback((target: Target) => {
-    Targets.deleteTarget(target.id)
-      .then(() => {
-        refetchWeeklyTargets();
-        refetchAllTargets();
-        refetchActiveCount();
-      })
-      .catch((error: Error) => Alert.alert(error.message));
-  }, []);
+  const deleteTarget = useCallback(
+    (target: Target) => {
+      Targets.deleteTarget(target.id)
+        .then(() => {
+          refetchWeeklyTargets();
+          refetchAllTargets();
+          refetchActiveCount();
+        })
+        .catch((error: Error) => Alert.alert(error.message));
+    },
+    [refetchActiveCount, refetchAllTargets, refetchWeeklyTargets]
+  );
 
   //------------------------------------------------------------------------
   const createNewTarget = useCallback((newTarget: NewTarget) => {
@@ -132,14 +136,11 @@ const TargetBank = () => {
   };
 
   //------------------------------------------------------------------------
-  const handleLongPress = useCallback(
-    (target: Target) => {
-      heavyHaptics();
-      setIsEditModalVisible(true);
-      setOldEditTarget(target);
-    },
-    [isEditModalVisible]
-  );
+  const handleLongPress = useCallback((target: Target) => {
+    heavyHaptics();
+    setIsEditModalVisible(true);
+    setOldEditTarget(target);
+  }, []);
 
   //------------------------------------------------------------------------
   //------------------------------------------------------------------------
@@ -160,16 +161,7 @@ const TargetBank = () => {
   } else {
     return (
       <View style={styles.container}>
-        <View style={[styles.card, { backgroundColor: Colors[colorScheme ?? 'light'].backgroundSecondary }]}>
-          <FlatList
-            showsVerticalScrollIndicator={false}
-            data={targets}
-            keyExtractor={(item, index) => item.name + index}
-            renderItem={({ item: target }) => (
-              <BankListItem colorScheme={colorScheme} onRemovePress={deleteTarget} onLongPress={handleLongPress} target={target} />
-            )}
-          />
-        </View>
+        <TargetBankList targets={targets} deleteTarget={deleteTarget} onLongPress={handleLongPress} colorScheme={colorScheme} />
 
         <NewTargetModal
           colorScheme={colorScheme}
@@ -177,6 +169,7 @@ const TargetBank = () => {
           isNewTargetModalVisible={isNewModalVisible}
           setIsNewTargetModalVisible={setIsNewModalVisible}
         />
+
         <EditTargetModal
           onSaveRemoveTargets={deleteTargetsFromWeeklyTargets}
           colorScheme={colorScheme}
@@ -195,7 +188,7 @@ const TargetBank = () => {
   }
 };
 
-export default React.memo(TargetBank);
+export default TargetBank;
 
 const styles = StyleSheet.create({
   container: {
@@ -203,13 +196,5 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'center',
     padding: 13,
-  },
-
-  card: {
-    width: '100%',
-    height: '100%',
-
-    borderRadius: 10,
-    paddingHorizontal: 10,
   },
 });

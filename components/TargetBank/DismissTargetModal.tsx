@@ -28,6 +28,10 @@ const DismissTargetModal = ({ colorScheme, isVisible, setIsVisible, onSave, sort
     setRemovedWeeklyTargets([]);
   }, [sortedWeeklyTargets, isVisible]);
 
+  useEffect(() => {
+    if (missingTargets) setMutableMissingTargets(missingTargets);
+  }, [missingTargets]);
+
   //------------------------------------------------------------------------------------------------------------------------------------------------
   const handleRemove = (tb_id: number) => {
     const dayOfTarget = mutableSortedWeeklyTargets.filter((day) => day.targets.find((t) => t.targetTbId === tb_id)?.targetTbId === tb_id);

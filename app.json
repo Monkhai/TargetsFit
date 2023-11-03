@@ -2,7 +2,7 @@
   "expo": {
     "name": "TargetsFit",
     "slug": "TargetsFit",
-    "version": "0.4.0",
+    "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "myapp",
@@ -16,7 +16,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.yohaiwiener.TargetsFit",
-      "buildNumber": "3"
+      "buildNumber": "4"
     },
     "android": {
       "adaptiveIcon": {

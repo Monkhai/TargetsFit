@@ -18,7 +18,7 @@ const useGetWeeklyTargets = (isDBLoading: boolean) => {
         setError(error);
         setIsloading(false);
       });
-  }, [TargetsByDays]);
+  }, []);
 
   useEffect(() => {
     if (!isDBLoading) fetchTargets();
