@@ -18,7 +18,7 @@ const useGetActiveQuantity = (isDBLoading: boolean) => {
         setError(error);
         setIsloading(false);
       });
-  }, [WeeklyTargets]);
+  }, []);
 
   useEffect(() => {
     if (!isDBLoading) {

@@ -6,6 +6,7 @@
 import { Text as DefaultText, useColorScheme, View as DefaultView } from 'react-native';
 
 import Colors from '../constants/Colors';
+import React from 'react';
 
 type ThemeProps = {
   lightColor?: string;
@@ -15,10 +16,7 @@ type ThemeProps = {
 export type TextProps = ThemeProps & DefaultText['props'];
 export type ViewProps = ThemeProps & DefaultView['props'];
 
-export function useThemeColor(
-  props: { light?: string; dark?: string },
-  colorName: keyof typeof Colors.light & keyof typeof Colors.dark
-) {
+export function useThemeColor(props: { light?: string; dark?: string }, colorName: keyof typeof Colors.light & keyof typeof Colors.dark) {
   const theme = useColorScheme() ?? 'light';
   const colorFromProps = props[theme];
 
@@ -29,18 +27,23 @@ export function useThemeColor(
   }
 }
 
-export function Text(props: TextProps) {
+// export function Text(props: TextProps) {
+//   const { style, lightColor, darkColor, ...otherProps } = props;
+//   const color = useThemeColor({ light: lightColor, dark: darkColor }, 'text');
+
+//   return <DefaultText style={[{ color }, style]} {...otherProps} />;
+// }
+
+export const Text = React.memo((props: TextProps) => {
   const { style, lightColor, darkColor, ...otherProps } = props;
   const color = useThemeColor({ light: lightColor, dark: darkColor }, 'text');
 
   return <DefaultText style={[{ color }, style]} {...otherProps} />;
-}
+});
 
 export function View(props: ViewProps) {
   const { style, lightColor, darkColor, ...otherProps } = props;
   const theme = useColorScheme();
 
-  return (
-    <DefaultView style={[{ backgroundColor: Colors[theme!].background }, style]} {...otherProps} />
-  );
+  return <DefaultView style={[{ backgroundColor: Colors[theme!].background }, style]} {...otherProps} />;
 }

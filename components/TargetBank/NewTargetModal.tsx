@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Alert, ColorSchemeName, Keyboard, StyleSheet, View } from 'react-native';
 import Modal from 'react-native-modal';
 import Colors from '../../constants/Colors';
@@ -19,6 +19,12 @@ const NewTargetModal = ({ colorScheme, isNewTargetModalVisible, setIsNewTargetMo
   const [selectedType, setSelectedType] = useState<TargetType>('strength');
   const [newName, setNewName] = useState<string>();
   const [newQuantity, setNewQuantity] = useState<number>();
+
+  useEffect(() => {
+    setNewName(undefined);
+    setNewQuantity(undefined);
+    setSelectedType('strength');
+  }, [isNewTargetModalVisible]);
 
   const handlePress = () => {
     if (!newName) return Alert.alert('Must choose a name');

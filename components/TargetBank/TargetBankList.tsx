@@ -1,8 +1,9 @@
-import { ColorSchemeName, FlatList, StyleSheet, Text, View } from 'react-native';
+import { FlashList } from '@shopify/flash-list';
 import React from 'react';
+import { ColorSchemeName, StyleSheet, View } from 'react-native';
 import Colors from '../../constants/Colors';
-import BankListItem from './BankListItem';
 import { Target } from '../../db/db';
+import BankListItem from './BankListItem';
 
 interface Props {
   targets: Target[];
@@ -14,14 +15,16 @@ interface Props {
 const TargetBankList = ({ targets, colorScheme, deleteTarget, onLongPress }: Props) => {
   return (
     <View style={[styles.card, { backgroundColor: Colors[colorScheme ?? 'light'].backgroundSecondary }]}>
-      <FlatList
-        showsVerticalScrollIndicator={false}
-        data={targets}
-        keyExtractor={(item) => item.name}
-        renderItem={({ item: target }) => (
-          <BankListItem colorScheme={colorScheme} onRemovePress={deleteTarget} onLongPress={onLongPress} target={target} />
-        )}
-      />
+      {targets.length > 0 && (
+        <FlashList
+          estimatedItemSize={72}
+          showsVerticalScrollIndicator={false}
+          data={targets}
+          renderItem={({ item: target }) => (
+            <BankListItem colorScheme={colorScheme} onRemovePress={deleteTarget} onLongPress={onLongPress} target={target} />
+          )}
+        />
+      )}
     </View>
   );
 };

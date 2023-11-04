@@ -1,7 +1,7 @@
 import { FontAwesome } from '@expo/vector-icons';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { SplashScreen, Tabs } from 'expo-router';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useColorScheme } from 'react-native';
 import Colors from '../constants/Colors';
 import ActiveQuantityContext from '../context/ActiveQuantityContext';
@@ -20,10 +20,9 @@ SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
   //------------------------------------------------------------------------
   const { isLoading: isDBLoading, error: dbError } = useInitializeTables();
-  const [filter, setFilter] = useState<string>();
 
   //------------------------------------------------------------------------
-  const { targets, isLoading: isAllTargetsLoading, error: allTargetsError, refetch } = useGetAllTargets(isDBLoading, filter);
+  const { targets, isLoading: isAllTargetsLoading, error: allTargetsError, refetch } = useGetAllTargets(isDBLoading);
 
   //------------------------------------------------------------------------
   const {
@@ -67,8 +66,6 @@ export default function RootLayout() {
           isLoading: isAllTargetsLoading,
           error: allTargetsError,
           refetch: refetch,
-          filter,
-          setFilter,
         }}
       >
         <WeeklyTargetsContext.Provider
@@ -103,13 +100,13 @@ function RootLayoutNav() {
       <Tabs
         screenOptions={{
           tabBarActiveTintColor: Colors[colorScheme ?? 'light'].accent,
+          tabBarShowLabel: false,
         }}
       >
         <Tabs.Screen
           name="index"
           options={{
             title: 'Home',
-            tabBarShowLabel: false,
             tabBarIcon: (props) => <FontAwesome name="home" size={props.size} color={props.color} />,
           }}
         />
@@ -118,7 +115,6 @@ function RootLayoutNav() {
           name="TargetBank"
           options={{
             title: 'Target Bank',
-            tabBarShowLabel: false,
             tabBarIcon: (props) => <FontAwesome name="bullseye" size={props.size} color={props.color} />,
           }}
         />

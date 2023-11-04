@@ -6,8 +6,6 @@ type TargetsContextType = {
   isLoading: boolean;
   error: Error | undefined;
   refetch: () => void;
-  filter: string | undefined;
-  setFilter: React.Dispatch<React.SetStateAction<string | undefined>>;
 };
 
 const TargetsContext = React.createContext<TargetsContextType>({
@@ -15,8 +13,6 @@ const TargetsContext = React.createContext<TargetsContextType>({
   isLoading: false,
   error: undefined,
   refetch: () => {},
-  filter: undefined,
-  setFilter: () => {},
 });
 
 export default TargetsContext;

@@ -146,7 +146,14 @@ const TargetBank = () => {
   //------------------------------------------------------------------------
   useEffect(() => {
     navigator.setOptions({
-      headerRight: () => <Button title="new" onPress={() => setIsNewModalVisible(true)} />,
+      headerRight: () => (
+        <Button
+          title="new"
+          onPress={() => {
+            setIsNewModalVisible(true);
+          }}
+        />
+      ),
       headerRightContainerStyle: { paddingRight: 10 },
       headerLeftContainerStyle: { paddingRight: 10 },
     });

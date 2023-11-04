@@ -156,14 +156,9 @@ export const deleteAllTables = async () => {
 //----------------------------------------------------------------------------------------------
 export class TargetDAO {
   //----------------------------------------------------------------------------------------------
-  public async getAllTargets(typeFilter?: string): Promise<Target[]> {
+  public async getAllTargets(): Promise<Target[]> {
     let sql = `SELECT * FROM targets `;
     let params: any[] = [];
-
-    if (typeFilter) {
-      sql += `WHERE type = ? `;
-      params.push(typeFilter);
-    }
 
     sql += `ORDER BY
         CASE type

@@ -90,7 +90,7 @@ const AddToDayList = ({ colorScheme, allTargets, activeTargetQuantity, onAddPres
   );
 };
 
-export default AddToDayList;
+export default React.memo(AddToDayList);
 
 const styles = StyleSheet.create({
   container: {

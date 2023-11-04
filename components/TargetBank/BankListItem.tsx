@@ -4,6 +4,7 @@ import Colors from '../../constants/Colors';
 import { LIST_ITEM_HEIGHT } from '../../constants/SIZES';
 import { Target } from '../../db/db';
 import { Text, View } from '../Themed';
+import MemoText from '../MemoText';
 
 interface Props {
   colorScheme: ColorSchemeName;

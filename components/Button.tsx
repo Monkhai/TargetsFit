@@ -1,5 +1,15 @@
 import React from 'react';
-import { ButtonProps, Button as NativeButton, Platform, Pressable, StyleProp, Text, TextStyle } from 'react-native';
+import {
+  ButtonProps,
+  Button as NativeButton,
+  Platform,
+  Pressable,
+  PressableStateCallbackType,
+  StyleProp,
+  Text,
+  TextStyle,
+  ViewStyle,
+} from 'react-native';
 
 interface Props extends ButtonProps {
   title: string;
@@ -17,8 +27,20 @@ const Button = ({ title, onPress, ...props }: Props) => {
     fontSize: 17,
   };
 
+  const pressableStyle = (isPressed: PressableStateCallbackType): StyleProp<ViewStyle> => {
+    if (isPressed.pressed) {
+      return {
+        opacity: 0.5,
+      };
+    } else if (!isPressed.pressed) {
+      return {
+        opacity: 1,
+      };
+    }
+  };
+
   return (
-    <Pressable style={(a) => (a.pressed ? { opacity: 0.5 } : { opacity: 1 })} onPress={onPress} {...props}>
+    <Pressable hitSlop={5} style={(a) => pressableStyle(a)} onPress={onPress} {...props}>
       <Text style={androidButtonStyle}>{title}</Text>
     </Pressable>
   );

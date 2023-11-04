@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { Target, TargetDAO } from '../db/db';
 
-const useGetAllTargets = (isDBLoading: boolean, filter?: string) => {
+const useGetAllTargets = (isDBLoading: boolean) => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | undefined>();
   const [targets, setTargets] = useState<Target[] | []>([]);
@@ -9,7 +9,7 @@ const useGetAllTargets = (isDBLoading: boolean, filter?: string) => {
   const TargetDB = new TargetDAO();
 
   const fetchTargets = useCallback(() => {
-    TargetDB.getAllTargets(filter)
+    TargetDB.getAllTargets()
       .then((targets) => {
         setTargets(targets);
         setIsLoading(false);
@@ -18,13 +18,13 @@ const useGetAllTargets = (isDBLoading: boolean, filter?: string) => {
         setError(error);
         setIsLoading(false);
       });
-  }, [TargetDB, filter]);
+  }, [TargetDB]);
 
   useEffect(() => {
     if (!isDBLoading) {
       fetchTargets();
     }
-  }, [isDBLoading, filter]);
+  }, [isDBLoading]);
 
   return { isLoading, error, targets, refetch: fetchTargets };
 };
