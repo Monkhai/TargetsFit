@@ -126,6 +126,7 @@ const TargetBank = () => {
     Targets.updateTarget(updatedTarget)
       .then(() => {
         refetchAllTargets();
+        refetchWeeklyTargets();
         refetchActiveCount();
       })
       .then(() => setIsEditModalVisible(false))

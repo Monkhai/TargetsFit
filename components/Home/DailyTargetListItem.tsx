@@ -1,10 +1,10 @@
-import { ColorSchemeName, Pressable, StyleSheet, TouchableOpacity, View } from 'react-native';
-import React from 'react';
-import { LIST_ITEM_HEIGHT } from '../../constants/SIZES';
-import { ActiveTargetQuantity, Target, TargetInWeeklyTargets } from '../../db/db';
-import Colors from '../../constants/Colors';
-import { Text } from '../Themed';
 import { FontAwesome } from '@expo/vector-icons';
+import React, { useEffect } from 'react';
+import { ColorSchemeName, Pressable, StyleSheet, TouchableOpacity, View } from 'react-native';
+import Colors from '../../constants/Colors';
+import { LIST_ITEM_HEIGHT } from '../../constants/SIZES';
+import { TargetInWeeklyTargets } from '../../db/db';
+import { Text } from '../Themed';
 
 interface Props {
   colorScheme: ColorSchemeName;
@@ -46,6 +46,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     width: 48,
+    gap: 13,
     height: LIST_ITEM_HEIGHT,
   },
   listItemText: {

@@ -1,6 +1,6 @@
 import * as Haptics from 'expo-haptics';
 import React, { useEffect, useState } from 'react';
-import { ColorSchemeName, Pressable, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
+import { ColorSchemeName, FlatList, Pressable, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 import DraggableFlatList, { ScaleDecorator } from 'react-native-draggable-flatlist';
 import Colors from '../../constants/Colors';
 import { DailyTargets, TargetByDaysDAO, TargetInWeeklyTargets } from '../../db/db';
@@ -29,15 +29,15 @@ const DailyTargetList = ({ colorScheme, dailyTargets, onRemovePress, refetchWeek
     const currentTargets = dailyTargets.targets.map((t) => t.tb_id);
 
     // Check for added and removed targets
-    const addedTargets = currentTargets.filter((id) => !prevTargets.includes(id));
     const removedTargets = prevTargets.filter((id) => !currentTargets.includes(id));
+    const addedTargets = currentTargets.filter((tb_id) => !prevTargets.includes(tb_id));
 
-    // Initialize statuses for added targets
+    // Initialize status for added targets
     addedTargets.forEach((id) => {
       newMap.set(id, false);
     });
 
-    // Remove statuses for removed targets
+    // Remove status for removed targets
     removedTargets.forEach((id) => {
       newMap.delete(id);
     });
@@ -46,7 +46,7 @@ const DailyTargetList = ({ colorScheme, dailyTargets, onRemovePress, refetchWeek
   }, [dailyTargets.targets]);
 
   useEffect(() => {
-    // Extract IDs for easy comparison
+    //create arrays with tb_id for draggableData and for dailyTargets
     const draggableIds = new Set(draggableData.map((t) => t.tb_id));
     const dailyTargetIds = new Set(dailyTargets.targets.map((t) => t.tb_id));
 
@@ -60,6 +60,18 @@ const DailyTargetList = ({ colorScheme, dailyTargets, onRemovePress, refetchWeek
     const updatedDraggableData = draggableData.filter((t) => !removedTargets.includes(t)).concat(newTargets);
 
     setDraggableData(updatedDraggableData);
+  }, [dailyTargets]);
+
+  useEffect(() => {
+    const newDraggableData = draggableData.map((target) => {
+      const targetFromDailyTarget = dailyTargets.targets.find((t) => t.tb_id === target.tb_id);
+      if (target !== targetFromDailyTarget) {
+        return targetFromDailyTarget!;
+      } else {
+        return target!;
+      }
+    });
+    setDraggableData(newDraggableData);
   }, [dailyTargets]);
 
   const handleStatusToggle = (id: number, status: boolean | undefined) => {
@@ -82,6 +94,7 @@ const DailyTargetList = ({ colorScheme, dailyTargets, onRemovePress, refetchWeek
         <View style={{ flex: 1 }}>
           {dailyTargets.targets.length > 0 && (
             <DraggableFlatList
+              style={{ height: '100%' }}
               data={draggableData}
               showsVerticalScrollIndicator={false}
               onDragEnd={({ data }) => {

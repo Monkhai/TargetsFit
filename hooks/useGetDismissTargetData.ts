@@ -22,7 +22,7 @@ const useGetDismissTargetData = (oldTarget: Target, newTarget: Target) => {
     const filteredWeeklyTargets = weeklyTargets.map((day) => {
       return {
         ...day,
-        targets: day.targets.filter((target) => target.id === target.id),
+        targets: day.targets.filter((target) => target.id === oldTarget.id),
       };
     });
 

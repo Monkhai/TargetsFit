@@ -66,7 +66,13 @@ const NewTargetModal = ({ colorScheme, isNewTargetModalVisible, setIsNewTargetMo
           returnKeyType="done"
           keyboardType="number-pad"
         />
-        <ModalPicker onValueChange={(value) => setSelectedType(value)} selectedType={selectedType} />
+        <ModalPicker
+          onValueChange={(value) => {
+            console.log(value);
+            setSelectedType(value);
+          }}
+          selectedType={selectedType}
+        />
       </View>
     </Modal>
   );

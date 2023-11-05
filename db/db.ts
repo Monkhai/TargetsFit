@@ -160,6 +160,11 @@ export class TargetDAO {
     let sql = `SELECT * FROM targets `;
     let params: any[] = [];
 
+    // if (typeFilter) {
+    //   sql += `WHERE type = ? `;
+    //   params.push(typeFilter);
+    // }
+
     sql += `ORDER BY
         CASE type
           WHEN 'strength' THEN 1  
