@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { Alert, ColorSchemeName, Keyboard, StyleSheet, View } from 'react-native';
+import { ColorSchemeName, Keyboard, StyleSheet, View } from 'react-native';
 import Modal from 'react-native-modal';
 import Colors from '../../constants/Colors';
 import { BORDER_RADIUS } from '../../constants/SIZES';
 import { Target, TargetType } from '../../db/db';
+import { SingleSortedTarget, SortedTargets } from '../../hooks/useGetDismissTargetData';
 import CustomTextInput from './CustomTextInput';
 import DismissTargetModal from './DismissTargetModal';
 import ModalHeader from './ModalHeader';
 import ModalPicker from './ModalPicker';
-import { SingleSortedTarget, SortedTargets } from '../../hooks/useGetDismissTargetData';
 
 interface Props {
   colorScheme: ColorSchemeName;

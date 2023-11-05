@@ -1,11 +1,10 @@
+import * as Haptics from 'expo-haptics';
 import React, { useEffect, useState } from 'react';
-import { ColorSchemeName, FlatList, Pressable, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
+import { ColorSchemeName, Pressable, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
+import DraggableFlatList, { ScaleDecorator } from 'react-native-draggable-flatlist';
 import Colors from '../../constants/Colors';
-import { LIST_ITEM_HEIGHT, SCREEN_WIDTH } from '../../constants/SIZES';
 import { DailyTargets, TargetByDaysDAO, TargetInWeeklyTargets } from '../../db/db';
 import DailyTargetListItem from './DailyTargetListItem';
-import DraggableFlatList, { ScaleDecorator } from 'react-native-draggable-flatlist';
-import * as Haptics from 'expo-haptics';
 
 const targetByDaysDAO = new TargetByDaysDAO();
 interface Props {
