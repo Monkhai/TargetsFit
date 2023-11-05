@@ -43,7 +43,7 @@ const DailyTargetList = ({ colorScheme, dailyTargets, onRemovePress, refetchWeek
     });
 
     setCompletionMap(newMap);
-  }, [dailyTargets.targets]);
+  }, [dailyTargets]);
 
   useEffect(() => {
     //create arrays with tb_id for draggableData and for dailyTargets
@@ -59,11 +59,8 @@ const DailyTargetList = ({ colorScheme, dailyTargets, onRemovePress, refetchWeek
     // Remove the removed targets and append the new targets
     const updatedDraggableData = draggableData.filter((t) => !removedTargets.includes(t)).concat(newTargets);
 
-    setDraggableData(updatedDraggableData);
-  }, [dailyTargets]);
-
-  useEffect(() => {
-    const newDraggableData = draggableData.map((target) => {
+    //make sure targets are updated
+    const newDraggableData = updatedDraggableData.map((target) => {
       const targetFromDailyTarget = dailyTargets.targets.find((t) => t.tb_id === target.tb_id);
       if (target !== targetFromDailyTarget) {
         return targetFromDailyTarget!;
@@ -71,6 +68,7 @@ const DailyTargetList = ({ colorScheme, dailyTargets, onRemovePress, refetchWeek
         return target!;
       }
     });
+
     setDraggableData(newDraggableData);
   }, [dailyTargets]);
 
