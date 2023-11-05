@@ -149,7 +149,7 @@ const TargetBank = () => {
     navigator.setOptions({
       headerRight: () => (
         <Button
-          title="new"
+          title="New"
           onPress={() => {
             setIsNewModalVisible(true);
           }}
