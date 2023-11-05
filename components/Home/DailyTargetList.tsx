@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ColorSchemeName, FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
+import { ColorSchemeName, FlatList, Pressable, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 import Colors from '../../constants/Colors';
 import { LIST_ITEM_HEIGHT, SCREEN_WIDTH } from '../../constants/SIZES';
 import { DailyTargets, TargetByDaysDAO, TargetInWeeklyTargets } from '../../db/db';
@@ -19,6 +19,8 @@ const DailyTargetList = ({ colorScheme, dailyTargets, onRemovePress, refetchWeek
   const [completionMap, setCompletionMap] = useState(new Map<number, boolean>());
 
   const [draggableData, setDraggableData] = useState(dailyTargets.targets);
+
+  const { width: screenWidth } = useWindowDimensions();
 
   useEffect(() => {
     const newMap = new Map(completionMap);
@@ -75,7 +77,7 @@ const DailyTargetList = ({ colorScheme, dailyTargets, onRemovePress, refetchWeek
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { width: screenWidth }]}>
       <View style={[styles.secondaryContainer, { backgroundColor: Colors[colorScheme ?? 'light'].backgroundSecondary }]}>
         <Text style={styles.header}>{dailyTargets.day.name}</Text>
         <View style={{ flex: 1 }}>
@@ -119,9 +121,6 @@ export default React.memo(DailyTargetList);
 
 const styles = StyleSheet.create({
   container: {
-    width: SCREEN_WIDTH,
-    // paddingTop: 13,
-    // paddingHorizontal: 13,
     padding: 13,
   },
   secondaryContainer: {

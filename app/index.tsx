@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
-import { Alert, NativeScrollEvent, NativeSyntheticEvent, StyleSheet, useColorScheme } from 'react-native';
+import { Alert, NativeScrollEvent, NativeSyntheticEvent, StyleSheet, useColorScheme, useWindowDimensions } from 'react-native';
 import AddToDayList from '../components/Home/AddToDayList';
 import DailyTargetList from '../components/Home/DailyTargetList';
 import LoadingErrorHome from '../components/LoadingErrorHome';
@@ -17,6 +17,8 @@ const Home = () => {
   const colorScheme = useColorScheme();
   const [dayPage, setDayPage] = useState<1 | 2 | 3 | 4 | 5 | 6 | 7>(1);
   const [isScrollViewMounted, setIsScrollViewMounted] = useState(false);
+
+  const { width: screenWidth } = useWindowDimensions();
 
   const scrollViewRef = useRef<ScrollView>(null);
 
@@ -60,7 +62,6 @@ const Home = () => {
 
   const handleHViewScroll = useCallback(
     (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-      const screenWidth = SCREEN_WIDTH;
       const offsetX = event.nativeEvent.contentOffset.x;
       const page = Math.round(offsetX / screenWidth);
       const dayId: DayId = (page + 1) as DayId;
