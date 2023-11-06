@@ -14,15 +14,15 @@ interface Props {
   target: TargetInWeeklyTargets;
 }
 
+const handleDragEnd = (drag: () => void) => {
+  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+  drag();
+};
+
 const DailyTargetMetaListItem = ({ drag, completionMap, onRemovePress, colorScheme, handleStatusToggle, target }: Props) => {
   return (
     <ScaleDecorator>
-      <Pressable
-        onLongPress={() => {
-          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-          drag();
-        }}
-      >
+      <Pressable onLongPress={() => handleDragEnd(drag)}>
         <DailyTargetListItem
           status={completionMap.get(target.tb_id)}
           onStatusToggle={handleStatusToggle}

@@ -3,6 +3,7 @@ import { handleError } from './utilities/dbErrorHandler';
 import { DATABASE_NAME } from '../constants/DATABASE_NAME';
 import { handleQuery } from './utilities/queryHandler';
 import { transformWeeklyTargets } from './utilities/transformWeeklyTargets';
+import { transformDailyTargets } from './utilities/transformDailyTargets';
 
 //----------------------------------------------------------------------------------------------
 //TYPES--TYPES--TYPES--TYPES--TYPES--TYPES--TYPES--TYPES--TYPES--TYPES--TYPES--TYPES--TYPES
@@ -31,14 +32,14 @@ export type Day = {
 
 export type DailyTargets = {
   day: Day;
-  targets: Array<Target & { tb_id: number; position: number }>;
+  targets: Array<TargetInWeeklyTargets>;
 };
 
 export type WeeklyTargets = DailyTargets[];
 
-export type TargetInWeeklyTargets = Target & { tb_id: number; position: number };
+export type TargetInWeeklyTargets = Target & { tb_id: number; position: number; dayId: DayId };
 
-type RawDailyTargets = {
+export type RawDailyTargets = {
   day_id: DayId;
   day_name: DayName;
   tb_id: number;
@@ -266,14 +267,23 @@ export class TargetDAO {
 //----------------------------------------------------------------------------------------------
 export class TargetByDaysDAO {
   //----------------------------------------------------------------------------------------------
-  public async getDailyTargets(dayId: number): Promise<Target[]> {
-    return handleQuery(
-      `SELECT targets.* FROM days
-        JOIN targets_by_days ON days.id = targets_by_days.day_id
-        JOIN targets ON targets.id = targets_by_days.target_id WHERE days.id = ?;`,
-      'getting targets for this day',
-      [dayId]
-    );
+  public async getDailyTargets(dayId: DayId): Promise<DailyTargets> {
+    const sql = `
+      SELECT 
+        days.id as day_id,
+        days.name as day_name,
+        targets_by_days.id as tb_id,
+        targets.*, 
+        targets_by_days.position
+      FROM days 
+        LEFT JOIN targets_by_days ON days.id = targets_by_days.day_id
+        LEFT JOIN targets ON targets.id = targets_by_days.target_id
+      WHERE days.id = ?
+      ORDER BY targets_by_days.position, targets.type, targets.name;
+    `;
+
+    const rawDailyTargets = await handleQuery<RawDailyTargets[]>(sql, 'getting targets for this day', [dayId]);
+    return transformDailyTargets(rawDailyTargets);
   }
 
   //----------------------------------------------------------------------------------------------
@@ -286,9 +296,9 @@ export class TargetByDaysDAO {
       targets.*, 
       targets_by_days.position
     FROM days 
-    LEFT JOIN targets_by_days ON days.id = targets_by_days.day_id
-    LEFT JOIN targets ON targets.id = targets_by_days.target_id 
-    ORDER BY days.id, targets_by_days.position, targets.type, targets.name;
+      LEFT JOIN targets_by_days ON days.id = targets_by_days.day_id
+      LEFT JOIN targets ON targets.id = targets_by_days.target_id 
+      ORDER BY days.id, targets_by_days.position, targets.type, targets.name;
   `;
 
     const rawWeeklyTargets = await handleQuery<RawWeeklyTargets>(sql, 'getting weekly targets');

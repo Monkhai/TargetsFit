@@ -24,7 +24,8 @@ export const transformWeeklyTargets = (rawTargets: RawWeeklyTargets) => {
         name: row.name,
         quantity: row.quantity,
         type: row.type,
-        position: row.position, // Assuming position is a field in the RawWeeklyTargets type
+        position: row.position,
+        dayId: row.day_id,
       };
       day.targets.push(target);
     }

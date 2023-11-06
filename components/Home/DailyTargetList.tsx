@@ -1,5 +1,5 @@
 import * as Haptics from 'expo-haptics';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { ColorSchemeName, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 import DraggableFlatList from 'react-native-draggable-flatlist';
 import Colors from '../../constants/Colors';
@@ -20,6 +20,26 @@ const DailyTargetList = ({ colorScheme, dailyTargets, onRemovePress, refetchWeek
   const [draggableData, setDraggableData] = useState(dailyTargets.targets);
 
   const { width: screenWidth } = useWindowDimensions();
+  //------------------------------------------------------------------------------------------------------------------------------------------------
+  useEffect(() => {
+    // Convert both sets of ids to Sets for O(1) lookups.
+    const draggableIdsSet = new Set(draggableData.map((t) => t.tb_id));
+    const dailyTargetIdsSet = new Set(dailyTargets.targets.map((t) => t.tb_id));
+
+    // Find new targets efficiently
+    const newTargets = dailyTargets.targets.filter((t) => !draggableIdsSet.has(t.tb_id));
+
+    // Create a map of the dailyTargets for constant-time lookups
+    const dailyTargetsMap = new Map(dailyTargets.targets.map((t) => [t.tb_id, t]));
+
+    // Construct the new draggableData array with updated and new items
+    const newDraggableData = draggableData
+      .filter((t) => dailyTargetIdsSet.has(t.tb_id)) // Retain only targets that are still present
+      .map((t) => dailyTargetsMap.get(t.tb_id) || t) // Update items with their latest versions if changed
+      .concat(newTargets); // Add new items
+
+    setDraggableData(newDraggableData);
+  }, [dailyTargets]);
 
   //------------------------------------------------------------------------------------------------------------------------------------------------
   useEffect(() => {
@@ -46,46 +66,27 @@ const DailyTargetList = ({ colorScheme, dailyTargets, onRemovePress, refetchWeek
   }, [dailyTargets]);
 
   //------------------------------------------------------------------------------------------------------------------------------------------------
+  const handleStatusToggle = useCallback(
+    (id: number, status: boolean | undefined) => {
+      const newMap = new Map(completionMap);
 
-  useEffect(() => {
-    // Convert both sets of ids to Sets for O(1) lookups.
-    const draggableIdsSet = new Set(draggableData.map((t) => t.tb_id));
-    const dailyTargetIdsSet = new Set(dailyTargets.targets.map((t) => t.tb_id));
+      Haptics.selectionAsync();
 
-    // Find new targets efficiently
-    const newTargets = dailyTargets.targets.filter((t) => !draggableIdsSet.has(t.tb_id));
+      if (status === true) {
+        newMap.set(id, false);
+      } else if (status === false || status === undefined) {
+        newMap.set(id, true);
+      }
+      setCompletionMap(newMap);
+    },
+    [completionMap]
+  );
 
-    // Create a map of the dailyTargets for constant-time lookups
-    const dailyTargetsMap = new Map(dailyTargets.targets.map((t) => [t.tb_id, t]));
-
-    // Construct the new draggableData array with updated and new items
-    const newDraggableData = draggableData
-      .filter((t) => dailyTargetIdsSet.has(t.tb_id)) // Retain only targets that are still present
-      .map((t) => dailyTargetsMap.get(t.tb_id) || t) // Update items with their latest versions if changed
-      .concat(newTargets); // Add new items
-
-    setDraggableData(newDraggableData);
-  }, [dailyTargets]);
-
-  //------------------------------------------------------------------------------------------------------------------------------------------------
-  const handleStatusToggle = (id: number, status: boolean | undefined) => {
-    const newMap = new Map(completionMap);
-
-    Haptics.selectionAsync();
-
-    if (status === true) {
-      newMap.set(id, false);
-    } else if (status === false || status === undefined) {
-      newMap.set(id, true);
-    }
-    setCompletionMap(newMap);
-  };
-
-  const handleDragEnd = (data: TargetInWeeklyTargets[]) => {
+  const handleDragEnd = useCallback((data: TargetInWeeklyTargets[]) => {
     const positions = data.map((item, index) => ({ tb_id: item.tb_id, position: index }));
     setDraggableData(data);
     targetByDaysDAO.updatePositions(dailyTargets.day.id, positions).then(() => refetchWeeklyTergets());
-  };
+  }, []);
   //------------------------------------------------------------------------------------------------------------------------------------------------
   return (
     <View style={[styles.container, { width: screenWidth }]}>

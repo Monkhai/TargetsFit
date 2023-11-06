@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ColorSchemeName, Keyboard, StyleSheet, View } from 'react-native';
+import { ColorSchemeName, Keyboard, Platform, StyleSheet, View } from 'react-native';
 import Modal from 'react-native-modal';
 import Colors from '../../constants/Colors';
 import { BORDER_RADIUS } from '../../constants/SIZES';
@@ -112,7 +112,7 @@ const EditTargetModal = ({
 export default React.memo(EditTargetModal);
 
 const styles = StyleSheet.create({
-  modal: { width: '100%', margin: 0, top: -50 },
+  modal: { width: '100%', margin: 0, top: Platform.OS === 'ios' ? -80 : 0 },
   container: {
     alignSelf: 'center',
     width: '80%',

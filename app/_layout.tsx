@@ -14,7 +14,6 @@ import useGetAllTargets from '../hooks/useGetAllTargets';
 import useGetWeeklyTargets from '../hooks/useGetWeeklyTargets';
 
 export { ErrorBoundary } from 'expo-router';
-
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
@@ -26,10 +25,17 @@ export default function RootLayout() {
 
   //------------------------------------------------------------------------
   const {
-    weeklyTargets,
+    sundayTargets,
+    mondayTargets,
+    tuesdayTargets,
+    wednesdayTargets,
+    thursdayTargets,
+    fridayTargets,
+    saturdayTargets,
     isLoading: weeklyTaretsIsLoading,
     error: weeklyTargetsError,
-    refetch: refetchWeeklyTergets,
+    refetchAllTargets: refetchWeeklyTergets,
+    refetchDailyTargets,
   } = useGetWeeklyTargets(isDBLoading);
 
   //------------------------------------------------------------------------
@@ -53,11 +59,6 @@ export default function RootLayout() {
   }, [isDBLoading, isAllTargetsLoading]);
 
   //------------------------------------------------------------------------
-  if (isDBLoading && isAllTargetsLoading) {
-    return null;
-  }
-
-  //------------------------------------------------------------------------
   return (
     <DBContext.Provider value={{ isLoading: isDBLoading, error: dbError }}>
       <TargetsContext.Provider
@@ -70,10 +71,17 @@ export default function RootLayout() {
       >
         <WeeklyTargetsContext.Provider
           value={{
-            weeklyTargets,
+            sundayTargets,
+            mondayTargets,
+            tuesdayTargets,
+            wednesdayTargets,
+            thursdayTargets,
+            fridayTargets,
+            saturdayTargets,
             isLoading: weeklyTaretsIsLoading,
             error: weeklyTargetsError,
             refetch: refetchWeeklyTergets,
+            refetchDailyTargets,
           }}
         >
           <ActiveQuantityContext.Provider

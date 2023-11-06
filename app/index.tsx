@@ -11,6 +11,8 @@ import TargetsContext from '../context/TargetsContext';
 import WeeklyTargetsContext from '../context/WeeklyTargetsContext';
 import { DayId, Target, TargetByDaysDAO, TargetInWeeklyTargets } from '../db/db';
 import { ScrollView } from 'react-native-gesture-handler';
+import LoadingHomeScreen from '../components/Home/LoadingHomeScreen';
+import useGetWeeklyTargets from '../hooks/useGetWeeklyTargets';
 
 const Home = () => {
   const WeeklyTargets = new TargetByDaysDAO();
@@ -40,10 +42,17 @@ const Home = () => {
   } = useContext(TargetsContext);
 
   const {
-    weeklyTargets,
+    sundayTargets,
+    mondayTargets,
+    tuesdayTargets,
+    wednesdayTargets,
+    thursdayTargets,
+    fridayTargets,
+    saturdayTargets,
     isLoading: weeklyTaretsIsLoading,
     error: weeklyTaretsError,
     refetch: refetchWeeklyTargets,
+    refetchDailyTargets,
   } = useContext(WeeklyTargetsContext);
 
   const {
@@ -78,7 +87,7 @@ const Home = () => {
         .then(() => {
           refetchActiveCount();
           refetchAllTargets();
-          refetchWeeklyTargets();
+          refetchDailyTargets(dayPage);
         })
         .catch((error: Error) => {
           Alert.alert(error.message);
@@ -88,11 +97,12 @@ const Home = () => {
   );
 
   const handleItemDelete = useCallback((target: TargetInWeeklyTargets) => {
+    console.log(target.dayId);
     WeeklyTargets.deleteTargetFromWeeklyTargets(target.tb_id)
       .then(() => {
         refetchActiveCount();
+        refetchDailyTargets(target.dayId);
         refetchAllTargets();
-        refetchWeeklyTargets();
       })
       .catch((error: Error) => {
         Alert.alert(error.message);
@@ -100,7 +110,7 @@ const Home = () => {
   }, []);
 
   if (allTargetsIsLoading || weeklyTaretsIsLoading || isDBLoading || isActiveCountLoading) {
-    return <LoadingErrorHome message="Loading..." />;
+    return <LoadingHomeScreen />;
   } else if (weeklyTaretsError) {
     return <LoadingErrorHome message={weeklyTaretsError.message} />;
   } else if (allTargetsError) {
@@ -128,7 +138,7 @@ const Home = () => {
             refetchWeeklyTergets={refetchWeeklyTargets}
             onRemovePress={handleItemDelete}
             colorScheme={colorScheme}
-            dailyTargets={weeklyTargets[0]}
+            dailyTargets={sundayTargets}
           />
 
           {/* MONDAY TARGET LIST */}
@@ -136,7 +146,7 @@ const Home = () => {
             refetchWeeklyTergets={refetchWeeklyTargets}
             onRemovePress={handleItemDelete}
             colorScheme={colorScheme}
-            dailyTargets={weeklyTargets[1]}
+            dailyTargets={mondayTargets}
           />
 
           {/* TUESDAY TARGET LIST */}
@@ -144,7 +154,7 @@ const Home = () => {
             refetchWeeklyTergets={refetchWeeklyTargets}
             onRemovePress={handleItemDelete}
             colorScheme={colorScheme}
-            dailyTargets={weeklyTargets[2]}
+            dailyTargets={tuesdayTargets}
           />
 
           {/* WEDNESDAY TARGET LIST */}
@@ -152,7 +162,7 @@ const Home = () => {
             refetchWeeklyTergets={refetchWeeklyTargets}
             onRemovePress={handleItemDelete}
             colorScheme={colorScheme}
-            dailyTargets={weeklyTargets[3]}
+            dailyTargets={wednesdayTargets}
           />
 
           {/* THURSDAY TARGET LIST */}
@@ -160,7 +170,7 @@ const Home = () => {
             refetchWeeklyTergets={refetchWeeklyTargets}
             onRemovePress={handleItemDelete}
             colorScheme={colorScheme}
-            dailyTargets={weeklyTargets[4]}
+            dailyTargets={thursdayTargets}
           />
 
           {/* FRIDAY TARGET LIST */}
@@ -168,7 +178,7 @@ const Home = () => {
             refetchWeeklyTergets={refetchWeeklyTargets}
             onRemovePress={handleItemDelete}
             colorScheme={colorScheme}
-            dailyTargets={weeklyTargets[5]}
+            dailyTargets={fridayTargets}
           />
 
           {/* SATURDAY TARGET LIST */}
@@ -176,7 +186,7 @@ const Home = () => {
             refetchWeeklyTergets={refetchWeeklyTargets}
             onRemovePress={handleItemDelete}
             colorScheme={colorScheme}
-            dailyTargets={weeklyTargets[6]}
+            dailyTargets={saturdayTargets}
           />
         </ScrollView>
         {totalActiveCount > 0 && (
