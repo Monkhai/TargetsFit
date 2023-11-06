@@ -5,6 +5,7 @@ import DraggableFlatList, { ScaleDecorator } from 'react-native-draggable-flatli
 import Colors from '../../constants/Colors';
 import { DailyTargets, TargetByDaysDAO, TargetInWeeklyTargets } from '../../db/db';
 import DailyTargetListItem from './DailyTargetListItem';
+import DailyTargetMetaListItem from './DailyTargetMetaListItem';
 
 const targetByDaysDAO = new TargetByDaysDAO();
 interface Props {
@@ -102,22 +103,14 @@ const DailyTargetList = ({ colorScheme, dailyTargets, onRemovePress, refetchWeek
               }}
               keyExtractor={(item) => item.tb_id.toString()}
               renderItem={({ item: target, drag }) => (
-                <ScaleDecorator>
-                  <Pressable
-                    onLongPress={() => {
-                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-                      drag();
-                    }}
-                  >
-                    <DailyTargetListItem
-                      status={completionMap.get(target.tb_id)}
-                      onStatusToggle={handleStatusToggle}
-                      colorScheme={colorScheme}
-                      target={target}
-                      onRemovePress={onRemovePress}
-                    />
-                  </Pressable>
-                </ScaleDecorator>
+                <DailyTargetMetaListItem
+                  colorScheme={colorScheme}
+                  completionMap={completionMap}
+                  drag={drag}
+                  handleStatusToggle={handleStatusToggle}
+                  onRemovePress={onRemovePress}
+                  target={target}
+                />
               )}
             />
           )}

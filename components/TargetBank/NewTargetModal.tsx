@@ -68,7 +68,6 @@ const NewTargetModal = ({ colorScheme, isNewTargetModalVisible, setIsNewTargetMo
         />
         <ModalPicker
           onValueChange={(value) => {
-            console.log(value);
             setSelectedType(value);
           }}
           selectedType={selectedType}
@@ -85,6 +84,7 @@ const styles = StyleSheet.create({
   container: {
     alignSelf: 'center',
     width: '80%',
+    maxWidth: 450,
     height: 'auto',
     justifyContent: 'flex-start',
     alignItems: 'center',
