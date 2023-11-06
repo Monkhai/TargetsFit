@@ -30,6 +30,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     width: '95%',
     padding: 10,
+    // marginBottom: 20,
     color: 'red',
   },
 });
