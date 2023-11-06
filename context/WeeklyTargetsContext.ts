@@ -1,5 +1,5 @@
 import React from 'react';
-import { DailyTargets, DayId, Target, TargetInWeeklyTargets } from '../db/db';
+import { DailyTargets, DayId, Target, TargetInWeeklyTargets, WeeklyTargets } from '../db/db';
 
 type WeeklyTargetsContextType = {
   sundayTargets: DailyTargets;
@@ -9,6 +9,7 @@ type WeeklyTargetsContextType = {
   thursdayTargets: DailyTargets;
   fridayTargets: DailyTargets;
   saturdayTargets: DailyTargets;
+  weeklyTargets: WeeklyTargets;
   isLoading: boolean;
   error: Error | undefined;
   refetch: () => void;
@@ -28,7 +29,7 @@ const WeeklyTargetsContext = React.createContext<WeeklyTargetsContextType>({
   thursdayTargets: { ...initialDailyTargets, day: { id: 5, name: 'thursday' } },
   fridayTargets: { ...initialDailyTargets, day: { id: 6, name: 'friday' } },
   saturdayTargets: { ...initialDailyTargets, day: { id: 7, name: 'saturday' } },
-
+  weeklyTargets: [],
   isLoading: false,
   error: undefined,
   refetch: () => {},

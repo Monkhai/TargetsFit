@@ -363,14 +363,14 @@ export class TargetByDaysDAO {
   }
 
   //----------------------------------------------------------------------------------------------
-  public async deleteTargetFromWeeklyTargets(id: number): Promise<void> {
+  public async deleteTargetFromWeeklyTargets(tb_id: number, id: number): Promise<void> {
     return new Promise((resolve, reject) => {
       db.transaction(
         (tx: SQLite.SQLTransaction) => {
-          tx.executeSql(`SELECT day_id FROM targets_by_days WHERE id = (?)`, [id], (_, resultSet) => {
+          tx.executeSql(`SELECT day_id FROM targets_by_days WHERE id = (?)`, [tb_id], (_, resultSet) => {
             const day = resultSet.rows._array[0];
 
-            tx.executeSql(`DELETE FROM targets_by_days WHERE id = (?)`, [id], () => {
+            tx.executeSql(`DELETE FROM targets_by_days WHERE id = (?)`, [tb_id], () => {
               tx.executeSql(`SELECT id, position FROM targets_by_days WHERE day_id = ? ORDER BY position`, [day.day_id], (_, resultSet) => {
                 const remainingTargets = resultSet.rows._array;
                 remainingTargets.forEach((target, index) => {

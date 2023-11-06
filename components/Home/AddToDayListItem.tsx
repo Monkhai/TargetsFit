@@ -10,9 +10,10 @@ interface Props {
   item: ActiveTargetQuantity;
   availableTargets: number;
   onAddPress: (target: Target) => void;
+  weeklyTaretsIsLoading: boolean;
 }
 
-const AddToDayListItem = ({ item, availableTargets, onAddPress, colorScheme }: Props) => {
+const AddToDayListItem = ({ item, availableTargets, onAddPress, colorScheme, weeklyTaretsIsLoading }: Props) => {
   return (
     <View style={styles.listItemContainer}>
       <Text style={[styles.listItemText, styles.primaryListItemText]}>{item.target.name}</Text>
@@ -20,7 +21,7 @@ const AddToDayListItem = ({ item, availableTargets, onAddPress, colorScheme }: P
         <Text style={styles.listItemText}>{item.target.type}</Text>
         <Text style={styles.listItemText}>{availableTargets}</Text>
       </View>
-      <TouchableOpacity onPress={() => onAddPress(item.target)}>
+      <TouchableOpacity disabled={weeklyTaretsIsLoading} onPress={() => onAddPress(item.target)}>
         <View style={[styles.addButtonContainer, { backgroundColor: Colors[colorScheme ?? 'light'].tertiary }]}>
           <Text style={styles.addButton}>+</Text>
         </View>

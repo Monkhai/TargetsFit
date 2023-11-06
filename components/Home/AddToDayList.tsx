@@ -13,9 +13,10 @@ interface Props {
   allTargets: Target[];
   activeTargetQuantity: ActiveTargetQuantity[];
   onAddPress: (target: Target) => void;
+  weeklyTaretsIsLoading: boolean;
 }
 
-const AddToDayList = ({ colorScheme, allTargets, activeTargetQuantity, onAddPress }: Props) => {
+const AddToDayList = ({ colorScheme, allTargets, activeTargetQuantity, onAddPress, weeklyTaretsIsLoading }: Props) => {
   const height = useSharedValue<number>(0);
   const rotateChevron = useSharedValue<number>(0);
 
@@ -71,7 +72,15 @@ const AddToDayList = ({ colorScheme, allTargets, activeTargetQuantity, onAddPres
     const target = targetMap[item.target.id];
     const availableTargets = target ? target.quantity - item.activeCount : 0;
     if (availableTargets === 0 || availableTargets < 0) return null;
-    return <AddToDayListItem availableTargets={availableTargets} colorScheme={colorScheme} item={item} onAddPress={onAddPress} />;
+    return (
+      <AddToDayListItem
+        weeklyTaretsIsLoading={weeklyTaretsIsLoading}
+        availableTargets={availableTargets}
+        colorScheme={colorScheme}
+        item={item}
+        onAddPress={onAddPress}
+      />
+    );
   };
 
   return (

@@ -93,12 +93,12 @@ const Home = () => {
           Alert.alert(error.message);
         });
     },
-    [dayPage]
+
+    [dayPage, activeTargetQuantity]
   );
 
   const handleItemDelete = useCallback((target: TargetInWeeklyTargets) => {
-    console.log(target.dayId);
-    WeeklyTargets.deleteTargetFromWeeklyTargets(target.tb_id)
+    WeeklyTargets.deleteTargetFromWeeklyTargets(target.tb_id, target.id)
       .then(() => {
         refetchActiveCount();
         refetchDailyTargets(target.dayId);
@@ -109,7 +109,7 @@ const Home = () => {
       });
   }, []);
 
-  if (allTargetsIsLoading || weeklyTaretsIsLoading || isDBLoading || isActiveCountLoading) {
+  if (allTargetsIsLoading || isDBLoading || isActiveCountLoading) {
     return <LoadingHomeScreen />;
   } else if (weeklyTaretsError) {
     return <LoadingErrorHome message={weeklyTaretsError.message} />;
@@ -191,6 +191,7 @@ const Home = () => {
         </ScrollView>
         {totalActiveCount > 0 && (
           <AddToDayList
+            weeklyTaretsIsLoading={weeklyTaretsIsLoading}
             colorScheme={colorScheme}
             onAddPress={handleAddToDay}
             allTargets={allTargets}

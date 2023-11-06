@@ -39,7 +39,7 @@ const initialSaturdayTargets: DailyTargets = {
 const useGetWeeklyTargets = (isDBLoading: boolean) => {
   const [isLoading, setIsloading] = useState(true);
   const [error, setError] = useState<Error | undefined>();
-
+  const [weeklyTargets, setWeeklyTargets] = useState<WeeklyTargets>([]);
   const [sundayTargets, setSundayTargets] = useState<DailyTargets>(initialSundayTargets);
   const [mondayTargets, setMondayTargets] = useState<DailyTargets>(initialMondayTargets);
   const [tuesdayTargets, setTuesdayTargets] = useState<DailyTargets>(initialTuesdayTargets);
@@ -63,6 +63,7 @@ const useGetWeeklyTargets = (isDBLoading: boolean) => {
   const fetchAllTargets = useCallback(() => {
     TargetsByDays.getWeeklyTargets()
       .then((targets) => {
+        setWeeklyTargets(targets);
         setSundayTargets(targets[0]);
         setMondayTargets(targets[1]);
         setTuesdayTargets(targets[2]);
@@ -80,10 +81,12 @@ const useGetWeeklyTargets = (isDBLoading: boolean) => {
   }, []);
 
   const fetchDailyTargets = useCallback((dayId: DayId) => {
+    setIsloading(true);
     TargetsByDays.getDailyTargets(dayId)
       .then((targets) => {
         const setTargets = setTargetsByDayId[dayId];
         setTargets(targets);
+        setIsloading(false);
       })
       .catch((error) => {
         setError(error);
@@ -99,6 +102,7 @@ const useGetWeeklyTargets = (isDBLoading: boolean) => {
     error,
     refetchDailyTargets: fetchDailyTargets,
     refetchAllTargets: fetchAllTargets,
+    weeklyTargets,
     sundayTargets,
     mondayTargets,
     tuesdayTargets,
