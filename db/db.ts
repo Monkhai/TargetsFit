@@ -363,7 +363,7 @@ export class TargetByDaysDAO {
   }
 
   //----------------------------------------------------------------------------------------------
-  public async deleteTargetFromWeeklyTargets(tb_id: number, id: number): Promise<void> {
+  public async deleteTargetFromWeeklyTargets(tb_id: number): Promise<void> {
     return new Promise((resolve, reject) => {
       db.transaction(
         (tx: SQLite.SQLTransaction) => {

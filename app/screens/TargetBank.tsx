@@ -1,21 +1,21 @@
 import { useNavigation } from 'expo-router';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { Alert, FlatList, StyleSheet, useColorScheme } from 'react-native';
-import Button from '../components/Button';
-import LoadingErrorHome from '../components/LoadingErrorHome';
-import BankListItem from '../components/TargetBank/BankListItem';
-import EditTargetModal from '../components/TargetBank/EditTargetModal';
-import NewTargetModal from '../components/TargetBank/NewTargetModal';
-import { View } from '../components/Themed';
-import Colors from '../constants/Colors';
-import ActiveQuantityContext from '../context/ActiveQuantityContext';
-import DBContext from '../context/DBLoadingContext';
-import TargetsContext from '../context/TargetsContext';
-import WeeklyTargetsContext from '../context/WeeklyTargetsContext';
-import { NewTarget, Target, TargetByDaysDAO, TargetDAO } from '../db/db';
-import useGetDismissTargetData, { SingleSortedTarget } from '../hooks/useGetDismissTargetData';
-import { heavyHaptics } from '../utilityFunctions/haptics';
-import TargetBankList from '../components/TargetBank/TargetBankList';
+import Button from '../../components/Button';
+import LoadingErrorHome from '../../components/LoadingErrorHome';
+import BankListItem from '../../components/TargetBank/BankListItem';
+import EditTargetModal from '../../components/TargetBank/EditTargetModal';
+import NewTargetModal from '../../components/TargetBank/NewTargetModal';
+import { View } from '../../components/Themed';
+import Colors from '../../constants/Colors';
+import ActiveQuantityContext from '../../context/ActiveQuantityContext';
+import DBContext from '../../context/DBLoadingContext';
+import TargetsContext from '../../context/TargetsContext';
+import WeeklyTargetsContext from '../../context/WeeklyTargetsContext';
+import { NewTarget, Target, TargetByDaysDAO, TargetDAO } from '../../db/db';
+import useGetDismissTargetData, { SingleSortedTarget } from '../../hooks/useGetDismissTargetData';
+import { heavyHaptics } from '../../utilityFunctions/haptics';
+import TargetBankList from '../../components/TargetBank/TargetBankList';
 
 const TargetBank = () => {
   //------------------------------------------------------------------------
