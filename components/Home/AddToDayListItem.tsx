@@ -16,7 +16,7 @@ const AddToDayListItem = ({ item, availableTargets, onAddPress, colorScheme }: P
   return (
     <View style={styles.listItemContainer}>
       <Text style={[styles.listItemText, styles.primaryListItemText]}>{item.target.name}</Text>
-      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 20 }}>
+      <View style={styles.secondaryListItemTextContainer}>
         <Text style={styles.listItemText}>{item.target.type}</Text>
         <Text style={styles.listItemText}>{availableTargets}</Text>
       </View>
@@ -41,6 +41,12 @@ const styles = StyleSheet.create({
     flex: 1,
     fontWeight: '700',
     color: 'red',
+  },
+  secondaryListItemTextContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 20,
   },
   listItemText: {
     fontSize: 15,

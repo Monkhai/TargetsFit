@@ -16,9 +16,11 @@ const BankListItem = ({ target, onRemovePress, onLongPress, colorScheme }: Props
   return (
     <Pressable onLongPress={() => onLongPress(target)}>
       <View style={styles.listItemContainer}>
-        <Text style={[styles.listItemText, { flex: 1, fontWeight: '700', color: 'red' }]}>{target.name}</Text>
-        <Text style={styles.listItemText}>{target.type}</Text>
-        <Text style={styles.listItemText}>{target.quantity}</Text>
+        <Text style={[styles.listItemText, styles.primaryListItemText]}>{target.name}</Text>
+        <View style={styles.secondaryListItemTextContainer}>
+          <Text style={styles.listItemText}>{target.type}</Text>
+          <Text style={styles.listItemText}>{target.quantity}</Text>
+        </View>
         <TouchableOpacity onPress={() => onRemovePress(target)}>
           <View style={[styles.addButtonContainer, { backgroundColor: Colors[colorScheme ?? 'light'].tertiary }]}>
             <Text style={styles.removeButton}>-</Text>
@@ -36,7 +38,18 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     height: LIST_ITEM_HEIGHT,
     alignItems: 'center',
-    gap: 30,
+    backgroundColor: 'transparent',
+  },
+  primaryListItemText: {
+    flex: 1,
+    fontWeight: '700',
+    color: 'red',
+  },
+  secondaryListItemTextContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 20,
     backgroundColor: 'transparent',
   },
   listItemText: {
@@ -48,6 +61,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 8,
+    marginLeft: 10,
   },
   removeButton: {
     fontSize: 16,
