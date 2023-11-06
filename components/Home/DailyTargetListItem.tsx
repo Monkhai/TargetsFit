@@ -40,7 +40,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     height: LIST_ITEM_HEIGHT,
     alignItems: 'center',
-    // gap: 30,
   },
   primaryTextContainer: {
     flex: 1,
