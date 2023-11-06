@@ -18,8 +18,8 @@ const DailyTargetListItem = ({ target, onRemovePress, colorScheme, onStatusToggl
   return (
     <View style={styles.listItemContainer}>
       <View style={styles.primaryTextContainer}>
-        <Pressable hitSlop={48} onPress={() => onStatusToggle(target.tb_id, status)} style={styles.pressableStyle}>
-          <FontAwesome name={status ? 'circle' : 'circle-o'} color={'red'} size={20} />
+        <Pressable onPress={() => onStatusToggle(target.tb_id, status)} style={styles.pressableStyle}>
+          <FontAwesome name={status ? 'circle' : 'circle-o'} color={'red'} size={24} />
         </Pressable>
         <Text style={[styles.listItemText, styles.targetNameText]}>{target.name}</Text>
       </View>
@@ -49,9 +49,8 @@ const styles = StyleSheet.create({
   },
   pressableStyle: {
     justifyContent: 'center',
-    alignItems: 'center',
-    width: 24,
-    gap: 13,
+    alignItems: 'flex-start',
+    width: 30,
     height: LIST_ITEM_HEIGHT,
   },
   targetNameText: {

@@ -21,6 +21,7 @@ const AddToDayList = ({ colorScheme, allTargets, activeTargetQuantity, onAddPres
 
   const prevLength = useRef(activeTargetQuantity.length);
 
+  //------------------------------------------------------------------------------------------------------------------------------------------------
   const chevronStyles = useAnimatedStyle(() => {
     return { transform: [{ rotateZ: `${rotateChevron.value}deg` }] };
   });
@@ -29,6 +30,7 @@ const AddToDayList = ({ colorScheme, allTargets, activeTargetQuantity, onAddPres
     return { height: height.value, maxHeight: height.value };
   });
 
+  //------------------------------------------------------------------------------------------------------------------------------------------------
   useEffect(() => {
     if (activeTargetQuantity.length === 0 || activeTargetQuantity.length < 0) {
       height.value = 0;
@@ -43,6 +45,7 @@ const AddToDayList = ({ colorScheme, allTargets, activeTargetQuantity, onAddPres
     }
   }, [activeTargetQuantity]);
 
+  //------------------------------------------------------------------------------------------------------------------------------------------------
   const toggleFlatListHeight = () => {
     if (height.value === 0) {
       rotateChevron.value = withTiming(90);
@@ -54,6 +57,7 @@ const AddToDayList = ({ colorScheme, allTargets, activeTargetQuantity, onAddPres
     }
   };
 
+  //------------------------------------------------------------------------------------------------------------------------------------------------
   const targetMap = Object.fromEntries(allTargets.map((target) => [target.id, target]));
 
   const totalActiveCount = Math.max(
@@ -62,6 +66,13 @@ const AddToDayList = ({ colorScheme, allTargets, activeTargetQuantity, onAddPres
     }, 0),
     0
   );
+  //------------------------------------------------------------------------------------------------------------------------------------------------
+  const renderAddToDayListItem = (item: ActiveTargetQuantity) => {
+    const target = targetMap[item.target.id];
+    const availableTargets = target ? target.quantity - item.activeCount : 0;
+    if (availableTargets === 0 || availableTargets < 0) return null;
+    return <AddToDayListItem availableTargets={availableTargets} colorScheme={colorScheme} item={item} onAddPress={onAddPress} />;
+  };
 
   return (
     <View style={styles.container}>
@@ -77,12 +88,7 @@ const AddToDayList = ({ colorScheme, allTargets, activeTargetQuantity, onAddPres
             showsVerticalScrollIndicator={false}
             style={[styles.flatListStyle, listStyles]}
             data={activeTargetQuantity}
-            renderItem={({ item }) => {
-              const target = targetMap[item.target.id];
-              const availableTargets = target ? target.quantity - item.activeCount : 0;
-              if (availableTargets === 0 || availableTargets < 0) return null;
-              return <AddToDayListItem availableTargets={availableTargets} colorScheme={colorScheme} item={item} onAddPress={onAddPress} />;
-            }}
+            renderItem={({ item }) => renderAddToDayListItem(item)}
           />
         </Animated.View>
       </View>
