@@ -1,8 +1,10 @@
 import { useContext, useEffect, useState } from 'react';
 import WeeklyTargetsContext from '../context/WeeklyTargetsContext';
-import { Day, Target } from '../db/db';
+import { Day, DayId, Target } from '../db/db';
+import useGetWeeklyTargets from './useGetWeeklyTargets';
+import { lightHaptics } from '../utilityFunctions/haptics';
 
-export type SingleSortedTarget = { targetId: number; targetTbId: number; targetPosition: number; dayId: number };
+export type SingleSortedTarget = { targetId: number; targetTbId: number; targetPosition: number; dayId: DayId };
 
 export type SortedTargets = {
   day: Day;
@@ -11,14 +13,15 @@ export type SortedTargets = {
 };
 
 const useGetDismissTargetData = (oldTarget: Target, newTarget: Target) => {
-  const { weeklyTargets } = useContext(WeeklyTargetsContext);
+  const { sundayTargets, mondayTargets, tuesdayTargets, wednesdayTargets, thursdayTargets, fridayTargets, saturdayTargets } =
+    useContext(WeeklyTargetsContext);
   const [sortedWeeklyTargets, setSortedWeeklyTargets] = useState<SortedTargets[]>([]);
   const [availableTargets, setAvailableTargets] = useState(0);
   const [missingTargets, setMissingTargets] = useState(0);
 
   useEffect(() => {
-    //-----------------------------------------------------------------------------------------------------------------------------
-    //-----------------------------------------------------------------------------------------------------------------------------
+    const weeklyTargets = [sundayTargets, mondayTargets, tuesdayTargets, wednesdayTargets, thursdayTargets, fridayTargets, saturdayTargets];
+
     const filteredWeeklyTargets = weeklyTargets.map((day) => {
       return {
         ...day,
@@ -57,7 +60,7 @@ const useGetDismissTargetData = (oldTarget: Target, newTarget: Target) => {
       return acc;
     }, []);
     setSortedWeeklyTargets(newSortedWeeklyTargets);
-    //-----------------------------------------------------------------------------------------------------------------------------
+
     //-----------------------------------------------------------------------------------------------------------------------------
 
     const newTotalActiveQuantity = newSortedWeeklyTargets.reduce((acc, curr) => acc + curr.quantity, 0);
@@ -71,7 +74,17 @@ const useGetDismissTargetData = (oldTarget: Target, newTarget: Target) => {
     setMissingTargets(newMissingTargets);
     //-----------------------------------------------------------------------------------------------------------------------------
     //-----------------------------------------------------------------------------------------------------------------------------
-  }, [weeklyTargets, newTarget, oldTarget]);
+  }, [
+    sundayTargets,
+    mondayTargets,
+    tuesdayTargets,
+    wednesdayTargets,
+    thursdayTargets,
+    fridayTargets,
+    saturdayTargets,
+    newTarget,
+    oldTarget,
+  ]);
 
   return { sortedWeeklyTargets, availableTargets, missingTargets };
 };

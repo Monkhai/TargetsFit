@@ -4,6 +4,7 @@ import Colors from '../../constants/Colors';
 import { LIST_ITEM_HEIGHT } from '../../constants/SIZES';
 import { Target } from '../../db/db';
 import { Text, View } from '../Themed';
+import { transform } from '@babel/core';
 
 interface Props {
   colorScheme: ColorSchemeName;
@@ -14,7 +15,13 @@ interface Props {
 
 const BankListItem = ({ target, onRemovePress, onLongPress, colorScheme }: Props) => {
   return (
-    <Pressable onLongPress={() => onLongPress(target)}>
+    <Pressable
+      style={(a) => {
+        return { opacity: a.pressed ? 0.5 : 1 };
+      }}
+      onPress={() => onLongPress(target)}
+      onLongPress={() => onLongPress(target)}
+    >
       <View style={styles.listItemContainer}>
         <Text style={[styles.listItemText, styles.primaryListItemText]}>{target.name}</Text>
         <View style={styles.secondaryListItemTextContainer}>

@@ -97,6 +97,7 @@ const useGetWeeklyTargets = (isDBLoading: boolean) => {
   useEffect(() => {
     if (!isDBLoading) fetchAllTargets();
   }, [isDBLoading]);
+
   return {
     isLoading,
     error,

@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { ColorSchemeName, Keyboard, Platform, StyleSheet, View } from 'react-native';
+import React, { useCallback, useEffect, useState } from 'react';
+import { ColorSchemeName, Keyboard, Platform, StyleSheet, View, useColorScheme } from 'react-native';
 import Modal from 'react-native-modal';
 import Colors from '../../constants/Colors';
 import { BORDER_RADIUS } from '../../constants/SIZES';
@@ -11,7 +11,6 @@ import ModalHeader from './ModalHeader';
 import ModalPicker from './ModalPicker';
 
 interface Props {
-  colorScheme: ColorSchemeName;
   isEditTargetModalVisible: boolean;
   setIsEditTargetModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
   handleModalEdit: (target: Target) => void;
@@ -25,7 +24,6 @@ interface Props {
 }
 
 const EditTargetModal = ({
-  colorScheme,
   isEditTargetModalVisible,
   setIsEditTargetModalVisible,
   handleModalEdit,
@@ -37,6 +35,7 @@ const EditTargetModal = ({
   missingTargets,
   sortedWeeklyTargets,
 }: Props) => {
+  const colorScheme = useColorScheme();
   const [selectedType, setSelectedType] = useState<TargetType>(editedTarget.type);
   const [name, setName] = useState<string>(editedTarget.name);
   const [quantity, setQuantity] = useState<number>(editedTarget.quantity);
@@ -47,7 +46,7 @@ const EditTargetModal = ({
     setSelectedType(editedTarget.type);
   }, [editedTarget]);
 
-  const handleSave = () => {
+  const handleSave = useCallback(() => {
     Keyboard.dismiss();
 
     setNewEditedTarget({
@@ -62,7 +61,7 @@ const EditTargetModal = ({
       type: selectedType,
       id: editedTarget.id,
     });
-  };
+  }, [setNewEditedTarget, name, quantity, selectedType, editedTarget, sortedWeeklyTargets]);
 
   if (!editedTarget.id) return null;
 
@@ -74,9 +73,6 @@ const EditTargetModal = ({
         Keyboard.dismiss();
         setIsEditTargetModalVisible(false);
       }}
-      useNativeDriverForBackdrop
-      animationIn={'zoomIn'}
-      animationOut={'zoomOut'}
     >
       <View style={[{ backgroundColor: Colors[colorScheme ?? 'light'].backgroundSecondary }, styles.container]}>
         <ModalHeader

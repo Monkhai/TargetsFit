@@ -54,64 +54,23 @@ export default function RootLayout() {
 
   //------------------------------------------------------------------------
   useEffect(() => {
-    if (!isDBLoading && isAllTargetsLoading) {
+    if (!isDBLoading && isAllTargetsLoading && weeklyTaretsIsLoading) {
       SplashScreen.hideAsync();
     }
   }, [isDBLoading, isAllTargetsLoading]);
 
   //------------------------------------------------------------------------
-  return (
-    <DBContext.Provider value={{ isLoading: isDBLoading, error: dbError }}>
-      <TargetsContext.Provider
-        value={{
-          targets: targets,
-          isLoading: isAllTargetsLoading,
-          error: allTargetsError,
-          refetch: refetch,
-        }}
-      >
-        <WeeklyTargetsContext.Provider
-          value={{
-            sundayTargets,
-            mondayTargets,
-            tuesdayTargets,
-            wednesdayTargets,
-            thursdayTargets,
-            fridayTargets,
-            saturdayTargets,
-            weeklyTargets,
-            isLoading: weeklyTaretsIsLoading,
-            error: weeklyTargetsError,
-            refetch: refetchWeeklyTergets,
-            refetchDailyTargets,
-          }}
-        >
-          <ActiveQuantityContext.Provider
-            value={{
-              activeTargetQuantity: activeTargetQuantity,
-              isLoading: isActiveCountLoading,
-              error: activeCountError,
-              refetch: refetchActiveCount,
-            }}
-          >
-            <RootLayoutNav />
-          </ActiveQuantityContext.Provider>
-        </WeeklyTargetsContext.Provider>
-      </TargetsContext.Provider>
-    </DBContext.Provider>
-  );
+  return <RootLayoutNav />;
 }
 
 //------------------------------------------------------------------------
 function RootLayoutNav() {
   const colorScheme = useColorScheme();
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="index" />
-        <Stack.Screen name="screens" options={{ animation: 'fade' }} />
-        <Stack.Screen name="FirstUseScreen" options={{ animation: 'fade' }} />
-      </Stack>
-    </ThemeProvider>
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="index" />
+      <Stack.Screen name="screens" options={{ animation: 'fade' }} />
+      <Stack.Screen name="first-use" options={{ animation: 'fade' }} />
+    </Stack>
   );
 }

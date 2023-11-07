@@ -28,7 +28,7 @@ const ModalHeader = ({ title, handleSave, setIsVisible, disabledCondition }: Pro
   );
 };
 
-export default ModalHeader;
+export default React.memo(ModalHeader);
 
 const styles = StyleSheet.create({
   headerContainer: {

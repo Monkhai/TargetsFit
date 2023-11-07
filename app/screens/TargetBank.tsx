@@ -1,13 +1,12 @@
 import { useNavigation } from 'expo-router';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
-import { Alert, FlatList, StyleSheet, useColorScheme } from 'react-native';
+import { Alert, StyleSheet, useColorScheme } from 'react-native';
 import Button from '../../components/Button';
 import LoadingErrorHome from '../../components/LoadingErrorHome';
-import BankListItem from '../../components/TargetBank/BankListItem';
 import EditTargetModal from '../../components/TargetBank/EditTargetModal';
 import NewTargetModal from '../../components/TargetBank/NewTargetModal';
+import TargetBankList from '../../components/TargetBank/TargetBankList';
 import { View } from '../../components/Themed';
-import Colors from '../../constants/Colors';
 import ActiveQuantityContext from '../../context/ActiveQuantityContext';
 import DBContext from '../../context/DBLoadingContext';
 import TargetsContext from '../../context/TargetsContext';
@@ -15,7 +14,6 @@ import WeeklyTargetsContext from '../../context/WeeklyTargetsContext';
 import { NewTarget, Target, TargetByDaysDAO, TargetDAO } from '../../db/db';
 import useGetDismissTargetData, { SingleSortedTarget } from '../../hooks/useGetDismissTargetData';
 import { heavyHaptics } from '../../utilityFunctions/haptics';
-import TargetBankList from '../../components/TargetBank/TargetBankList';
 
 const TargetBank = () => {
   //------------------------------------------------------------------------
@@ -32,7 +30,7 @@ const TargetBank = () => {
 
   //------------------------------------------------------------------------
   const { targets, isLoading, error, refetch: refetchAllTargets } = useContext(TargetsContext);
-  const { refetch: refetchWeeklyTargets } = useContext(WeeklyTargetsContext);
+  const { refetch: refetchWeeklyTargets, refetchDailyTargets } = useContext(WeeklyTargetsContext);
   const { refetch: refetchActiveCount } = useContext(ActiveQuantityContext);
 
   //------------------------------------------------------------------------
@@ -72,35 +70,31 @@ const TargetBank = () => {
         Alert.alert(error.message);
       });
   }, []);
-
   //------------------------------------------------------------------------
-  const editTarget = useCallback(
-    (updatedTarget: Target) => {
-      const totalActiveQuantity = sortedWeeklyTargets.reduce((acc, curr) => acc + curr.quantity, 0);
-      const availableTargets = oldEditTarget.quantity - totalActiveQuantity;
-      const targetsToRemove = Math.max(oldEditTarget.quantity - updatedTarget.quantity, 0);
+  const editTarget = (updatedTarget: Target) => {
+    const totalActiveQuantity = sortedWeeklyTargets.reduce((acc, curr) => acc + curr.quantity, 0);
+    const availableTargets = oldEditTarget.quantity - totalActiveQuantity;
+    const targetsToRemove = Math.max(oldEditTarget.quantity - updatedTarget.quantity, 0);
 
-      const newMissingTargets = targetsToRemove - availableTargets;
+    const newMissingTargets = targetsToRemove - availableTargets;
 
-      if (newMissingTargets <= 0) {
-        updateTarget(updatedTarget);
-      } else {
-        Alert.alert(`Missing ${newMissingTargets} Targets`, `Would you like to dismiss ${newMissingTargets} targets?`, [
-          {
-            text: 'No',
+    if (newMissingTargets <= 0) {
+      updateTarget(updatedTarget);
+    } else {
+      Alert.alert(`Missing ${newMissingTargets} Targets`, `Would you like to dismiss ${newMissingTargets} targets?`, [
+        {
+          text: 'No',
+        },
+        {
+          text: 'Yes',
+          isPreferred: true,
+          onPress: () => {
+            setIsDismissTargetModalVisible(true);
           },
-          {
-            text: 'Yes',
-            isPreferred: true,
-            onPress: () => {
-              setIsDismissTargetModalVisible(true);
-            },
-          },
-        ]);
-      }
-    },
-    [newEditTarget, oldEditTarget, sortedWeeklyTargets]
-  );
+        },
+      ]);
+    }
+  };
 
   //------------------------------------------------------------------------
   const deleteTargetsFromWeeklyTargets = useCallback(
@@ -110,7 +104,7 @@ const TargetBank = () => {
           .then(() => {
             refetchActiveCount();
             refetchAllTargets();
-            refetchWeeklyTargets();
+            refetchDailyTargets(target.dayId);
           })
           .catch((error: Error) => {
             Alert.alert(error.message);
@@ -126,10 +120,9 @@ const TargetBank = () => {
     Targets.updateTarget(updatedTarget)
       .then(() => {
         refetchAllTargets();
-        refetchWeeklyTargets();
         refetchActiveCount();
+        setIsEditModalVisible(false);
       })
-      .then(() => setIsEditModalVisible(false))
       .catch((err: Error) => {
         Alert.alert(err.message);
         setIsEditModalVisible(false);
@@ -137,7 +130,7 @@ const TargetBank = () => {
   };
 
   //------------------------------------------------------------------------
-  const handleLongPress = useCallback((target: Target) => {
+  const handleTargetPress = useCallback((target: Target) => {
     heavyHaptics();
     setIsEditModalVisible(true);
     setOldEditTarget(target);
@@ -169,7 +162,7 @@ const TargetBank = () => {
   } else {
     return (
       <View style={styles.container}>
-        <TargetBankList targets={targets} deleteTarget={deleteTarget} onLongPress={handleLongPress} colorScheme={colorScheme} />
+        <TargetBankList targets={targets} deleteTarget={deleteTarget} onLongPress={handleTargetPress} colorScheme={colorScheme} />
 
         <NewTargetModal
           colorScheme={colorScheme}
@@ -180,7 +173,6 @@ const TargetBank = () => {
 
         <EditTargetModal
           onSaveRemoveTargets={deleteTargetsFromWeeklyTargets}
-          colorScheme={colorScheme}
           handleModalEdit={editTarget}
           editedTarget={oldEditTarget}
           setNewEditedTarget={setNewEditTarget}

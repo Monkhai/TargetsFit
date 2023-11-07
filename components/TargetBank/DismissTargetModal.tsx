@@ -78,7 +78,7 @@ const DismissTargetModal = ({ colorScheme, isVisible, setIsVisible, onSave, sort
 
   //------------------------------------------------------------------------------------------------------------------------------------------------
   return (
-    <Modal isVisible={isVisible} animationIn={'zoomIn'} animationOut={'zoomOut'} style={styles.modal}>
+    <Modal isVisible={isVisible} style={styles.modal}>
       <View style={[{ backgroundColor: Colors[colorScheme ?? 'light'].backgroundSecondary }, styles.container]}>
         <ModalHeader
           disabledCondition={mutableMissingTargets !== 0}

@@ -47,9 +47,6 @@ const NewTargetModal = ({ colorScheme, isNewTargetModalVisible, setIsNewTargetMo
         Keyboard.dismiss();
         setIsNewTargetModalVisible(false);
       }}
-      animationIn={'zoomIn'}
-      animationOut={'zoomOut'}
-      useNativeDriverForBackdrop
       isVisible={isNewTargetModalVisible}
     >
       <View style={[{ backgroundColor: Colors[colorScheme ?? 'light'].backgroundSecondary }, styles.container]}>

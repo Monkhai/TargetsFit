@@ -92,10 +92,10 @@ const DailyTargetList = ({ colorScheme, dailyTargets, onRemovePress, refetchWeek
     <View style={[styles.container, { width: screenWidth }]}>
       <View style={[styles.secondaryContainer, { backgroundColor: Colors[colorScheme ?? 'light'].backgroundSecondary }]}>
         <Text style={styles.header}>{dailyTargets.day.name}</Text>
-        <View style={{ flex: 1 }}>
+        <View style={{ flex: 1, overflow: 'hidden' }}>
           {dailyTargets.targets.length > 0 && (
             <DraggableFlatList
-              style={{ height: '100%' }}
+              style={{ overflow: 'visible' }}
               data={draggableData}
               showsVerticalScrollIndicator={false}
               onDragEnd={({ data }) => handleDragEnd(data)}
