@@ -68,6 +68,8 @@ const EditTargetModal = ({
 
   return (
     <Modal
+      hideModalContentWhileAnimating
+      useNativeDriver
       useNativeDriverForBackdrop
       isVisible={isEditTargetModalVisible}
       style={styles.modal}

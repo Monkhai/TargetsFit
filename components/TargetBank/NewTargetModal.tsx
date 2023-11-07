@@ -42,6 +42,8 @@ const NewTargetModal = ({ colorScheme, isNewTargetModalVisible, setIsNewTargetMo
 
   return (
     <Modal
+      hideModalContentWhileAnimating
+      useNativeDriver
       useNativeDriverForBackdrop
       style={styles.modal}
       onBackdropPress={() => {
