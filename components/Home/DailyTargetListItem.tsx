@@ -5,7 +5,7 @@ import Colors from '../../constants/Colors';
 import { LIST_ITEM_HEIGHT } from '../../constants/SIZES';
 import { TargetInWeeklyTargets } from '../../db/db';
 import { Text } from '../Themed';
-import AddRemoveButton from './AddRemoveButton';
+import AddRemoveButton from '../AddRemoveButton';
 
 interface Props {
   colorScheme: ColorSchemeName;

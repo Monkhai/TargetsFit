@@ -20,9 +20,7 @@ const TargetBankList = ({ targets, colorScheme, deleteTarget, onLongPress }: Pro
           estimatedItemSize={72}
           showsVerticalScrollIndicator={false}
           data={targets}
-          renderItem={({ item: target }) => (
-            <BankListItem colorScheme={colorScheme} onRemovePress={deleteTarget} onLongPress={onLongPress} target={target} />
-          )}
+          renderItem={({ item: target }) => <BankListItem onRemovePress={deleteTarget} onLongPress={onLongPress} target={target} />}
         />
       )}
     </View>

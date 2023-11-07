@@ -363,19 +363,15 @@ export class TargetByDaysDAO {
   }
 
   //----------------------------------------------------------------------------------------------
-  public async deleteTargetFromWeeklyTargets(tb_id: number): Promise<void> {
+  public async deleteTargetFromWeeklyTargets(tb_id: number, dayId: number): Promise<void> {
     return new Promise((resolve, reject) => {
       db.transaction(
         (tx: SQLite.SQLTransaction) => {
-          tx.executeSql(`SELECT day_id FROM targets_by_days WHERE id = (?)`, [tb_id], (_, resultSet) => {
-            const day = resultSet.rows._array[0];
-
-            tx.executeSql(`DELETE FROM targets_by_days WHERE id = (?)`, [tb_id], () => {
-              tx.executeSql(`SELECT id, position FROM targets_by_days WHERE day_id = ? ORDER BY position`, [day.day_id], (_, resultSet) => {
-                const remainingTargets = resultSet.rows._array;
-                remainingTargets.forEach((target, index) => {
-                  tx.executeSql(`UPDATE targets_by_days SET position = ? WHERE id = ?`, [index + 1, target.id]);
-                });
+          tx.executeSql(`DELETE FROM targets_by_days WHERE id = (?)`, [tb_id], () => {
+            tx.executeSql(`SELECT id, position FROM targets_by_days WHERE day_id = ? ORDER BY position`, [dayId], (_, resultSet) => {
+              const remainingTargets = resultSet.rows._array;
+              remainingTargets.forEach((target, index) => {
+                tx.executeSql(`UPDATE targets_by_days SET position = ? WHERE id = ?`, [index + 1, target.id]);
               });
             });
           });

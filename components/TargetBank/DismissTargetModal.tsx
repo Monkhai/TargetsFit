@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Alert, ColorSchemeName, FlatList, StyleSheet, View } from 'react-native';
+import { ColorSchemeName, FlatList, StyleSheet, View } from 'react-native';
 import Modal from 'react-native-modal';
 import Colors from '../../constants/Colors';
 import { BORDER_RADIUS } from '../../constants/SIZES';
+import { SingleSortedTarget, SortedTargets } from '../../hooks/useGetDismissTargetData';
 import DismissTargetListItem from './DismissTargetListItem';
 import ModalHeader from './ModalHeader';
-import { SingleSortedTarget, SortedTargets } from '../../hooks/useGetDismissTargetData';
 
 interface Props {
   colorScheme: ColorSchemeName;
@@ -111,10 +111,8 @@ export default React.memo(DismissTargetModal);
 
 const styles = StyleSheet.create({
   modal: {
-    width: '100%',
     margin: 0,
     top: -50,
-    zIndex: 100,
   },
   container: {
     alignSelf: 'center',

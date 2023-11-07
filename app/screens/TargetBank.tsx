@@ -100,17 +100,18 @@ const TargetBank = () => {
   const deleteTargetsFromWeeklyTargets = useCallback(
     (targets: SingleSortedTarget[]) => {
       targets.forEach((target) => {
-        WeeklyTargets.deleteTargetFromWeeklyTargets(target.targetTbId)
+        WeeklyTargets.deleteTargetFromWeeklyTargets(target.targetTbId, target.dayId)
           .then(() => {
             refetchActiveCount();
             refetchAllTargets();
             refetchDailyTargets(target.dayId);
+            setIsDismissTargetModalVisible(false);
           })
           .catch((error: Error) => {
+            setIsDismissTargetModalVisible(false);
             Alert.alert(error.message);
           });
       });
-      setIsDismissTargetModalVisible(false);
     },
     [refetchActiveCount, refetchAllTargets, refetchWeeklyTargets]
   );

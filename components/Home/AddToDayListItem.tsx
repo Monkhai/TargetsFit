@@ -1,20 +1,21 @@
 import { ColorSchemeName, StyleSheet, TouchableOpacity, View } from 'react-native';
-import React from 'react';
+import React, { useContext } from 'react';
 import { LIST_ITEM_HEIGHT } from '../../constants/SIZES';
 import { ActiveTargetQuantity, Target } from '../../db/db';
 import Colors from '../../constants/Colors';
 import { Text } from '../Themed';
-import AddRemoveButton from './AddRemoveButton';
+import AddRemoveButton from '../AddRemoveButton';
+import WeeklyTargetsContext from '../../context/WeeklyTargetsContext';
 
 interface Props {
-  colorScheme: ColorSchemeName;
   item: ActiveTargetQuantity;
   availableTargets: number;
   onAddPress: (target: Target) => void;
-  weeklyTaretsIsLoading: boolean;
 }
 
-const AddToDayListItem = ({ item, availableTargets, onAddPress, colorScheme, weeklyTaretsIsLoading }: Props) => {
+const AddToDayListItem = ({ item, availableTargets, onAddPress }: Props) => {
+  const { isLoading } = useContext(WeeklyTargetsContext);
+
   return (
     <View style={styles.listItemContainer}>
       <Text style={[styles.listItemText, styles.primaryListItemText]}>{item.target.name}</Text>
@@ -22,7 +23,7 @@ const AddToDayListItem = ({ item, availableTargets, onAddPress, colorScheme, wee
         <Text style={styles.listItemText}>{item.target.type}</Text>
         <Text style={styles.listItemText}>{availableTargets}</Text>
       </View>
-      <AddRemoveButton onPress={() => onAddPress(item.target)} label="+" weeklyTaretsIsLoading={weeklyTaretsIsLoading} />
+      <AddRemoveButton onPress={() => onAddPress(item.target)} label="+" disabled={isLoading} />
     </View>
   );
 };

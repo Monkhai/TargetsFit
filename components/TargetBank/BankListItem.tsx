@@ -1,5 +1,5 @@
 import React from 'react';
-import { ColorSchemeName, Pressable, StyleSheet, TouchableOpacity } from 'react-native';
+import { ColorSchemeName, Pressable, StyleSheet, TouchableOpacity, useColorScheme } from 'react-native';
 import Colors from '../../constants/Colors';
 import { LIST_ITEM_HEIGHT } from '../../constants/SIZES';
 import { Target } from '../../db/db';
@@ -7,20 +7,19 @@ import { Text, View } from '../Themed';
 import { transform } from '@babel/core';
 
 interface Props {
-  colorScheme: ColorSchemeName;
   target: Target;
   onRemovePress: (target: Target) => void;
   onLongPress: (target: Target) => void;
 }
 
-const BankListItem = ({ target, onRemovePress, onLongPress, colorScheme }: Props) => {
+const BankListItem = ({ target, onRemovePress, onLongPress }: Props) => {
+  const colorScheme = useColorScheme();
   return (
     <Pressable
       style={(a) => {
         return { opacity: a.pressed ? 0.5 : 1 };
       }}
       onPress={() => onLongPress(target)}
-      onLongPress={() => onLongPress(target)}
     >
       <View style={styles.listItemContainer}>
         <Text style={[styles.listItemText, styles.primaryListItemText]}>{target.name}</Text>

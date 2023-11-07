@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { DailyTargets, DayId, TargetByDaysDAO, TargetInWeeklyTargets, WeeklyTargets } from '../db/db';
 import { lightHaptics } from '../utilityFunctions/haptics';
+import { Alert } from 'react-native';
 
 const initialSundayTargets: DailyTargets = {
   day: { id: 1, name: 'sunday' },
@@ -92,6 +93,7 @@ const useGetWeeklyTargets = (isDBLoading: boolean) => {
       })
       .catch((error) => {
         setError(error);
+        Alert.alert(error.message);
         setIsloading(false);
       });
   }, []);

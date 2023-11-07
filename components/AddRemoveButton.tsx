@@ -1,17 +1,17 @@
-import { Pressable, StyleSheet, Text, View, useColorScheme } from 'react-native';
+import { Pressable, StyleSheet, Text, View, ViewProps, ViewStyle, useColorScheme } from 'react-native';
 import React from 'react';
-import Colors from '../../constants/Colors';
+import Colors from '../constants/Colors';
 
 interface Props {
-  weeklyTaretsIsLoading?: boolean;
+  disabled?: boolean;
   onPress: () => void;
   label: string;
 }
 
-const AddRemoveButton = ({ weeklyTaretsIsLoading = false, onPress, label }: Props) => {
+const AddRemoveButton = ({ disabled = false, onPress, label }: Props) => {
   const colorScheme = useColorScheme();
   return (
-    <Pressable style={(a) => (a.pressed ? { opacity: 0.5 } : { opacity: 1 })} disabled={weeklyTaretsIsLoading} onPress={onPress}>
+    <Pressable style={(a) => (a.pressed ? { opacity: 0.5 } : { opacity: 1 })} disabled={disabled} onPress={onPress}>
       <View style={[styles.addButtonContainer, { backgroundColor: Colors[colorScheme ?? 'light'].tertiary }]}>
         <Text style={styles.addButton}>{label}</Text>
       </View>

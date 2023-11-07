@@ -42,6 +42,7 @@ const NewTargetModal = ({ colorScheme, isNewTargetModalVisible, setIsNewTargetMo
 
   return (
     <Modal
+      useNativeDriverForBackdrop
       style={styles.modal}
       onBackdropPress={() => {
         Keyboard.dismiss();

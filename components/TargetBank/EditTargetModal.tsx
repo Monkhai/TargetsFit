@@ -9,6 +9,7 @@ import CustomTextInput from './CustomTextInput';
 import DismissTargetModal from './DismissTargetModal';
 import ModalHeader from './ModalHeader';
 import ModalPicker from './ModalPicker';
+import Animated, { SlideOutDown } from 'react-native-reanimated';
 
 interface Props {
   isEditTargetModalVisible: boolean;
@@ -93,7 +94,6 @@ const EditTargetModal = ({
         <ModalPicker onValueChange={(value) => setSelectedType(value)} selectedType={selectedType} />
       </View>
       {/* //------------------------------------------------------------------------ */}
-
       <DismissTargetModal
         colorScheme={colorScheme}
         isVisible={isDismissTargetModalVisible}

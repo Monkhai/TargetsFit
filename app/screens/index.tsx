@@ -190,7 +190,6 @@ const Home = () => {
         </ScrollView>
         {totalActiveCount > 0 && (
           <AddToDayList
-            weeklyTaretsIsLoading={weeklyTaretsIsLoading}
             colorScheme={colorScheme}
             onAddPress={handleAddToDay}
             allTargets={allTargets}
