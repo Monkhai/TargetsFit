@@ -77,7 +77,7 @@ const AddToDayList = ({ colorScheme, allTargets, activeTargetQuantity, onAddPres
   return (
     <View style={styles.container}>
       <View style={[{ backgroundColor: Colors[colorScheme ?? 'light'].backgroundSecondary }, styles.flatListContainer]}>
-        <Pressable style={styles.headerContainer} disabled={totalActiveCount === 0} onPress={toggleFlatListHeight}>
+        <Pressable style={styles.headerContainer} disabled={totalActiveCount === 0 || totalActiveCount < 0} onPress={toggleFlatListHeight}>
           <Text style={[styles.headerTitle, { color: totalActiveCount > 0 ? 'red' : 'gray' }]}>Add Targets</Text>
           <Animated.View style={chevronStyles}>
             <FontAwesome name="chevron-right" size={14} color={totalActiveCount > 0 ? 'red' : 'gray'} />
