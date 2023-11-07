@@ -93,7 +93,7 @@ const Home = () => {
         });
     },
 
-    [dayPage, activeTargetQuantity]
+    [dayPage]
   );
 
   const handleItemDelete = useCallback((target: TargetInWeeklyTargets) => {

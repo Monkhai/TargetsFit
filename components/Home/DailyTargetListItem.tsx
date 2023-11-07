@@ -5,6 +5,7 @@ import Colors from '../../constants/Colors';
 import { LIST_ITEM_HEIGHT } from '../../constants/SIZES';
 import { TargetInWeeklyTargets } from '../../db/db';
 import { Text } from '../Themed';
+import AddRemoveButton from './AddRemoveButton';
 
 interface Props {
   colorScheme: ColorSchemeName;
@@ -24,11 +25,7 @@ const DailyTargetListItem = ({ target, onRemovePress, colorScheme, onStatusToggl
         <Text style={[styles.listItemText, styles.targetNameText]}>{target.name}</Text>
       </View>
       <Text style={styles.listItemText}>{target.type}</Text>
-      <TouchableOpacity onPress={() => onRemovePress(target)}>
-        <View style={[styles.removeButtonContainer, { backgroundColor: Colors[colorScheme ?? 'light'].tertiary }]}>
-          <Text style={styles.removeButtonText}>-</Text>
-        </View>
-      </TouchableOpacity>
+      <AddRemoveButton onPress={() => onRemovePress(target)} label="-" />
     </View>
   );
 };

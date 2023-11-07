@@ -67,6 +67,7 @@ const EditTargetModal = ({
 
   return (
     <Modal
+      useNativeDriverForBackdrop
       isVisible={isEditTargetModalVisible}
       style={styles.modal}
       onBackdropPress={() => {

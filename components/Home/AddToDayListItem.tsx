@@ -4,6 +4,7 @@ import { LIST_ITEM_HEIGHT } from '../../constants/SIZES';
 import { ActiveTargetQuantity, Target } from '../../db/db';
 import Colors from '../../constants/Colors';
 import { Text } from '../Themed';
+import AddRemoveButton from './AddRemoveButton';
 
 interface Props {
   colorScheme: ColorSchemeName;
@@ -21,11 +22,7 @@ const AddToDayListItem = ({ item, availableTargets, onAddPress, colorScheme, wee
         <Text style={styles.listItemText}>{item.target.type}</Text>
         <Text style={styles.listItemText}>{availableTargets}</Text>
       </View>
-      <TouchableOpacity disabled={weeklyTaretsIsLoading} onPress={() => onAddPress(item.target)}>
-        <View style={[styles.addButtonContainer, { backgroundColor: Colors[colorScheme ?? 'light'].tertiary }]}>
-          <Text style={styles.addButton}>+</Text>
-        </View>
-      </TouchableOpacity>
+      <AddRemoveButton onPress={() => onAddPress(item.target)} label="+" weeklyTaretsIsLoading={weeklyTaretsIsLoading} />
     </View>
   );
 };

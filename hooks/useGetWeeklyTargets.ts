@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { DailyTargets, DayId, TargetByDaysDAO, TargetInWeeklyTargets, WeeklyTargets } from '../db/db';
+import { lightHaptics } from '../utilityFunctions/haptics';
 
 const initialSundayTargets: DailyTargets = {
   day: { id: 1, name: 'sunday' },
@@ -64,6 +65,7 @@ const useGetWeeklyTargets = (isDBLoading: boolean) => {
     TargetsByDays.getWeeklyTargets()
       .then((targets) => {
         setWeeklyTargets(targets);
+
         setSundayTargets(targets[0]);
         setMondayTargets(targets[1]);
         setTuesdayTargets(targets[2]);
