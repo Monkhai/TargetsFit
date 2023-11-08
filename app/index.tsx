@@ -6,7 +6,7 @@ const splashScreen = require('../assets/images/secondary-splash.png');
 
 const index = () => {
   useEffect(() => {
-    setTimeout(() => router.replace('/screens/'), 2000);
+    setTimeout(() => router.replace('/first-use/'), 2000);
   }, []);
 
   return <Animated.Image entering={FadeIn} source={splashScreen} style={styles.imageStyle} />;
