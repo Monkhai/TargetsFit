@@ -10,6 +10,7 @@ import {
   TextStyle,
   ViewStyle,
 } from 'react-native';
+import Colors from '../constants/Colors';
 
 interface Props extends ButtonProps {
   title: string;
@@ -18,12 +19,12 @@ interface Props extends ButtonProps {
 //------------------------------------------------------------------------
 const Button = ({ title, onPress, ...props }: Props) => {
   if (Platform.OS === 'ios') {
-    return <NativeButton title={title} color={'red'} onPress={onPress} {...props} />;
+    return <NativeButton title={title} color={Colors.accent} onPress={onPress} {...props} />;
   }
 
   const propsy = { ...props };
   const androidButtonStyle: StyleProp<TextStyle> = {
-    color: propsy.disabled ? 'gray' : 'red',
+    color: propsy.disabled ? 'gray' : Colors.accent,
     fontSize: 17,
   };
 

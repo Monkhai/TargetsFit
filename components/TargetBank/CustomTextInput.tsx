@@ -15,7 +15,7 @@ const CustomTextInput = ({ placeholder, onChangeText, ...props }: Props) => {
     <TextInput
       style={[styles.textInput, { backgroundColor: Colors[colorScheme ?? 'light'].background }]}
       placeholder={placeholder}
-      selectionColor={'red'}
+      selectionColor={Colors.accent}
       onChangeText={onChangeText}
       {...props}
     />
@@ -31,6 +31,6 @@ const styles = StyleSheet.create({
     width: '95%',
     padding: 10,
     // marginBottom: 20,
-    color: 'red',
+    color: Colors.accent,
   },
 });

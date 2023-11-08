@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
   primaryListItemText: {
     flex: 1,
     fontWeight: '700',
-    color: 'red',
+    color: Colors.accent,
   },
   secondaryListItemTextContainer: {
     flexDirection: 'row',
@@ -61,6 +61,6 @@ const styles = StyleSheet.create({
   addButton: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: 'red',
+    color: Colors.accent,
   },
 });

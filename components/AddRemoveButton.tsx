@@ -33,6 +33,6 @@ const styles = StyleSheet.create({
   addButton: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: 'red',
+    color: Colors.accent,
   },
 });

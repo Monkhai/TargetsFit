@@ -15,12 +15,12 @@ interface Props {
 }
 
 const DismissTargetListItem = ({ item, initialQuantity, mutableMissingTargets, colorScheme, onRemove, onAdd }: Props) => {
-  const addControlButtonColor = item.quantity === initialQuantity ? 'gray' : 'red';
-  const removeControlButtonColor = item.quantity === 0 || mutableMissingTargets === 0 ? 'gray' : 'red';
+  const addControlButtonColor = item.quantity === initialQuantity ? 'gray' : Colors.accent;
+  const removeControlButtonColor = item.quantity === 0 || mutableMissingTargets === 0 ? 'gray' : Colors.accent;
 
   return (
     <View style={styles.listItemContainer}>
-      <Text style={[styles.listItemText, { fontWeight: '700', color: 'red' }]}>{item.day.name}</Text>
+      <Text style={[styles.listItemText, { fontWeight: '700', color: Colors.accent }]}>{item.day.name}</Text>
       <Text style={[styles.listItemText, { textAlign: 'right', flex: 1, paddingHorizontal: 20 }]}>{item.quantity}</Text>
       <View style={[styles.buttonContainer, { backgroundColor: Colors[colorScheme ?? 'light'].tertiary }]}>
         <TouchableOpacity disabled={item.quantity === initialQuantity} onPress={() => onAdd(item.targets[0].targetId, item.day.id)}>

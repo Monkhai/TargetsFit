@@ -20,7 +20,7 @@ const DailyTargetListItem = ({ target, onRemovePress, colorScheme, onStatusToggl
     <View style={styles.listItemContainer}>
       <View style={styles.primaryTextContainer}>
         <Pressable onPress={() => onStatusToggle(target.tb_id, status)} style={styles.pressableStyle}>
-          <FontAwesome name={status ? 'circle' : 'circle-o'} color={'red'} size={24} />
+          <FontAwesome name={status ? 'circle' : 'circle-o'} color={Colors.accent} size={24} />
         </Pressable>
         <Text style={[styles.listItemText, styles.targetNameText]}>{target.name}</Text>
       </View>
@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
   },
   targetNameText: {
     fontWeight: '700',
-    color: 'red',
+    color: Colors.accent,
   },
 
   listItemText: {
@@ -69,6 +69,6 @@ const styles = StyleSheet.create({
   removeButtonText: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: 'red',
+    color: Colors.accent,
   },
 });
