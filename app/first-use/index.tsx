@@ -4,7 +4,7 @@ import Colors from '../../constants/Colors';
 import Animated, { FadeIn, SlideOutRight } from 'react-native-reanimated';
 import { router } from 'expo-router';
 import { Text, View } from '../../components/Themed';
-import { firstUseStyles } from '../../constants/FirstUseStyles';
+import { firstUseStyles, pressableStyle } from '../../constants/FirstUseStyles';
 
 const FirstUseScreen = () => {
   const [isHeadingAppearing, setIsHeadingAppearing] = useState(false);
@@ -12,13 +12,6 @@ const FirstUseScreen = () => {
   const [isNextButtonAvailable, setIsNextButtonAvailable] = useState(false);
 
   const handleNext = () => router.replace('/first-use/Second');
-
-  const pressableStyle = useCallback((isPressed: boolean): StyleProp<ViewStyle> => {
-    if (isPressed) {
-      return firstUseStyles.activeNextButton;
-    }
-    return firstUseStyles.inactiveButton;
-  }, []);
 
   useEffect(() => {
     setTimeout(() => setIsHeadingAppearing(true), 1000);
@@ -41,7 +34,7 @@ const FirstUseScreen = () => {
       {isNextButtonAvailable && (
         <Animated.View style={firstUseStyles.nextButtonContainer} entering={FadeIn.duration(1000)}>
           <Pressable onPress={handleNext} style={(a) => pressableStyle(a.pressed)}>
-            <Text style={firstUseStyles.nextButtonText}>Let's Start!</Text>
+            <Text style={firstUseStyles.nextButtonText}>Next</Text>
           </Pressable>
         </Animated.View>
       )}

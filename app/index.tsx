@@ -1,7 +1,7 @@
 import { router } from 'expo-router';
 import React, { useEffect } from 'react';
 import { Image, StyleSheet } from 'react-native';
-import Animated, { FadeIn } from 'react-native-reanimated';
+import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 const splashScreen = require('../assets/images/secondary-splash.png');
 
 const index = () => {
@@ -9,7 +9,7 @@ const index = () => {
     setTimeout(() => router.replace('/first-use/'), 2000);
   }, []);
 
-  return <Animated.Image entering={FadeIn} source={splashScreen} style={styles.imageStyle} />;
+  return <Animated.Image entering={FadeIn} exiting={FadeOut} source={splashScreen} style={styles.imageStyle} />;
 };
 
 export default index;

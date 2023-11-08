@@ -25,7 +25,7 @@
       },
       "package": "com.yohaiwiener.TargetsFit"
     },
-    "plugins": ["expo-router"],
+    "plugins": ["expo-router", ["expo-av", { "microphonePremission": "Allow $(PRODUCT_NAME) to access your microphone." }]],
     "experiments": {
       "typedRoutes": true
     },
