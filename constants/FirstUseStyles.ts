@@ -58,7 +58,9 @@ export const firstUseStyles = StyleSheet.create({
   },
   animatedVideoContainer: {
     height: SCREEN_WIDTH,
+    maxHeight: 500,
     width: SCREEN_WIDTH,
+    maxWidth: 500,
     borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
@@ -66,7 +68,9 @@ export const firstUseStyles = StyleSheet.create({
   },
   videoContainer: {
     width: SCREEN_WIDTH * 0.9,
+    maxWidth: 500 * 0.9,
     height: SCREEN_WIDTH * 0.9,
+    maxHeight: 500 * 0.9,
     borderRadius: 20,
     shadowColor: 'black',
     shadowOffset: { height: 3, width: 0 },

@@ -16,12 +16,24 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.yohaiwiener.TargetsFit",
-      "buildNumber": "7"
+      "buildNumber": "8",
+      "splash": {
+        "dark": {
+          "backgroundColor": "#000",
+          "image": "./assets/images/dark-splash.png"
+        }
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
+      },
+      "splash": {
+        "dark": {
+          "image": "./assets/images/dark-splash.png",
+          "backgroundColor": "#000"
+        }
       },
       "package": "com.yohaiwiener.TargetsFit"
     },
