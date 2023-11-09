@@ -19,11 +19,12 @@ const ModalPicker = ({ selectedType, onValueChange }: Props) => {
       style={styles.pickerContainer}
       itemStyle={[styles.pickerItem, { color: Colors[colorScheme ?? 'light'].text }]}
     >
-      <Picker.Item label="strength" value={'strength'} />
-      <Picker.Item label="mobility" value={'mobility'} />
+      <Picker.Item label="Strength" value={'strength'} />
+      <Picker.Item label="Mobility" value={'mobility'} />
       <Picker.Item label="VO2" value={'VO2'} />
+      <Picker.Item label="Cardio" value={'cardio'} />
       <Picker.Item label="Flexibility" value={'flexibilty'} />
-      <Picker.Item label="specific" value={'specific'} />
+      <Picker.Item label="Specific" value={'specific'} />
     </Picker>
   );
 };

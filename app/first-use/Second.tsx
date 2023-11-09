@@ -40,7 +40,7 @@ const IOS = () => {
             <Video
               onPlaybackStatusUpdate={(status) => {
                 if (status.isLoaded) {
-                  if (status.didJustFinish) setTimeout(() => setIsNextButtonAvailable(true), 1000);
+                  if (status.didJustFinish) setIsNextButtonAvailable(true);
                 }
               }}
               ref={videoRef}
@@ -57,7 +57,7 @@ const IOS = () => {
       </Text>
 
       {isNextButtonAvailable && (
-        <Animated.View style={firstUseStyles.nextButtonContainer} entering={FadeIn.duration(1000)}>
+        <Animated.View style={firstUseStyles.nextButtonContainer} entering={FadeIn.duration(1500)}>
           <Pressable onPress={handleNext} style={(a) => pressableStyle(a.pressed)}>
             <Text style={firstUseStyles.nextButtonText}>Next</Text>
           </Pressable>
@@ -92,7 +92,7 @@ const Android = () => {
             entering={ZoomIn.duration(1500)}
             onPlaybackStatusUpdate={(status) => {
               if (status.isLoaded) {
-                if (status.didJustFinish) setTimeout(() => setIsNextButtonAvailable(true), 1000);
+                if (status.didJustFinish) setIsNextButtonAvailable(true);
               }
             }}
             ref={videoRef}
@@ -104,7 +104,7 @@ const Android = () => {
       </View>
 
       {isNextButtonAvailable && (
-        <Animated.View style={firstUseStyles.nextButtonContainer} entering={FadeIn.duration(1000)}>
+        <Animated.View style={firstUseStyles.nextButtonContainer} entering={FadeIn.duration(1500)}>
           <Pressable onPress={handleNext} style={(a) => pressableStyle(a.pressed)}>
             <Text style={firstUseStyles.nextButtonText}>Next</Text>
           </Pressable>

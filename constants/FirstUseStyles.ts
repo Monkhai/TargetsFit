@@ -53,7 +53,7 @@ export const firstUseStyles = StyleSheet.create({
   body: {
     fontSize: 17,
     marginTop: 45,
-    paddingHorizontal: 15,
+    paddingHorizontal: 20,
     textAlign: 'center',
   },
   animatedVideoContainer: {

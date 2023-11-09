@@ -6,11 +6,11 @@ import { Text, View } from '../../components/Themed';
 import Colors from '../../constants/Colors';
 import { firstUseStyles, pressableStyle } from '../../constants/FirstUseStyles';
 import { router } from 'expo-router';
-const lightVideo = require('../../assets/first-use-videos/edit-day-light.mp4');
-const darkVideo = require('../../assets/first-use-videos/edit-day-dark.mp4');
+const lightVideo = require('../../assets/first-use-videos/reorder-targets-light.mp4');
+const darkVideo = require('../../assets/first-use-videos/reorder-targets-dark.mp4');
 
 const handleNext = () => {
-  router.replace('/first-use/Fifth');
+  router.replace('/screens/');
 };
 
 const IOS = () => {
@@ -27,14 +27,14 @@ const IOS = () => {
 
   return (
     <View style={firstUseStyles.container}>
-      <Animated.Text entering={FadeIn.duration(1500)} style={firstUseStyles.header}>
-        Editing Days
+      <Animated.Text entering={FadeIn.duration(1500)} exiting={FadeOut} style={firstUseStyles.header}>
+        Reordering Targets
       </Animated.Text>
-
       {!isVideoAppearing && <View style={firstUseStyles.animatedVideoContainer} />}
       {isVideoAppearing && (
         <Animated.View
           entering={FadeIn.duration(1500)}
+          exiting={FadeOut}
           style={[firstUseStyles.animatedVideoContainer, { backgroundColor: Colors[colorScheme ?? 'light'].backgroundSecondary }]}
         >
           <View style={[firstUseStyles.videoContainer, { backgroundColor: Colors[colorScheme ?? 'light'].backgroundSecondary }]}>
@@ -52,15 +52,13 @@ const IOS = () => {
           </View>
         </Animated.View>
       )}
-      <Animated.Text style={firstUseStyles.body}>
-        To edit a day, just slide to it, Open the target bank, and add your targets using the{' '}
-        <Text style={{ color: Colors.accent }}>+</Text> button.
+      <Animated.Text exiting={FadeOut} style={firstUseStyles.body}>
+        To reorder your targets, just drag them.
       </Animated.Text>
-
       {isNextButtonAvailable && (
-        <Animated.View style={firstUseStyles.nextButtonContainer} entering={FadeIn.duration(1500)}>
+        <Animated.View style={firstUseStyles.nextButtonContainer} entering={FadeIn.duration(1500)} exiting={FadeOut}>
           <Pressable onPress={handleNext} style={(a) => pressableStyle(a.pressed)}>
-            <Text style={firstUseStyles.nextButtonText}>Next</Text>
+            <Text style={firstUseStyles.nextButtonText}>Get Started!</Text>
           </Pressable>
         </Animated.View>
       )}
@@ -85,7 +83,7 @@ const Android = () => {
   return (
     <View style={firstUseStyles.container}>
       <Animated.Text entering={FadeIn.duration(1500)} style={firstUseStyles.header}>
-        Editing Days
+        Reordering Targets
       </Animated.Text>
 
       <View style={[firstUseStyles.animatedVideoContainer, { backgroundColor: Colors[colorScheme ?? 'light'].backgroundSecondary }]}>
@@ -105,7 +103,7 @@ const Android = () => {
         </View>
       </View>
 
-      <Text style={firstUseStyles.body}>To edit a day, just choose it, Open the target bank, and add your targets.</Text>
+      <Text style={firstUseStyles.body}>To reorder your targets, just drag them.</Text>
 
       {isNextButtonAvailable && (
         <Animated.View style={firstUseStyles.nextButtonContainer} entering={FadeIn.duration(1500)}>

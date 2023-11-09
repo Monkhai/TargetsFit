@@ -10,7 +10,7 @@ const lightVideo = require('../../assets/first-use-videos/edit-target-light.mp4'
 const darkVideo = require('../../assets/first-use-videos/edit-target-dark.mp4');
 
 const handleNext = () => {
-  router.replace('/first-use/Third');
+  router.replace('/first-use/Fourth');
 };
 
 const IOS = () => {
@@ -41,7 +41,7 @@ const IOS = () => {
             <Video
               onPlaybackStatusUpdate={(status) => {
                 if (status.isLoaded) {
-                  if (status.didJustFinish) setTimeout(() => setIsNextButtonAvailable(true), 1000);
+                  if (status.didJustFinish) setIsNextButtonAvailable(true);
                 }
               }}
               ref={videoRef}
@@ -52,11 +52,10 @@ const IOS = () => {
           </View>
         </Animated.View>
       )}
-
       <Text style={firstUseStyles.body}>To edit a target, simply tap it.</Text>
 
       {isNextButtonAvailable && (
-        <Animated.View style={firstUseStyles.nextButtonContainer} entering={FadeIn.duration(1000)}>
+        <Animated.View style={firstUseStyles.nextButtonContainer} entering={FadeIn.duration(1500)}>
           <Pressable onPress={handleNext} style={(a) => pressableStyle(a.pressed)}>
             <Text style={firstUseStyles.nextButtonText}>Next</Text>
           </Pressable>
@@ -92,7 +91,7 @@ const Android = () => {
             entering={ZoomIn.duration(1500)}
             onPlaybackStatusUpdate={(status) => {
               if (status.isLoaded) {
-                if (status.didJustFinish) setTimeout(() => setIsNextButtonAvailable(true), 1000);
+                if (status.didJustFinish) setIsNextButtonAvailable(true);
               }
             }}
             ref={videoRef}
@@ -108,7 +107,7 @@ const Android = () => {
       </Animated.Text>
 
       {isNextButtonAvailable && (
-        <Animated.View style={firstUseStyles.nextButtonContainer} entering={FadeIn.duration(1000)}>
+        <Animated.View style={firstUseStyles.nextButtonContainer} entering={FadeIn.duration(1500)}>
           <Pressable onPress={handleNext} style={(a) => pressableStyle(a.pressed)}>
             <Text style={firstUseStyles.nextButtonText}>Next</Text>
           </Pressable>

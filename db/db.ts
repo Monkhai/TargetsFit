@@ -8,7 +8,7 @@ import { transformDailyTargets } from './utilities/transformDailyTargets';
 //----------------------------------------------------------------------------------------------
 //TYPES--TYPES--TYPES--TYPES--TYPES--TYPES--TYPES--TYPES--TYPES--TYPES--TYPES--TYPES--TYPES
 //----------------------------------------------------------------------------------------------
-export type TargetType = 'mobility' | 'strength' | 'specific' | 'cardio' | 'VO2' | 'flexibility';
+export type TargetType = 'mobility' | 'strength' | 'specific' | 'cardio' | 'VO2' | 'flexibility' | 'cardio';
 
 export type Target = {
   id: number;
@@ -170,9 +170,10 @@ export class TargetDAO {
         CASE type
           WHEN 'strength' THEN 1  
           WHEN 'mobility' THEN 2  
-          WHEN 'flexibility' THEN 3  
+          WHEN 'cardio' THEN 3  
           WHEN 'VO2' THEN 4  
-          WHEN 'specific' THEN 5
+          WHEN 'flexibility' THEN 5  
+          WHEN 'specific' THEN 6
           ELSE 1000
         END,
       name ASC`;

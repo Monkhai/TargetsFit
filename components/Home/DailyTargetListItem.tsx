@@ -57,6 +57,7 @@ const styles = StyleSheet.create({
 
   listItemText: {
     fontSize: 15,
+    textTransform: 'capitalize',
   },
   removeButtonContainer: {
     height: 32,
