@@ -2,7 +2,6 @@
 
 # dependencies
 node_modules/
-assets/first-use-videos
 
 # Expo
 .expo/
@@ -43,3 +42,5 @@ expo-env.d.ts
 
 pc-api-7720674180752937284-579-9b5ee0b9793c.json
 # google api key
+
+assets/first-use-videos
