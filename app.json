@@ -29,6 +29,7 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
+      "versionCode": 2,
       "splash": {
         "dark": {
           "image": "./assets/images/dark-splash.png",
