@@ -106,7 +106,7 @@ const Android = () => {
       {isNextButtonAvailable && (
         <Animated.View style={firstUseStyles.nextButtonContainer} entering={FadeIn.duration(1500)}>
           <Pressable onPress={handleNext} style={(a) => pressableStyle(a.pressed)}>
-            <Text style={firstUseStyles.nextButtonText}>Next</Text>
+            <Text style={firstUseStyles.nextButtonText}>Get Started!</Text>
           </Pressable>
         </Animated.View>
       )}
