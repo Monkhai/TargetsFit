@@ -102,9 +102,7 @@ const Android = () => {
         </View>
       </View>
 
-      <Animated.Text entering={FadeIn.duration(1500)} style={firstUseStyles.body}>
-        To edit a target, simply tap it.
-      </Animated.Text>
+      <Text style={firstUseStyles.body}>To edit a target, simply tap it.</Text>
 
       {isNextButtonAvailable && (
         <Animated.View style={firstUseStyles.nextButtonContainer} entering={FadeIn.duration(1500)}>

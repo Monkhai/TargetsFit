@@ -1,7 +1,7 @@
 import { ResizeMode, Video } from 'expo-av';
 import { router } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
-import { Platform, Pressable, StyleSheet, useColorScheme } from 'react-native';
+import { Platform, Pressable, useColorScheme } from 'react-native';
 import Animated, { FadeIn, ZoomIn } from 'react-native-reanimated';
 import { Text, View } from '../../components/Themed';
 import Colors from '../../constants/Colors';
@@ -110,9 +110,10 @@ const Android = () => {
           </Pressable>
         </Animated.View>
       )}
-      <Animated.Text entering={FadeIn.duration(1500)} style={firstUseStyles.body}>
+
+      <Text style={firstUseStyles.body}>
         Tap the <Text style={{ color: Colors.accent }}>New</Text> button and create your target
-      </Animated.Text>
+      </Text>
     </View>
   );
 };

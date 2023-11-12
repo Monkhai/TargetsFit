@@ -52,9 +52,7 @@ const IOS = () => {
           </View>
         </Animated.View>
       )}
-      <Animated.Text exiting={FadeOut} style={firstUseStyles.body}>
-        To reorder your targets, just drag them.
-      </Animated.Text>
+      <Text style={firstUseStyles.body}>To reorder your targets, just drag them.</Text>
       {isNextButtonAvailable && (
         <Animated.View style={firstUseStyles.nextButtonContainer} entering={FadeIn.duration(1500)} exiting={FadeOut}>
           <Pressable onPress={handleNext} style={(a) => pressableStyle(a.pressed)}>

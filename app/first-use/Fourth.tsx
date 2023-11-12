@@ -52,10 +52,10 @@ const IOS = () => {
           </View>
         </Animated.View>
       )}
-      <Animated.Text style={firstUseStyles.body}>
+      <Text style={firstUseStyles.body}>
         To edit a day, just slide to it, Open the target bank, and add your targets using the{' '}
         <Text style={{ color: Colors.accent }}>+</Text> button.
-      </Animated.Text>
+      </Text>
 
       {isNextButtonAvailable && (
         <Animated.View style={firstUseStyles.nextButtonContainer} entering={FadeIn.duration(1500)}>

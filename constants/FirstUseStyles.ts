@@ -9,7 +9,7 @@ export const firstUseStyles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'center',
     gap: 20,
-    paddingTop: 100,
+    paddingTop: '15%',
     paddingBottom: 50,
   },
   containerWithPadding: {
@@ -34,7 +34,7 @@ export const firstUseStyles = StyleSheet.create({
   },
   nextButtonContainer: {
     position: 'absolute',
-    bottom: 80,
+    bottom: '5%',
   },
   nextButtonText: {
     fontSize: 17,

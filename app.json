@@ -16,7 +16,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.yohaiwiener.TargetsFit",
-      "buildNumber": "8",
+      "buildNumber": "9",
       "splash": {
         "dark": {
           "backgroundColor": "#000",
@@ -29,7 +29,7 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "versionCode": 2,
+      "versionCode": 3,
       "splash": {
         "dark": {
           "image": "./assets/images/dark-splash.png",

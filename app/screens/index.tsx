@@ -97,7 +97,7 @@ const Home = () => {
   );
 
   const handleItemDelete = useCallback((target: TargetInWeeklyTargets) => {
-    WeeklyTargets.deleteTargetFromWeeklyTargets(target.tb_id)
+    WeeklyTargets.deleteTargetFromWeeklyTargets(target.tb_id, target.dayId)
       .then(() => {
         refetchActiveCount();
         refetchDailyTargets(target.dayId);
