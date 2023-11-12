@@ -60,7 +60,6 @@ const styles = StyleSheet.create({
   },
   listItemText: {
     fontSize: 15,
-    textTransform: 'capitalize',
   },
   addButtonContainer: {
     height: 32,

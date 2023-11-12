@@ -61,7 +61,6 @@ const styles = StyleSheet.create({
   },
   listItemText: {
     fontSize: 15,
-    textTransform: 'capitalize',
   },
   buttonContainer: {
     flexDirection: 'row',

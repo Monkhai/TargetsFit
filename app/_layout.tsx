@@ -1,10 +1,9 @@
 import { SplashScreen, Stack } from 'expo-router';
 import React, { useEffect } from 'react';
+import { I18nManager } from 'react-native';
 import useInitializeTables from '../hooks/useCreateDB';
 import useGetAllTargets from '../hooks/useGetAllTargets';
 import useGetWeeklyTargets from '../hooks/useGetWeeklyTargets';
-import { I18nManager } from 'react-native';
-import { StatusBar } from 'expo-status-bar';
 
 export { ErrorBoundary } from 'expo-router';
 SplashScreen.preventAutoHideAsync();

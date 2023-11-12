@@ -29,7 +29,6 @@ const styles = StyleSheet.create({
   header: {
     alignSelf: 'center',
     fontSize: 24,
-    textTransform: 'capitalize',
     fontWeight: '600',
     color: Colors.accent,
     marginVertical: 8,
